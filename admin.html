@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Compute Credits Admin — SPUR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── DESIGN TOKENS (from v2) ──────────────────────── */
+    :root {
+      --orange-500: oklch(0.70 0.18 45);
+      --orange-600: oklch(0.63 0.19 42);
+      --orange-100: oklch(0.96 0.03 45);
+      --orange-050: oklch(0.98 0.015 45);
+      --green-600: oklch(0.55 0.15 155);
+      --green-100: oklch(0.95 0.03 155);
+      --ink-900: oklch(0.22 0.01 250);
+      --ink-700: oklch(0.38 0.01 250);
+      --ink-500: oklch(0.55 0.01 250);
+      --ink-300: oklch(0.75 0.005 250);
+      --ink-100: oklch(0.90 0.003 250);
+      --ink-050: oklch(0.96 0.002 250);
+      --paper:   oklch(0.99 0.001 250);
+      --blue-600: oklch(0.50 0.18 260);
+      --blue-100: oklch(0.94 0.03 260);
+      --red-500: oklch(0.55 0.20 25);
+      --red-100: oklch(0.95 0.03 25);
+
+      --bg:           var(--paper);
+      --bg-subtle:    var(--ink-050);
+      --bg-section:   var(--ink-100);
+      --text-primary: var(--ink-900);
+      --text-body:    var(--ink-700);
+      --text-muted:   var(--ink-500);
+      --border:       var(--ink-300);
+      --border-subtle:var(--ink-100);
+      --accent:       var(--orange-500);
+      --accent-hover: var(--orange-600);
+      --accent-bg:    var(--orange-050);
+      --accent-border:var(--orange-100);
+      --success:      var(--green-600);
+      --success-bg:   var(--green-100);
+      --info:         var(--blue-600);
+      --info-bg:      var(--blue-100);
+      --danger:       var(--red-500);
+      --danger-bg:    var(--red-100);
+
+      --font-display: 'Sora', system-ui, -apple-system, sans-serif;
+      --font-sans:    'DM Sans', system-ui, -apple-system, sans-serif;
+      --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+
+      --radius: 8px;
+      --radius-sm: 5px;
+      --maxw: 1080px;
+      --pad: 24px;
+    }
+
+    *,*::before,*::after{box-sizing:border-box;}
+    html,body{margin:0;padding:0;}
+    body{
+      font-family:var(--font-sans);
+      background:var(--bg-subtle);
+      color:var(--text-primary);
+      font-size:15px;
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+    a{color:var(--accent);text-decoration:none;}
+    a:hover{text-decoration:underline;}
+    ::selection{background:var(--accent-bg);}
+    ::-webkit-scrollbar{width:6px;height:6px;}
+    ::-webkit-scrollbar-track{background:transparent;}
+    ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+    ::-webkit-scrollbar-thumb:hover{background:var(--ink-300);}
+
+    .mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+    .label{font-family:var(--font-mono);font-size:12px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);}
+    h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;}
+    h1{font-size:28px;font-weight:600;}
+    h2{font-size:22px;}
+    h3{font-size:18px;font-weight:600;}
+    h4{font-size:15px;font-weight:600;}
+
+    /* ── HEADER ────────────────────────────────────────── */
+    .header{
+      position:sticky;top:0;z-index:100;
+      background:var(--bg);
+      border-bottom:1px solid var(--border);
+    }
+    .header-inner{
+      display:flex;align-items:center;justify-content:space-between;
+      height:60px;
+    }
+    .logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:700;font-size:15px;letter-spacing:-0.01em;color:var(--text-primary);text-decoration:none;}
+    .logo:hover{text-decoration:none;}
+    .logo .mark{
+      width:28px;height:28px;border-radius:var(--radius-sm);
+      background:var(--accent);color:#fff;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:700;font-size:14px;
+    }
+    .header-right{display:flex;align-items:center;gap:16px;}
+    .header-right a{font-size:14px;font-weight:500;color:var(--text-body);}
+    .header-right a:hover{color:var(--text-primary);text-decoration:none;}
+    .header-badge{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:4px 10px;border-radius:999px;
+      background:var(--success-bg);color:var(--success);
+      font-size:12px;font-weight:600;
+      border:1px solid oklch(0.85 0.05 155);
+    }
+    .header-badge.off{background:var(--danger-bg);color:var(--danger);border-color:oklch(0.85 0.05 25);}
+    .header-badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+
+    .wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad);}
+
+    /* ── STATS ──────────────────────────────────────────── */
+    .stats-grid{
+      display:grid;grid-template-columns:repeat(4,1fr);
+      gap:16px;margin:32px 0;
+    }
+    @media(max-width:768px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:480px){.stats-grid{grid-template-columns:1fr;}}
+    .stat-card{
+      background:var(--bg);
+      border:1px solid var(--border-subtle);
+      border-radius:var(--radius);
+      padding:20px;
+    }
+    .stat-card .stat-label{font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;}
+    .stat-card .stat-value{font-family:var(--font-display);font-size:32px;font-weight:700;color:var(--text-primary);line-height:1;}
+    .stat-card .stat-sub{font-size:13px;color:var(--text-muted);margin-top:6px;}
+    .stat-card.accent .stat-value{color:var(--accent);}
+
+    /* ── TOOLBAR ────────────────────────────────────────── */
+    .toolbar{
+      display:flex;align-items:center;justify-content:space-between;
+      gap:12px;margin-bottom:16px;flex-wrap:wrap;
+    }
+    .toolbar-left{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+    .toolbar-right{display:flex;align-items:center;gap:8px;}
+    .search-box{
+      position:relative;
+      flex:1;min-width:200px;
+    }
+    .search-box input{
+      width:100%;padding:9px 12px 9px 36px;
+      background:var(--bg);color:var(--text-primary);
+      border:1px solid var(--border);border-radius:var(--radius-sm);
+      font-family:var(--font-sans);font-size:14px;
+      transition:border-color .15s,box-shadow .15s;
+    }
+    .search-box input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px oklch(0.70 0.18 45 / 0.15);}
+    .search-box input::placeholder{color:var(--ink-300);}
+    .search-box svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--text-muted);}
+    .filter-select{
+      padding:9px 12px;
+      background:var(--bg);color:var(--text-primary);
+      border:1px solid var(--border);border-radius:var(--radius-sm);
+      font-family:var(--font-sans);font-size:14px;cursor:pointer;
+      appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23757065' stroke-width='1.5'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;
+    }
+    .filter-select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px oklch(0.70 0.18 45 / 0.15);}
+
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:6px;
+      padding:9px 16px;border-radius:var(--radius-sm);
+      font-family:var(--font-sans);font-size:14px;font-weight:600;
+      border:1px solid transparent;cursor:pointer;
+      transition:background .15s,transform .08s;
+    }
+    .btn-primary{background:var(--accent);color:#fff;}
+    .btn-primary:hover{background:var(--accent-hover);text-decoration:none;}
+    .btn-primary:active{transform:scale(0.98);}
+    .btn-ghost{background:var(--bg);color:var(--text-primary);border:1px solid var(--border);}
+    .btn-ghost:hover{background:var(--bg-subtle);text-decoration:none;}
+    .btn-sm{padding:6px 12px;font-size:13px;}
+
+    /* ── TABLE ──────────────────────────────────────────── */
+    .table-wrap{
+      background:var(--bg);
+      border:1px solid var(--border-subtle);
+      border-radius:var(--radius);
+      overflow:hidden;
+    }
+    .table-scroll{overflow-x:auto;}
+    table{width:100%;border-collapse:collapse;}
+    thead th{
+      text-align:left;padding:12px 16px;
+      font-family:var(--font-mono);font-size:11px;font-weight:500;
+      letter-spacing:0.08em;text-transform:uppercase;
+      color:var(--text-muted);
+      border-bottom:1px solid var(--border);
+      background:var(--bg-subtle);
+      white-space:nowrap;
+    }
+    tbody td{
+      padding:14px 16px;
+      border-bottom:1px solid var(--border-subtle);
+      font-size:14px;color:var(--text-body);
+      vertical-align:top;
+    }
+    tbody tr:last-child td{border-bottom:none;}
+    tbody tr{transition:background .1s;}
+    tbody tr:hover{background:var(--bg-subtle);}
+    tbody tr.expanded{background:var(--accent-bg);}
+    .td-name{font-weight:600;color:var(--text-primary);}
+    .td-email{font-family:var(--font-mono);font-size:13px;}
+    .td-time{font-family:var(--font-mono);font-size:13px;color:var(--text-muted);white-space:nowrap;}
+
+    /* Track badges */
+    .badge{
+      display:inline-flex;align-items:center;gap:4px;
+      padding:3px 10px;border-radius:999px;
+      font-size:12px;font-weight:600;
+      border:1px solid transparent;
+    }
+    .badge-founder{background:var(--accent-bg);color:var(--accent);border-color:var(--accent-border);}
+    .badge-student{background:var(--info-bg);color:var(--info);border-color:oklch(0.85 0.05 260);}
+    .badge-event{background:var(--success-bg);color:var(--success);border-color:oklch(0.85 0.05 155);}
+
+    /* Status badges */
+    .status{
+      display:inline-flex;align-items:center;gap:4px;
+      padding:3px 10px;border-radius:999px;
+      font-size:12px;font-weight:600;
+    }
+    .status-pending{background:var(--ink-100);color:var(--ink-500);}
+    .status-approved{background:var(--success-bg);color:var(--success);}
+    .status-rejected{background:var(--danger-bg);color:var(--danger);}
+    .status .dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+
+    /* Expandable detail row */
+    .detail-row td{padding:0 !important;border-bottom:1px solid var(--border-subtle);}
+    .detail-inner{padding:16px 16px 20px;display:none;}
+    .detail-row.show .detail-inner{display:block;}
+    .detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 32px;margin-bottom:16px;}
+    @media(max-width:640px){.detail-grid{grid-template-columns:1fr;}}
+    .detail-item{display:flex;flex-direction:column;gap:2px;}
+    .detail-item .dk{font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);}
+    .detail-item .dv{font-size:14px;color:var(--text-body);}
+    .detail-desc{
+      background:var(--bg-subtle);border-radius:var(--radius-sm);
+      padding:12px 14px;font-size:14px;color:var(--text-body);line-height:1.5;
+      margin-bottom:12px;
+    }
+    .detail-actions{display:flex;gap:8px;flex-wrap:wrap;}
+
+    /* ── EMPTY STATE ────────────────────────────────────── */
+    .empty{
+      text-align:center;padding:64px 20px;
+    }
+    .empty .icon{
+      width:56px;height:56px;border-radius:50%;
+      background:var(--bg-subtle);color:var(--text-muted);
+      display:flex;align-items:center;justify-content:center;
+      font-size:24px;margin:0 auto 16px;
+      border:1px solid var(--border-subtle);
+    }
+    .empty h3{margin-bottom:8px;}
+    .empty p{color:var(--text-muted);font-size:14px;max-width:40ch;margin:0 auto;}
+
+    /* ── LOGIN ──────────────────────────────────────────── */
+    .login-wrap{
+      display:flex;align-items:center;justify-content:center;
+      min-height:100vh;padding:20px;
+    }
+    .login-card{
+      background:var(--bg);border:1px solid var(--border-subtle);
+      border-radius:var(--radius);padding:40px;max-width:380px;width:100%;
+    }
+    .login-card h2{margin-bottom:8px;}
+    .login-card p{color:var(--text-muted);font-size:14px;margin-bottom:24px;}
+    .login-field{margin-bottom:16px;}
+    .login-field label{display:block;font-size:14px;font-weight:500;margin-bottom:6px;}
+    .login-field input{
+      width:100%;padding:10px 12px;
+      background:var(--bg);color:var(--text-primary);
+      border:1px solid var(--border);border-radius:var(--radius-sm);
+      font-family:var(--font-sans);font-size:15px;
+    }
+    .login-field input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px oklch(0.70 0.18 45 / 0.15);}
+    .login-error{color:var(--danger);font-size:13px;margin-top:8px;display:none;}
+    .login-error.show{display:block;}
+    .login-card .btn{width:100%;padding:12px;margin-top:8px;}
+
+    /* ── TOAST ──────────────────────────────────────────── */
+    .toast{
+      position:fixed;bottom:24px;right:24px;z-index:999;
+      background:var(--ink-900);color:#fff;
+      padding:12px 20px;border-radius:var(--radius-sm);
+      font-size:14px;font-weight:500;
+      box-shadow:0 8px 24px rgba(0,0,0,0.2);
+      opacity:0;transform:translateY(8px);
+      transition:opacity .2s,transform .2s;
+      pointer-events:none;
+    }
+    .toast.show{opacity:1;transform:translateY(0);}
+
+    /* ── MODAL ──────────────────────────────────────────── */
+    .modal-overlay{
+      position:fixed;inset:0;z-index:200;
+      background:rgba(0,0,0,0.3);
+      display:flex;align-items:center;justify-content:center;
+      padding:20px;
+      opacity:0;pointer-events:none;
+      transition:opacity .2s;
+    }
+    .modal-overlay.show{opacity:1;pointer-events:auto;}
+    .modal{
+      background:var(--bg);border-radius:var(--radius);
+      max-width:560px;width:100%;max-height:80vh;overflow-y:auto;
+      box-shadow:0 12px 40px rgba(0,0,0,0.15);
+      transform:scale(0.96);transition:transform .2s;
+    }
+    .modal-overlay.show .modal{transform:scale(1);}
+    .modal-header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:20px 24px;border-bottom:1px solid var(--border-subtle);
+    }
+    .modal-header h3{margin:0;}
+    .modal-close{
+      background:none;border:none;cursor:pointer;
+      font-size:20px;color:var(--text-muted);padding:4px;
+    }
+    .modal-close:hover{color:var(--text-primary);}
+    .modal-body{padding:24px;}
+    .modal-body .detail-grid{margin-bottom:0;}
+    .modal-body .detail-desc{margin-bottom:16px;}
+    .modal-actions{
+      display:flex;gap:8px;justify-content:flex-end;
+      padding:16px 24px;border-top:1px solid var(--border-subtle);
+    }
+
+    /* ── CLAIM CODES SECTION ────────────────────────────── */
+    .codes-grid{
+      display:grid;grid-template-columns:repeat(3,1fr);
+      gap:16px;margin-top:16px;
+    }
+    @media(max-width:768px){.codes-grid{grid-template-columns:1fr;}}
+    .code-card{
+      background:var(--bg);border:1px solid var(--border-subtle);
+      border-radius:var(--radius);padding:20px;
+    }
+    .code-card .code-label{font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;}
+    .code-card .code-value{font-family:var(--font-mono);font-size:18px;font-weight:700;color:var(--text-primary);margin-bottom:4px;}
+    .code-card .code-credits{font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--accent);}
+    .code-card .code-track{font-size:13px;color:var(--text-muted);margin-top:4px;}
+
+    /* ── LOADING ────────────────────────────────────────── */
+    .loading{text-align:center;padding:48px;color:var(--text-muted);font-size:14px;}
+    .spinner{
+      width:32px;height:32px;border-radius:50%;
+      border:3px solid var(--border-subtle);
+      border-top-color:var(--accent);
+      animation:spin 0.8s linear infinite;
+      margin:0 auto 12px;
+    }
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    /* ── SECTION TITLE ──────────────────────────────────── */
+    .section-title{
+      display:flex;align-items:center;justify-content:space-between;
+      margin:40px 0 16px;
+    }
+    .section-title h2{font-size:20px;}
+    .section-title .count{
+      font-family:var(--font-mono);font-size:13px;color:var(--text-muted);
+    }
+
+    /* ── ANALYTICS ──────────────────────────────────────── */
+    .tabs{display:flex;gap:0;border-bottom:1px solid var(--border-subtle);margin-bottom:24px}
+    .tab{padding:12px 20px;font-size:14px;font-weight:600;color:var(--text-muted);
+      cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+    .tab:hover{color:var(--text-primary)}
+    .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+    .tab-panel{display:none}
+    .tab-panel.active{display:block}
+
+    /* bar chart */
+    .bar-chart{display:flex;align-items:flex-end;gap:4px;height:120px;margin:16px 0;padding:0 4px}
+    .bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+    .bar{width:100%;border-radius:3px 3px 0 0;background:var(--accent);transition:height .4s ease;min-height:2px}
+    .bar-bar{width:60%;border-radius:3px 3px 0 0;min-height:2px;transition:height .4s}
+    .bar-label{font-family:var(--font-mono);font-size:10px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+    .bar-val{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--text-primary)}
+
+    /* funnel */
+    .funnel{display:flex;flex-direction:column;gap:8px;margin:16px 0}
+    .funnel-row{display:flex;align-items:center;gap:12px}
+    .funnel-label{font-size:13px;font-weight:600;width:120px;flex-shrink:0}
+    .funnel-bar-bg{flex:1;height:28px;background:var(--bg-subtle);border-radius:6px;overflow:hidden}
+    .funnel-bar-fill{height:100%;border-radius:6px;display:flex;align-items:center;justify-content:flex-end;
+      padding-right:10px;font-family:var(--font-mono);font-size:12px;font-weight:700;color:#fff;transition:width .5s}
+    .funnel-bar-fill.s1{background:var(--accent)}
+    .funnel-bar-fill.s2{background:oklch(0.55 0.18 260)}
+    .funnel-bar-fill.s3{background:var(--success)}
+    .funnel-bar-fill.s4{background:var(--danger)}
+
+    /* donut */
+    .donut-wrap{display:flex;align-items:center;gap:24px}
+    .donut-legend{display:flex;flex-direction:column;gap:8px}
+    .donut-legend-item{display:flex;align-items:center;gap:8px;font-size:13px}
+    .donut-legend-item .swatch{width:12px;height:12px;border-radius:3px}
+    .donut-legend-item b{font-family:var(--font-mono);font-weight:700}
+
+    .analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}
+    @media(max-width:768px){.analytics-grid{grid-template-columns:1fr}}
+    .analytics-card{background:var(--bg);border:1px solid var(--border-subtle);border-radius:var(--radius);padding:24px}
+    .analytics-card h3{font-size:15px;margin-bottom:4px}
+    .analytics-card .sub{font-size:13px;color:var(--text-muted);margin-bottom:16px}
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="wrap header-inner">
+    <a class="logo" href="/admin" aria-label="SPUR Compute Credits Admin">
+      <span class="mark">S</span>
+      <span>Compute Credits — Admin</span>
+    </a>
+    <div class="header-right">
+      <span class="header-badge off" id="server-badge">
+        <span class="dot"></span>
+        <span id="server-status">Connecting…</span>
+      </span>
+      <a href="/v2">View public page &rarr;</a>
+    </div>
+  </div>
+</header>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="login-view">
+  <div class="login-card">
+    <h2>Admin access</h2>
+    <p>Enter the admin token to view submissions.</p>
+    <div class="login-field">
+      <label for="admin-token">Admin token</label>
+      <input id="admin-token" type="password" placeholder="Enter token" autocomplete="off">
+    </div>
+    <div class="login-error" id="login-error">Invalid token. Try again.</div>
+    <button class="btn btn-primary" onclick="doLogin()">Sign in &rarr;</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" style="display:none;">
+  <div class="wrap">
+
+    <!-- TABS -->
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('submissions')">Submissions</div>
+      <div class="tab" onclick="switchTab('analytics')">Analytics</div>
+    </div>
+
+    <!-- SUBMISSIONS PANEL -->
+    <div class="tab-panel active" id="panel-submissions">
+
+    <!-- STATS -->
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total submissions</div>
+        <div class="stat-value mono" id="stat-total">—</div>
+      </div>
+      <div class="stat-card accent">
+        <div class="stat-label">Pending</div>
+        <div class="stat-value mono" id="stat-pending">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Approved</div>
+        <div class="stat-value mono" id="stat-approved">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Rejected</div>
+        <div class="stat-value mono" id="stat-rejected">—</div>
+      </div>
+    </div>
+
+    <!-- TOOLBAR -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+          <input id="search" type="text" placeholder="Search name, email, org…" oninput="renderTable()">
+        </div>
+        <select class="filter-select" id="filter-track" onchange="renderTable()">
+          <option value="">All tracks</option>
+          <option value="founder">Founder</option>
+          <option value="student">Student</option>
+          <option value="event">Event</option>
+        </select>
+        <select class="filter-select" id="filter-status" onchange="renderTable()">
+          <option value="">All statuses</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn btn-ghost btn-sm" onclick="exportCSV()">Export CSV</button>
+        <button class="btn btn-ghost btn-sm" onclick="fetchSubmissions()">Refresh</button>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <div class="table-scroll">
+        <table id="submissions-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Track</th>
+              <th>GPU</th>
+              <th>Status</th>
+              <th>Submitted</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div class="empty" id="empty-state" style="display:none;">
+      <div class="icon">&#9993;</div>
+      <h3>No submissions yet</h3>
+      <p>Compute credit requests will appear here once the intake form goes live.</p>
+    </div>
+
+    <!-- CLAIM CODES -->
+    <div class="section-title">
+      <h2>Claim codes</h2>
+      <span class="count" id="codes-count"></span>
+    </div>
+    <div class="codes-grid" id="codes-grid"></div>
+
+    </div><!-- /panel-submissions -->
+
+    <!-- ANALYTICS PANEL -->
+    <div class="tab-panel" id="panel-analytics">
+      <div class="analytics-grid">
+        <div class="analytics-card">
+          <h3>Daily submissions</h3>
+          <p class="sub">Claims over time</p>
+          <div class="bar-chart" id="chart-daily"></div>
+        </div>
+        <div class="analytics-card">
+          <h3>Track breakdown</h3>
+          <p class="sub">Claims by track</p>
+          <div class="donut-wrap" id="donut-tracks"></div>
+        </div>
+      </div>
+      <div class="analytics-grid">
+        <div class="analytics-card">
+          <h3>Conversion funnel</h3>
+          <p class="sub">Page view → scroll → CTA → submit</p>
+          <div class="funnel" id="funnel-chart"></div>
+        </div>
+        <div class="analytics-card">
+          <h3>CTA performance</h3>
+          <p class="sub">Clicks by section</p>
+          <div class="bar-chart" id="chart-cta" style="flex-direction:column;height:auto;gap:6px"></div>
+        </div>
+      </div>
+      <div class="analytics-grid">
+        <div class="analytics-card">
+          <h3>Scroll depth</h3>
+          <p class="sub">How far people scroll</p>
+          <div class="funnel" id="scroll-funnel"></div>
+        </div>
+        <div class="analytics-card">
+          <h3>Totals</h3>
+          <p class="sub">All-time counters</p>
+          <div id="analytics-totals" style="display:flex;flex-direction:column;gap:10px"></div>
+        </div>
+      </div>
+    </div><!-- /panel-analytics -->
+
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title">Submission</h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+var TOKEN = localStorage.getItem('cc_admin_token') || '';
+var SUBMISSIONS = [];
+var CLAIM_CODES = [];
+var TRACK_LABELS = {founder:'Founder / Startup', student:'Student / Researcher', event:'Event Participant'};
+var TRACK_CREDITS = {founder:'$5,000', student:'$500', event:'$1,000'};
+
+function api(path, method, body){
+  return fetch(path, {
+    method: method || 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + TOKEN
+    },
+    body: body ? JSON.stringify(body) : undefined
+  }).then(function(r){ return r.json().then(function(d){ return {ok:r.ok, body:d}; }); });
+}
+
+function toast(msg){
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2500);
+}
+
+function fmtTime(iso){
+  if(!iso) return '—';
+  var d = new Date(iso);
+  var s = d.toLocaleDateString('en-CA',{month:'short',day:'numeric'}) + ' ' +
+          d.toLocaleTimeString('en-CA',{hour:'2-digit',minute:'2-digit'});
+  return s;
+}
+
+function fmtTrack(t){ return TRACK_LABELS[t] || t; }
+function fmtCredits(t){ return TRACK_CREDITS[t] || 'TBD'; }
+function trackBadge(t){
+  return '<span class="badge badge-' + t + '">' + fmtTrack(t) + '</span>';
+}
+function statusBadge(s){
+  return '<span class="status status-' + s + '"><span class="dot"></span>' + s.charAt(0).toUpperCase()+s.slice(1) + '</span>';
+}
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── LOGIN ──────────────────────────────────────────────
+function doLogin(){
+  var input = document.getElementById('admin-token');
+  var err = document.getElementById('login-error');
+  TOKEN = input.value.trim();
+  if(!TOKEN){ err.classList.add('show'); return; }
+
+  api('/api/admin/submissions').then(function(r){
+    if(r.ok){
+      localStorage.setItem('cc_admin_token', TOKEN);
+      showDashboard(r.body);
+    } else {
+      err.classList.add('show');
+      TOKEN = '';
+    }
+  }).catch(function(){
+    err.classList.add('show');
+    TOKEN = '';
+  });
+}
+
+function showDashboard(data){
+  document.getElementById('login-view').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  document.getElementById('server-badge').classList.remove('off');
+  document.getElementById('server-status').textContent = 'Live';
+
+  SUBMISSIONS = data.submissions || [];
+  CLAIM_CODES = data.claim_codes || [];
+  renderStats();
+  renderTable();
+  renderCodes();
+}
+
+function fetchSubmissions(){
+  api('/api/admin/submissions').then(function(r){
+    if(r.ok){
+      SUBMISSIONS = r.body.submissions || [];
+      CLAIM_CODES = r.body.claim_codes || [];
+      renderStats();
+      renderTable();
+      renderCodes();
+      toast('Refreshed');
+    } else {
+      toast('Failed to refresh');
+    }
+  });
+}
+
+// ── STATS ──────────────────────────────────────────────
+function renderStats(){
+  var total = SUBMISSIONS.length;
+  var pending = SUBMISSIONS.filter(function(s){return s.status==='pending';}).length;
+  var approved = SUBMISSIONS.filter(function(s){return s.status==='approved';}).length;
+  var rejected = SUBMISSIONS.filter(function(s){return s.status==='rejected';}).length;
+
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-pending').textContent = pending;
+  document.getElementById('stat-approved').textContent = approved;
+  document.getElementById('stat-rejected').textContent = rejected;
+}
+
+// ── TABLE ───────────────────────────────────────────────
+function getFiltered(){
+  var q = (document.getElementById('search').value || '').toLowerCase();
+  var ft = document.getElementById('filter-track').value;
+  var fs = document.getElementById('filter-status').value;
+
+  return SUBMISSIONS.filter(function(s){
+    if(ft && s.track !== ft) return false;
+    if(fs && s.status !== fs) return false;
+    if(q){
+      var hay = (s.name+' '+s.email+' '+(s.organization||'')+' '+(s.description||'')).toLowerCase();
+      if(hay.indexOf(q) === -1) return false;
+    }
+    return true;
+  });
+}
+
+function renderTable(){
+  var filtered = getFiltered();
+  var tbody = document.getElementById('tbody');
+  var empty = document.getElementById('empty-state');
+  var tableWrap = document.querySelector('.table-wrap');
+
+  if(SUBMISSIONS.length === 0){
+    tableWrap.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+
+  tableWrap.style.display = 'block';
+  empty.style.display = 'none';
+
+  if(filtered.length === 0){
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text-muted);">No matches.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(function(s, i){
+    var idx = SUBMISSIONS.indexOf(s);
+    return '<tr class="submission-row" onclick="openModal('+idx+')">' +
+      '<td class="td-name">' + esc(s.name) + '</td>' +
+      '<td>' + trackBadge(s.track) + '</td>' +
+      '<td class="mono" style="font-size:13px;">' + esc((s.gpu_pref||'').toUpperCase()) + '</td>' +
+      '<td>' + statusBadge(s.status||'pending') + '</td>' +
+      '<td class="td-time">' + fmtTime(s.submitted_at) + '</td>' +
+      '<td style="text-align:right;"><span style="color:var(--text-muted);font-size:18px;">&rsaquo;</span></td>' +
+    '</tr>';
+  }).join('');
+}
+
+// ── MODAL ───────────────────────────────────────────────
+var currentIdx = -1;
+
+function openModal(idx){
+  currentIdx = idx;
+  var s = SUBMISSIONS[idx];
+  if(!s) return;
+
+  var fv = s.form_version || 'v2';
+  document.getElementById('modal-title').innerHTML = esc(s.name) + ' — ' + fmtTrack(s.track) +
+    ' <span style="font-size:12px;font-family:var(--font-mono);color:var(--text-muted);font-weight:400;margin-left:8px;">' + fv + '</span>';
+
+  var gpuMap = {b300:'NVIDIA B300', h100:'NVIDIA H100', no_preference:'No preference', no_pref:'No preference'};
+  var durMap = {week:'1 week', month:'1 month', '3_months':'3 months', ongoing:'Ongoing'};
+  var useMap = {training:'Training', inference:'Inference', fine_tuning:'Fine-tuning', research:'Research', batch:'Batch / offline', other:'Other'};
+
+  // Build detail rows — only show fields that have values
+  function detailItem(label, value){
+    if(!value || value === '—') return '';
+    return '<div class="detail-item"><span class="dk">' + label + '</span><span class="dv">' + value + '</span></div>';
+  }
+
+  var rows = '';
+  rows += detailItem('Email', '<span class="mono">' + esc(s.email) + '</span>');
+  rows += detailItem('Track', trackBadge(s.track));
+  rows += detailItem('Credits', '<span style="color:var(--accent);font-weight:700;">' + fmtCredits(s.track) + '</span>');
+  rows += detailItem('Status', statusBadge(s.status||'pending'));
+  rows += detailItem('Role', esc(s.role));
+  rows += detailItem('Organization', esc(s.organization));
+  rows += detailItem('Use case', useMap[s.use_case] ? esc(useMap[s.use_case]) : esc(s.use_case));
+  rows += detailItem('GPU preference', gpuMap[s.gpu_pref] ? esc(gpuMap[s.gpu_pref]) : esc(s.gpu_pref));
+  rows += detailItem('Duration', durMap[s.duration] ? esc(durMap[s.duration]) : esc(s.duration));
+  rows += detailItem('Event code', esc(s.event_code));
+  rows += detailItem('Submitted', '<span class="mono">' + fmtTime(s.submitted_at) + '</span>');
+  rows += detailItem('Email sent', s.email_sent ? '✓ Yes' : '— No');
+  rows += detailItem('Form version', esc(fv));
+  rows += detailItem('Credit type', s.credit_type === 'api_only' ? 'API credits only' : (s.credit_type === 'api_and_compute' ? 'API credits + compute' : esc(s.credit_type||'')));
+
+  var body = document.getElementById('modal-body');
+  body.innerHTML =
+    '<div class="detail-grid">' + rows + '</div>' +
+    '<div style="margin-top:16px;"></div>' +
+    '<div class="detail-desc">' + esc(s.description||'No description provided.') + '</div>';
+
+  var actions = document.getElementById('modal-actions');
+  var status = s.status || 'pending';
+  actions.innerHTML =
+    (status !== 'approved' ? '<button class="btn btn-primary btn-sm" onclick="updateStatus('+idx+',\'approved\')">Approve</button>' : '') +
+    (status !== 'rejected' ? '<button class="btn btn-ghost btn-sm" onclick="updateStatus('+idx+',\'rejected\')" style="color:var(--danger);border-color:var(--danger);">Reject</button>' : '') +
+    (status !== 'pending' ? '<button class="btn btn-ghost btn-sm" onclick="updateStatus('+idx+',\'pending\')">Reset to pending</button>' : '') +
+    '<button class="btn btn-ghost btn-sm" onclick="closeModal()">Close</button>';
+
+  document.getElementById('modal-overlay').classList.add('show');
+}
+
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('show');
+  currentIdx = -1;
+}
+
+function updateStatus(idx, status){
+  var s = SUBMISSIONS[idx];
+  if(!s) return;
+  api('/api/admin/submissions/' + s.id + '/status', 'PUT', {status: status}).then(function(r){
+    if(r.ok){
+      s.status = status;
+      renderStats();
+      renderTable();
+      openModal(idx);
+      toast('Marked as ' + status);
+    } else {
+      toast('Failed to update');
+    }
+  });
+}
+
+// ── CLAIM CODES ─────────────────────────────────────────
+function renderCodes(){
+  var grid = document.getElementById('codes-grid');
+  document.getElementById('codes-count').textContent = CLAIM_CODES.length + ' active';
+  grid.innerHTML = CLAIM_CODES.map(function(c){
+    return '<div class="code-card">' +
+      '<div class="code-label">' + esc(c.label) + '</div>' +
+      '<div class="code-value">' + esc(c.code) + '</div>' +
+      '<div class="code-credits">' + esc(c.credits) + '</div>' +
+      '<div class="code-track">Track: ' + esc(c.track) + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── CSV EXPORT ──────────────────────────────────────────
+function exportCSV(){
+  var filtered = getFiltered();
+  var headers = ['Name','Email','Track','Credit Type','Role','Organization','Use Case','GPU','Duration','Status','Email Sent','Submitted','Form Version','Description'];
+  var rows = filtered.map(function(s){
+    return [s.name,s.email,s.track,s.credit_type||'api_and_compute',s.role||'',s.organization||'',s.use_case||'',s.gpu_pref||'',s.duration||'',s.status||'pending',s.email_sent?'yes':'no',s.submitted_at||'',s.form_version||'v2',(s.description||'').replace(/"/g,'""')];
+  });
+  var csv = [headers].concat(rows).map(function(r){
+    return r.map(function(c){ return '"'+String(c).replace(/"/g,'""')+'"'; }).join(',');
+  }).join('\n');
+  var blob = new Blob([csv], {type:'text/csv'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'compute-credits-submissions.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('CSV exported');
+}
+
+// ── TAB SWITCHING ───────────────────────────────────────
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});
+  event.target.classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+  if(name === 'analytics') fetchAnalytics();
+}
+
+// ── ANALYTICS ───────────────────────────────────────────
+function fetchAnalytics(){
+  api('/api/admin/analytics').then(function(r){
+    if(r.ok) renderAnalytics(r.body);
+  });
+}
+
+function renderAnalytics(data){
+  var t = data.totals || {};
+  var tracks = data.track_breakdown || {};
+  var cta = data.cta_clicks_by_section || {};
+  var scroll = data.scroll_depth || {};
+  var daily = data.daily_submissions || [];
+
+  // ── Daily submissions bar chart ──
+  var chartEl = document.getElementById('chart-daily');
+  if(daily.length === 0){
+    chartEl.innerHTML = '<p style="color:var(--text-muted);font-size:14px;text-align:center;padding:24px 0">No data yet.</p>';
+  } else {
+    var maxVal = Math.max.apply(null, daily.map(function(d){return d[1];}));
+    // Show last 14 days max
+    var recent = daily.slice(-14);
+    chartEl.innerHTML = recent.map(function(d){
+      var pct = (d[1] / maxVal) * 100;
+      var label = d[0].slice(5).replace('-', '/');
+      return '<div class="bar-col">' +
+        '<div class="bar-val">' + d[1] + '</div>' +
+        '<div class="bar" style="height:' + pct + '%"></div>' +
+        '<div class="bar-label">' + label + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  // ── Track donut ──
+  var total = (tracks.founder||0) + (tracks.student||0) + (tracks.event||0);
+  var donutEl = document.getElementById('donut-tracks');
+  if(total === 0){
+    donutEl.innerHTML = '<p style="color:var(--text-muted);font-size:14px">No submissions yet.</p>';
+  } else {
+    var colors = {founder:'var(--accent)', student:'oklch(0.50 0.18 260)', event:'var(--success)'};
+    var labels = {founder:'Founder', student:'Student', event:'Event'};
+    var donutHTML = '<svg width="120" height="120" viewBox="0 0 120 120" style="flex-shrink:0">';
+    var offset = 0;
+    var circumference = 2 * Math.PI * 45;
+    ['founder','student','event'].forEach(function(tk){
+      var val = tracks[tk] || 0;
+      var pct = total > 0 ? val / total : 0;
+      var dash = pct * circumference;
+      donutHTML += '<circle cx="60" cy="60" r="45" fill="none" stroke="' + colors[tk] + '" stroke-width="18" ' +
+        'stroke-dasharray="' + dash + ' ' + circumference + '" ' +
+        'stroke-dashoffset="' + (-offset) + '" transform="rotate(-90 60 60)"/>';
+      offset += dash;
+    });
+    donutHTML += '<text x="60" y="58" text-anchor="middle" font-family="Sora,sans-serif" font-size="22" font-weight="800" fill="var(--text-primary)">' + total + '</text>';
+    donutHTML += '<text x="60" y="74" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" fill="var(--text-muted)">total</text>';
+    donutHTML += '</svg>';
+    donutHTML += '<div class="donut-legend">';
+    ['founder','student','event'].forEach(function(tk){
+      var val = tracks[tk] || 0;
+      donutHTML += '<div class="donut-legend-item"><div class="swatch" style="background:' + colors[tk] + '"></div>' + labels[tk] + ' — <b>' + val + '</b></div>';
+    });
+    donutHTML += '</div>';
+    donutEl.innerHTML = donutHTML;
+  }
+
+  // ── Conversion funnel ──
+  var pv = t.page_views || 0;
+  var sd = (scroll[50] || 0); // scrolled past 50%
+  var ct = t.cta_clicks || 0;
+  var fs = t.form_submits || 0;
+  var funnelEl = document.getElementById('funnel-chart');
+  var maxFunnel = Math.max(pv, 1);
+  var stages = [
+    {label:'Page views', val:pv, cls:'s1'},
+    {label:'Scrolled 50%+', val:sd, cls:'s2'},
+    {label:'CTA clicks', val:ct, cls:'s3'},
+    {label:'Form submits', val:fs, cls:'s4'}
+  ];
+  funnelEl.innerHTML = stages.map(function(s){
+    var pct = (s.val / maxFunnel) * 100;
+    return '<div class="funnel-row">' +
+      '<div class="funnel-label">' + s.label + '</div>' +
+      '<div class="funnel-bar-bg"><div class="funnel-bar-fill ' + s.cls + '" style="width:' + pct + '%">' + s.val + '</div></div>' +
+    '</div>';
+  }).join('') + '<p style="font-size:13px;color:var(--text-muted);margin-top:12px">Conversion rate: ' + (pv > 0 ? ((fs/pv)*100).toFixed(1) : '0') + '%</p>';
+
+  // ── CTA performance (horizontal bars) ──
+  var ctaEl = document.getElementById('chart-cta');
+  var ctaEntries = Object.entries(cta).sort(function(a,b){return b[1]-a[1];});
+  if(ctaEntries.length === 0){
+    ctaEl.innerHTML = '<p style="color:var(--text-muted);font-size:14px">No CTA clicks yet.</p>';
+  } else {
+    var maxCTA = Math.max.apply(null, ctaEntries.map(function(e){return e[1];}));
+    ctaEl.innerHTML = ctaEntries.map(function(e){
+      var pct = (e[1] / maxCTA) * 100;
+      return '<div style="display:flex;align-items:center;gap:8px">' +
+        '<div style="width:100px;font-size:12px;color:var(--text-body);font-weight:600">' + esc(e[0]) + '</div>' +
+        '<div style="flex:1;height:20px;background:var(--bg-subtle);border-radius:4px;overflow:hidden">' +
+        '<div style="height:100%;width:' + pct + '%;background:var(--accent);border-radius:4px"></div></div>' +
+        '<div style="font-family:var(--font-mono);font-size:12px;font-weight:700;width:24px">' + e[1] + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  // ── Scroll depth ──
+  var scrollEl = document.getElementById('scroll-funnel');
+  var maxScroll = Math.max(scroll[25]||0, 1);
+  var depthStages = [
+    {label:'25%', val:scroll[25]||0},
+    {label:'50%', val:scroll[50]||0},
+    {label:'75%', val:scroll[75]||0},
+    {label:'100%', val:scroll[100]||0}
+  ];
+  scrollEl.innerHTML = depthStages.map(function(s,i){
+    var pct = (s.val / maxScroll) * 100;
+    return '<div class="funnel-row">' +
+      '<div class="funnel-label">' + s.label + ' depth</div>' +
+      '<div class="funnel-bar-bg"><div class="funnel-bar-fill s' + (i+1) + '" style="width:' + pct + '%">' + s.val + '</div></div>' +
+    '</div>';
+  }).join('');
+
+  // ── Totals ──
+  var totalsEl = document.getElementById('analytics-totals');
+  var totalsRows = [
+    ['Events tracked', t.events || 0],
+    ['Page views', t.page_views || 0],
+    ['CTA clicks', t.cta_clicks || 0],
+    ['Form submissions', t.form_submits || 0],
+    ['Total submissions', t.submissions || 0],
+  ];
+  totalsEl.innerHTML = totalsRows.map(function(r){
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-subtle)">' +
+      '<span style="font-size:13px;color:var(--text-body)">' + r[0] + '</span>' +
+      '<span class="mono" style="font-size:16px;font-weight:700">' + r[1] + '</span>' +
+    '</div>';
+  }).join('') + (data.turnstile_enabled ?
+    '<div style="margin-top:8px;font-size:12px;color:var(--success);font-weight:600">✓ Turnstile bot protection active</div>' :
+    '<div style="margin-top:8px;font-size:12px;color:var(--text-muted)">Turnstile not configured</div>');
+}
+
+// ── KEYBOARD ────────────────────────────────────────────
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') closeModal();
+  if(e.key === 'Enter' && document.getElementById('login-view').style.display !== 'none'){
+    if(document.activeElement.id === 'admin-token') doLogin();
+  }
+});
+
+// ── INIT ────────────────────────────────────────────────
+if(TOKEN){
+  api('/api/admin/submissions').then(function(r){
+    if(r.ok){
+      showDashboard(r.body);
+    } else {
+      TOKEN = '';
+      localStorage.removeItem('cc_admin_token');
+    }
+  }).catch(function(){
+    TOKEN = '';
+    localStorage.removeItem('cc_admin_token');
+  });
+}
+</script>
+
+</body>
+</html>

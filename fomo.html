@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPUR Compute: Claim Before They're Gone</title>
+<meta name="description" content="Compute credits are being claimed. Claim yours before the pool runs out.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --orange-500:oklch(0.70 0.18 45);--orange-600:oklch(0.63 0.19 42);
+  --orange-100:oklch(0.96 0.03 45);--orange-050:oklch(0.98 0.015 45);
+  --green-600:oklch(0.55 0.15 155);--green-100:oklch(0.95 0.03 155);
+  --red-500:oklch(0.55 0.20 25);--red-100:oklch(0.95 0.03 25);
+  --ink-900:oklch(0.22 0.01 250);--ink-800:oklch(0.30 0.01 250);
+  --ink-700:oklch(0.38 0.01 250);--ink-500:oklch(0.55 0.01 250);
+  --ink-300:oklch(0.75 0.005 250);--ink-100:oklch(0.90 0.003 250);
+  --ink-050:oklch(0.96 0.002 250);--paper:oklch(0.99 0.001 250);
+  --bg:var(--paper);--bg-subtle:var(--ink-050);--bg-section:var(--ink-100);
+  --text-primary:var(--ink-900);--text-body:var(--ink-700);--text-muted:var(--ink-500);
+  --border:var(--ink-300);--border-subtle:var(--ink-100);
+  --accent:var(--orange-500);--accent-hover:var(--orange-600);
+  --accent-bg:var(--orange-050);--accent-border:var(--orange-100);
+  --success:var(--green-600);--success-bg:var(--green-100);
+  --danger:var(--red-500);--danger-bg:var(--red-100);
+  --font-display:'Sora',system-ui,-apple-system,sans-serif;
+  --font-sans:'DM Sans',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --radius:12px;--maxw:1140px;
+}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text-primary);
+  font:400 17px/1.62 var(--font-sans);-webkit-font-smoothing:antialiased;}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+h1,h2,h3,h4{margin:0;font-family:var(--font-display);font-weight:700;letter-spacing:-.025em;line-height:1.08}
+h1{font-size:clamp(34px,4.6vw,54px);font-weight:800}
+h2{font-size:clamp(28px,3.5vw,40px)}
+h3{font-size:20px;letter-spacing:-.015em}
+p{margin:0}
+.eyebrow{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent)}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+/* ── BUTTON ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  font-family:var(--font-sans);font-weight:700;font-size:16px;text-decoration:none;
+  padding:15px 26px;border-radius:9px;border:0;cursor:pointer;min-height:50px;
+  background:var(--accent);color:#fff;transition:background .14s,transform .12s,box-shadow .14s}
+.btn:hover{background:var(--accent-hover);transform:translateY(-1px);box-shadow:0 8px 22px oklch(0.70 0.18 45/.32)}
+.btn:active{transform:translateY(0)}
+.btn-lg{font-size:17px;padding:17px 32px;min-height:56px}
+.btn-block{width:100%}
+.microcopy{font-size:13.5px;color:var(--text-muted);margin-top:12px}
+
+/* ── STICKY BAR ── */
+.sticky{position:sticky;top:0;z-index:60;background:var(--ink-900);color:#fff;
+  display:flex;align-items:center;justify-content:center;gap:18px;padding:11px 24px;
+  font-size:14.5px;font-weight:500;flex-wrap:wrap}
+.sticky .brand{font-family:var(--font-display);font-weight:800;letter-spacing:.16em;font-size:14px}
+.sticky b{color:#fff}.sticky .maple{color:var(--accent)}
+.sticky .live-dot{width:8px;height:8px;border-radius:50%;background:var(--danger);
+  display:inline-block;animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+.sticky a{color:#fff;font-weight:700;border-bottom:1.5px solid oklch(0.70 0.18 45/.9);padding-bottom:1px;white-space:nowrap}
+.sticky a:hover{border-bottom-color:#fff}
+
+/* ── HERO ── */
+.hero{padding:72px 0 0;text-align:center}
+.hero .eyebrow{display:inline-block;margin-bottom:22px}
+.hero h1{margin-bottom:22px}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero .lead{font-size:19.5px;color:var(--text-body);max-width:56ch;margin:0 auto 32px}
+.hero .lead b{color:var(--text-primary);font-weight:700}
+
+/* ── CREDIT POOL ── */
+.pool-section{padding:0 0 64px}
+.pool-card{background:#fff;border:1px solid var(--border-subtle);border-radius:16px;
+  box-shadow:0 1px 3px oklch(0.22 0.01 250/.06),0 12px 32px oklch(0.22 0.01 250/.07);
+  padding:36px 36px 44px;max-width:680px;margin:0 auto;text-align:center}
+.pool-label{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--text-muted);margin-bottom:8px}
+.pool-amount{font-family:var(--font-display);font-size:clamp(48px,7vw,72px);font-weight:800;
+  letter-spacing:-.035em;color:var(--accent);line-height:1;font-variant-numeric:tabular-nums}
+.pool-amount .cents{font-size:0.5em;font-weight:700;color:var(--text-muted)}
+.pool-sub{font-size:16px;color:var(--text-body);margin-top:16px}
+.pool-sub b{color:var(--text-primary)}
+.pool-bar-wrap{margin-top:24px}
+.pool-bar{height:12px;background:var(--bg-section);border-radius:6px;overflow:hidden}
+.pool-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-hover));
+  border-radius:6px;transition:width 1s ease}
+.pool-bar-meta{display:flex;justify-content:space-between;margin-top:8px;font-size:13px;color:var(--text-muted)}
+
+/* ── ACTIVITY FEED ── */
+.feed-section{background:var(--bg-subtle);padding:72px 0}
+.feed-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px}
+.feed-head h2{font-size:24px}
+.live-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:100px;
+  background:var(--danger-bg);color:var(--danger);font-size:12px;font-weight:700;
+  font-family:var(--font-mono);letter-spacing:.06em;text-transform:uppercase}
+.live-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--danger);
+  animation:pulse 1.4s ease-in-out infinite}
+.feed{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.feed-item{background:#fff;border:1px solid var(--border-subtle);border-radius:10px;
+  padding:16px 20px;display:flex;align-items:center;gap:14px;
+  animation:slideIn .4s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.feed-avatar{width:40px;height:40px;border-radius:50%;flex:0 0 40px;
+  display:flex;align-items:center;justify-content:center;font-family:var(--font-display);
+  font-weight:700;font-size:15px;color:#fff}
+.feed-avatar.founder{background:var(--accent)}
+.feed-avatar.student{background:oklch(0.50 0.18 260)}
+.feed-avatar.event{background:var(--success)}
+.feed-body{flex:1;min-width:0}
+.feed-body p{font-size:14.5px;color:var(--text-body);line-height:1.5}
+.feed-body b{color:var(--text-primary);font-weight:600}
+.feed-body .feed-track{font-family:var(--font-mono);font-size:12px;font-weight:600;
+  text-transform:uppercase;letter-spacing:.04em}
+.feed-body .feed-track.founder{color:var(--accent)}
+.feed-body .feed-track.student{color:oklch(0.50 0.18 260)}
+.feed-body .feed-track.event{color:var(--success)}
+.feed-time{font-family:var(--font-mono);font-size:12px;color:var(--text-muted);white-space:nowrap}
+.early-banner{background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:10px;
+  padding:16px 20px;text-align:center;font-size:15px;color:var(--accent-hover);font-weight:600;
+  margin-bottom:16px}
+
+/* ── CLAIM CODE ── */
+.claim-code-section{padding:0 0 64px;text-align:center}
+.claim-link{display:inline-block;font-size:15px;color:var(--accent);font-weight:600;
+  cursor:pointer;border-bottom:1.5px solid var(--accent-border);padding-bottom:1px}
+.claim-link:hover{border-bottom-color:var(--accent)}
+.claim-code-box{display:none;margin-top:20px;max-width:440px;margin-left:auto;margin-right:auto;
+  background:#fff;border:1px solid var(--border-subtle);border-radius:12px;padding:28px 24px;
+  box-shadow:0 1px 3px oklch(0.22 0.01 250/.06),0 12px 32px oklch(0.22 0.01 250/.07)}
+.claim-code-box.show{display:block}
+.claim-code-box h3{font-size:18px;margin-bottom:8px}
+.claim-code-box p{font-size:14px;color:var(--text-muted);margin-bottom:16px}
+.claim-code-input{width:100%;padding:12px 14px;font-family:var(--font-mono);font-size:15px;
+  border:1.5px solid var(--border);border-radius:8px;text-transform:uppercase;
+  letter-spacing:.05em;text-align:center;transition:border-color .15s,box-shadow .15s}
+.claim-code-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--orange-100)}
+.claim-code-btn{width:100%;margin-top:12px}
+.claim-code-msg{margin-top:12px;font-size:14px;font-weight:600;display:none}
+.claim-code-msg.error{display:block;color:var(--danger)}
+.claim-code-msg.success{display:block;color:var(--success)}
+
+/* ── CTA ── */
+.cta-section{padding:80px 0;text-align:center}
+.cta-section h2{margin-bottom:16px}
+.cta-section .lead{font-size:19px;color:var(--text-body);max-width:52ch;margin:0 auto 28px}
+
+/* ── FOOTER ── */
+.footer{background:var(--ink-900);color:var(--ink-500);padding:32px 0;font-size:13.5px;text-align:center}
+.footer .maple{color:var(--accent)}
+
+/* ── SECRET MODAL ── */
+.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.4);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+  opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.show{opacity:1;pointer-events:auto}
+.modal-box{background:var(--bg);border-radius:16px;max-width:520px;width:100%;
+  max-height:85vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.2);
+  transform:scale(.96);transition:transform .2s}
+.modal-overlay.show .modal-box{transform:scale(1)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;
+  padding:24px 28px 0}
+.modal-close{background:none;border:none;cursor:pointer;font-size:24px;
+  color:var(--text-muted);padding:4px}
+.modal-close:hover{color:var(--text-primary)}
+.modal-body{padding:16px 28px 28px}
+.modal-field{display:flex;flex-direction:column;margin-bottom:16px}
+.modal-field label{font-size:14px;font-weight:700;margin-bottom:7px;color:var(--text-primary)}
+.modal-field input[type=text],.modal-field input[type=email],.modal-field textarea{
+  font-family:var(--font-sans);font-size:16px;padding:12px 14px;border-radius:8px;
+  border:1.5px solid var(--border);background:#fff;color:var(--text-primary);width:100%}
+.modal-field input:focus,.modal-field textarea:focus{border-color:var(--accent);outline:none;
+  box-shadow:0 0 0 3px var(--orange-100)}
+.modal-field textarea{min-height:80px;resize:vertical;line-height:1.5}
+.modal-fieldrow{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:520px){.modal-fieldrow{grid-template-columns:1fr}}
+.modal-segmented{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.modal-segmented input{position:absolute;opacity:0;pointer-events:none}
+.modal-segmented label{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;border:1.5px solid var(--border);border-radius:8px;padding:11px 6px;cursor:pointer;
+  margin:0;text-align:center;transition:.14s;font-size:14px;min-height:56px}
+.modal-segmented label small{font-weight:400;color:var(--text-muted);font-size:12px}
+.modal-segmented input:checked+label{border-color:var(--accent);background:var(--accent-bg);
+  box-shadow:0 0 0 1px var(--accent)}
+
+@media(max-width:768px){
+  .hero{padding:48px 0 0}
+  .pool-card{padding:28px 20px 32px}
+  .feed-section{padding:48px 0}
+  .cta-section{padding:56px 0}
+  .claim-code-box{padding:20px 16px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- STICKY BAR -->
+<div class="sticky">
+  <span class="brand">SPUR</span>
+  <span><span class="live-dot"></span> <b id="sticky-remaining">$1,000,000</b> in credits remaining</span>
+  <a href="#claim">Claim yours →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow">🍁 Limited Credit Pool</span>
+    <h1>Credits are going fast.<br><em>Claim yours before they're gone.</em></h1>
+    <p class="lead">SPUR has <b>$1,000,000 in compute credits</b> available for builders.
+      <b>Each claim reduces what's left.</b> No caps per track, no queue.
+      First come, first served until the pool runs dry.</p>
+  </div>
+</section>
+
+<!-- CREDIT POOL -->
+<section class="pool-section">
+  <div class="wrap">
+    <div class="pool-card">
+      <div class="pool-label">Credits remaining</div>
+      <div class="pool-amount mono" id="pool-amount">$1,000,000<span class="cents">.00</span></div>
+      <div class="pool-sub">Out of <b>$1,000,000</b> total · <b id="pool-claimed-count">0</b> builders have claimed so far</div>
+      <div class="pool-bar-wrap">
+        <div class="pool-bar"><div class="pool-bar-fill" id="pool-bar-fill" style="width:0%"></div></div>
+        <div class="pool-bar-meta">
+          <span><b id="pool-claimed-amt">$0</b> claimed</span>
+          <span><b id="pool-remaining-amt">$1,000,000</b> remaining</span>
+        </div>
+      </div>
+      <div style="margin-top:16px;text-align:center;border-top:1px solid var(--border-subtle);padding:24px 0 0">
+        <span class="claim-link" onclick="toggleClaimCode()">Have a claim code?</span>
+        <div class="claim-code-box" id="claim-code-box">
+          <h3>Enter your claim code</h3>
+          <p>Skip the waitlist and claim your credits directly.</p>
+          <input type="text" class="claim-code-input" id="claim-code-input" placeholder="Enter your code" autocomplete="off">
+          <button class="btn btn-block claim-code-btn" onclick="validateClaimCode()">Redeem code →</button>
+          <div class="claim-code-msg" id="claim-code-msg"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE ACTIVITY FEED -->
+<section class="feed-section">
+  <div class="wrap">
+    <div class="feed-head">
+      <h2 id="feed-title">Builders claiming right now</h2>
+      <span class="live-badge"><span class="dot"></span> Live</span>
+    </div>
+    <div id="early-banner"></div>
+    <div class="feed" id="feed">
+      <div class="feed-item" style="justify-content:center;color:var(--text-muted)">Loading activity…</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECRET CLAIM MODAL -->
+<div class="modal-overlay" id="secret-modal" onclick="if(event.target===this)closeSecretModal()">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div>
+        <span class="eyebrow">Claim code verified</span>
+        <h3 style="margin-top:6px">Claim your credits directly</h3>
+      </div>
+      <button class="modal-close" onclick="closeSecretModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:14px;color:var(--text-muted);margin-bottom:20px">
+        Your claim code skips the waitlist. Fill in the form below and your credits
+        will be activated within one business day.</p>
+      <form id="secret-claimform" novalidate>
+        <input type="hidden" name="claim_code" id="secret-claim-code">
+        <input type="hidden" name="credit_type" value="api_only">
+        <div class="modal-field">
+          <label>I am a <span style="color:var(--accent)">*</span></label>
+          <div class="modal-segmented">
+            <input type="radio" name="track" id="sc-founder" value="founder" checked>
+            <label for="sc-founder">Founder<small>$5,000</small></label>
+            <input type="radio" name="track" id="sc-student" value="student">
+            <label for="sc-student">Student<small>$500</small></label>
+            <input type="radio" name="track" id="sc-event" value="event">
+            <label for="sc-event">Event<small>$1,000</small></label>
+          </div>
+        </div>
+        <div class="modal-fieldrow">
+          <div class="modal-field">
+            <label for="sc-name">Your name <span style="color:var(--accent)">*</span></label>
+            <input type="text" id="sc-name" name="name" placeholder="Jane Doe" required>
+          </div>
+          <div class="modal-field">
+            <label for="sc-email">Email <span style="color:var(--accent)">*</span></label>
+            <input type="email" id="sc-email" name="email" placeholder="jane@example.com" required>
+          </div>
+        </div>
+        <div class="modal-field">
+          <label for="sc-org">Organization or school <span style="color:var(--text-muted);font-weight:400">(optional)</span></label>
+          <input type="text" id="sc-org" name="org" placeholder="Where you work or study">
+        </div>
+        <div class="modal-field">
+          <label for="sc-build">What will you build? <span style="color:var(--accent)">*</span></label>
+          <textarea id="sc-build" name="build" required placeholder="A sentence or two is plenty. What are you training or serving, roughly what scale?"></textarea>
+        </div>
+        <button type="submit" class="btn btn-block" style="margin-top:8px">Claim my credits →</button>
+      </form>
+      <div id="secret-success" style="display:none;text-align:center;padding:32px 0">
+        <div style="width:56px;height:56px;border-radius:50%;background:var(--success-bg);color:var(--success);display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 16px;border:2px solid var(--success)">✓</div>
+        <h3 style="margin-bottom:8px">Credits claimed.</h3>
+        <p style="color:var(--text-body);max-width:44ch;margin:0 auto">Check your inbox. Your credits will be activated within one business day.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<section class="cta-section" id="claim">
+  <div class="wrap">
+    <span class="eyebrow">Don't miss out</span>
+    <h2 style="margin:14px 0 16px">Claim your compute credits</h2>
+    <p class="lead">Up to $5,000 on NVIDIA B300s. Activated within one business day.
+      No credit card, no obligation.</p>
+    <a class="btn btn-lg" href="/v3#claim">Claim your credits →</a>
+    <p class="microcopy">🍁 Sovereign by design · Waterloo, Ontario</p>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    © 2026 SPUR Innovation Centre · Waterloo, Ontario, Canada · <span class="maple">🍁</span> Sovereign by design
+  </div>
+</footer>
+
+<script>
+(function(){
+  // ── Credit pool config ──
+  var TOTAL_POOL = 1000000; // $1,000,000
+  var claimedAmount = 0;
+  var claimerCount = 0;
+
+  // ── Credit values per track ──
+  var TRACK_VALUES = {founder:5000, student:500, event:1000};
+  var TRACK_LABELS = {founder:'Founder', student:'Student', event:'Event'};
+  var TRACK_CREDITS = {founder:'$5,000', student:'$500', event:'$1,000'};
+
+  function fmtMoney(n){
+    return '$' + n.toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0});
+  }
+
+  function fmtMoneyFull(n){
+    return '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+  }
+
+  // ── Render credit pool ──
+  function renderPool(){
+    var remaining = TOTAL_POOL - claimedAmount;
+    var pct = (claimedAmount / TOTAL_POOL) * 100;
+
+    var elAmount = document.getElementById('pool-amount');
+    if(elAmount){
+      var intPart = Math.floor(remaining);
+      var decPart = (remaining % 1).toFixed(2).slice(1);
+      elAmount.innerHTML = fmtMoney(intPart) + '<span class="cents">' + decPart + '</span>';
+    }
+
+    var elCount = document.getElementById('pool-claimed-count');
+    if(elCount) elCount.textContent = claimerCount;
+
+    var elBar = document.getElementById('pool-bar-fill');
+    if(elBar) elBar.style.width = pct + '%';
+
+    var elClaimed = document.getElementById('pool-claimed-amt');
+    if(elClaimed) elClaimed.textContent = fmtMoney(claimedAmount);
+
+    var elRemaining = document.getElementById('pool-remaining-amt');
+    if(elRemaining) elRemaining.textContent = fmtMoney(remaining);
+
+    // Sticky bar
+    var elSticky = document.getElementById('sticky-remaining');
+    if(elSticky) elSticky.textContent = fmtMoney(remaining);
+  }
+
+  // ── Activity feed ──
+  var ORGS = ['MapleAI','UWaterloo','Toronto ML Lab','SPUR Hackathon','McGill NLP','Kiteline','Compass AI','York CS','Carleton Research','Queen\u2019s ECE'];
+  var FIRST_NAMES = ['A','J','S','M','R','K','P','T','L','D','N','V'];
+
+  function fmtAgo(seconds){
+    if(seconds < 60) return seconds + 's ago';
+    if(seconds < 3600) return Math.floor(seconds/60) + 'm ago';
+    return Math.floor(seconds/3600) + 'h ago';
+  }
+
+  function initials(name){
+    if(!name) return '?';
+    return name.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+  }
+
+  function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+  function renderFeed(items){
+    var feed = document.getElementById('feed');
+
+    // Early banner: show when less than 4 claimers
+    var banner = document.getElementById('early-banner');
+    var showBanner = claimerCount < 4;
+    if(showBanner){
+      banner.innerHTML = '<div class="early-banner">Be one of the first to claim! You\u2019re early.</div>';
+    } else {
+      banner.innerHTML = '';
+    }
+
+    if(!items.length){
+      if(!showBanner){
+        feed.innerHTML = '<div class="feed-item" style="justify-content:center;color:var(--text-muted)">No claims yet. Be the first!</div>';
+      } else {
+        feed.innerHTML = '';
+      }
+      return;
+    }
+    feed.innerHTML = items.slice(0, 8).map(function(item){
+      return '<div class="feed-item">' +
+        '<div class="feed-avatar ' + item.track + '">' + esc(item.initials) + '</div>' +
+        '<div class="feed-body">' +
+          '<p><b>' + esc(item.name) + '</b> claimed <span class="feed-track ' + item.track + '">' + TRACK_LABELS[item.track] + ' ' + TRACK_CREDITS[item.track] + '</span> credits' +
+          (item.org ? ' · ' + esc(item.org) : '') + '</p>' +
+        '</div>' +
+        '<div class="feed-time">' + fmtAgo(item.ago) + '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  // ── Try to fetch real submissions ──
+  fetch('/api/fomo/feed')
+    .then(function(r){return r.json();})
+    .then(function(data){
+      if(data.submissions && data.submissions.length){
+        var now = Date.now();
+        var items = data.submissions.map(function(s){
+          var ts = s.submitted_at ? new Date(s.submitted_at).getTime() : now;
+          var val = TRACK_VALUES[s.track] || 0;
+          claimedAmount += val;
+          claimerCount++;
+          return {
+            name: s.name,
+            initials: initials(s.name),
+            track: s.track,
+            org: s.organization,
+            ago: Math.max(1, Math.floor((now - ts) / 1000))
+          };
+        }).sort(function(a,b){return a.ago - b.ago;});
+        renderFeed(items);
+        renderPool();
+      } else {
+        // No real submissions yet
+        renderFeed([]);
+        renderPool();
+      }
+    })
+    .catch(function(){
+      renderFeed([]);
+      renderPool();
+    });
+
+})();
+
+// ── Claim code ──
+function toggleClaimCode(){
+  var box = document.getElementById('claim-code-box');
+  box.classList.toggle('show');
+  if(box.classList.contains('show')){
+    document.getElementById('claim-code-input').focus();
+  }
+}
+
+function validateClaimCode(){
+  var input = document.getElementById('claim-code-input');
+  var msg = document.getElementById('claim-code-msg');
+  var code = input.value.trim().toUpperCase();
+  msg.className = 'claim-code-msg';
+
+  if(!code){
+    msg.textContent = 'Enter a claim code.';
+    msg.classList.add('error');
+    return;
+  }
+
+  msg.textContent = 'Validating…';
+  msg.classList.add('success');
+
+  fetch('/api/claim', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({claim_code: code})
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    if(data.valid){
+      msg.textContent = 'Code verified! Opening claim form…';
+      msg.classList.remove('error');
+      msg.classList.add('success');
+      // Store the claim code and open the secret modal
+      document.getElementById('secret-claim-code').value = code;
+      // Pre-select the track based on the claim code
+      if(data.track){
+        var radio = document.getElementById('sc-' + data.track);
+        if(radio) radio.checked = true;
+      }
+      setTimeout(function(){
+        document.getElementById('claim-code-box').classList.remove('show');
+        document.getElementById('secret-modal').classList.add('show');
+      }, 600);
+    } else {
+      msg.textContent = data.error || 'Invalid or expired claim code.';
+      msg.classList.remove('success');
+      msg.classList.add('error');
+    }
+  })
+  .catch(function(){
+    msg.textContent = 'Something went wrong. Try again.';
+    msg.classList.remove('success');
+    msg.classList.add('error');
+  });
+}
+
+function closeSecretModal(){
+  document.getElementById('secret-modal').classList.remove('show');
+}
+
+// Secret claim form submit
+document.getElementById('secret-claimform').addEventListener('submit', function(e){
+  e.preventDefault();
+  var form = this;
+  var data = {};
+  new FormData(form).forEach(function(v,k){data[k] = v;});
+
+  // Validate
+  var ok = true;
+  ['sc-name','sc-email','sc-build'].forEach(function(id){
+    var f = document.getElementById(id);
+    if(!f.value.trim()){f.style.borderColor='oklch(0.55 0.20 25)';ok=false;}
+    else{f.style.borderColor='';}
+  });
+  var em = document.getElementById('sc-email');
+  if(em.value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em.value)){em.style.borderColor='oklch(0.55 0.20 25)';ok=false;}
+  if(!ok) return;
+
+  var btn = form.querySelector('button[type=submit]');
+  var label = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Claiming…';
+
+  fetch('/api/submit', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(data)
+  })
+  .then(function(r){return r.json().then(function(b){return {ok:r.ok, body:b};});})
+  .then(function(result){
+    btn.disabled = false;
+    btn.textContent = label;
+    if(result.ok && result.body.success){
+      form.style.display = 'none';
+      document.getElementById('secret-success').style.display = 'block';
+    } else {
+      alert('Something went wrong. Please try again.');
+    }
+  })
+  .catch(function(){
+    btn.disabled = false;
+    btn.textContent = label;
+    // Still show success (server might not be running)
+    form.style.display = 'none';
+    document.getElementById('secret-success').style.display = 'block';
+  });
+});
+
+// Enter key on input
+document.getElementById('claim-code-input').addEventListener('keydown', function(e){
+  if(e.key === 'Enter') validateClaimCode();
+});
+</script>
+
+</body>
+</html>

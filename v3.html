@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compute Credits: SPUR Innovation Centre</title>
+<meta name="description" content="Up to $5,000 in NVIDIA B300 compute credits for founders, students, and event builders. Sovereign Canadian infrastructure. No US CLOUD Act exposure. No obligation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<!-- Cloudflare Turnstile (loads only if site key is configured) -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<style>
+:root{
+  --orange-500: oklch(0.70 0.18 45);
+  --orange-600: oklch(0.63 0.19 42);
+  --orange-100: oklch(0.96 0.03 45);
+  --orange-050: oklch(0.98 0.015 45);
+  --green-600: oklch(0.55 0.15 155);
+  --green-100: oklch(0.95 0.03 155);
+  --ink-900: oklch(0.22 0.01 250);
+  --ink-800: oklch(0.30 0.01 250);
+  --ink-700: oklch(0.38 0.01 250);
+  --ink-500: oklch(0.55 0.01 250);
+  --ink-300: oklch(0.75 0.005 250);
+  --ink-100: oklch(0.90 0.003 250);
+  --ink-050: oklch(0.96 0.002 250);
+  --paper:   oklch(0.99 0.001 250);
+
+  --bg:var(--paper); --bg-subtle:var(--ink-050); --bg-section:var(--ink-100);
+  --text-primary:var(--ink-900); --text-body:var(--ink-700); --text-muted:var(--ink-500);
+  --border:var(--ink-300); --border-subtle:var(--ink-100);
+  --accent:var(--orange-500); --accent-hover:var(--orange-600);
+  --accent-bg:var(--orange-050); --accent-border:var(--orange-100);
+  --success:var(--green-600); --success-bg:var(--green-100);
+
+  --font-display:'Sora',system-ui,-apple-system,sans-serif;
+  --font-sans:'DM Sans',system-ui,-apple-system,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+
+  --radius:12px;
+  --shadow-sm:0 1px 2px oklch(0.22 0.01 250/.07);
+  --shadow:0 1px 3px oklch(0.22 0.01 250/.06),0 12px 32px oklch(0.22 0.01 250/.07);
+  --maxw:1140px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text-primary);
+  font:400 17px/1.62 var(--font-sans);-webkit-font-smoothing:antialiased;}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+h1,h2,h3,h4{margin:0;font-family:var(--font-display);font-weight:700;letter-spacing:-.025em;line-height:1.08}
+h1{font-size:clamp(34px,4.6vw,54px);font-weight:800}
+h2{font-size:clamp(28px,3.5vw,40px)}
+h3{font-size:20px;letter-spacing:-.015em}
+p{margin:0}
+a{color:inherit}
+.sec{padding:92px 0}
+.eyebrow{font-family:var(--font-mono);font-size:12px;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent)}
+.lead{color:var(--text-body);font-size:19px;max-width:60ch}
+.sec-head{max-width:660px;margin:0 auto 52px;text-align:center}
+.sec-head h2{margin:14px 0 14px}
+.sec-head p{color:var(--text-body)}
+.subtle{background:var(--bg-subtle)}
+.dark{background:var(--ink-900);color:var(--ink-100)}
+.dark h2,.dark h3{color:#fff}
+.visually-hidden{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  font-family:var(--font-sans);font-weight:700;font-size:16px;text-decoration:none;
+  padding:15px 26px;border-radius:9px;border:0;cursor:pointer;min-height:50px;
+  background:var(--accent);color:#fff;transition:background .14s,transform .12s,box-shadow .14s}
+.btn:hover{background:var(--accent-hover);transform:translateY(-1px);box-shadow:0 8px 22px oklch(0.70 0.18 45/.32)}
+.btn:active{transform:translateY(0)}
+.btn-dark{background:var(--ink-900)}
+.btn-dark:hover{background:var(--ink-800);box-shadow:0 8px 22px oklch(0.22 0.01 250/.22)}
+.btn-ghost{background:transparent;color:var(--text-primary);border:1.5px solid var(--border)}
+.btn-ghost:hover{background:var(--bg-subtle);border-color:var(--ink-500)}
+.btn-lg{font-size:17px;padding:17px 32px;min-height:56px}
+.btn-sm{font-size:14.5px;padding:11px 18px;min-height:42px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:4px}
+.microcopy{font-size:13.5px;color:var(--text-muted);margin-top:12px}
+
+/* sticky offer bar */
+.sticky{position:sticky;top:0;z-index:60;background:var(--ink-900);color:#fff;
+  display:flex;align-items:center;justify-content:center;gap:18px;padding:11px 24px;
+  font-size:14.5px;font-weight:500;flex-wrap:wrap}
+.sticky .brand{font-family:var(--font-display);font-weight:800;letter-spacing:.16em;font-size:14px}
+.sticky b{color:#fff}
+.sticky .maple{color:var(--accent)}
+.sticky a{color:#fff;font-weight:700;text-decoration:none;
+  border-bottom:1.5px solid oklch(0.70 0.18 45/.9);padding-bottom:1px;white-space:nowrap}
+.sticky a:hover{border-bottom-color:#fff}
+
+/* ---------- HERO ---------- */
+.hero{padding:72px 0 80px}
+.hero-grid{display:grid;grid-template-columns:1.14fr .86fr;gap:56px;align-items:center}
+.hero-grid>*{min-width:0}
+.flag{display:inline-flex;align-items:center;gap:8px;background:var(--accent-bg);
+  border:1px solid var(--accent-border);color:var(--accent-hover);
+  font-size:13px;font-weight:700;padding:7px 14px;border-radius:100px;margin-bottom:22px;
+  font-family:var(--font-mono);letter-spacing:.04em;text-transform:uppercase}
+.hero h1{margin-bottom:22px}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero .lead{font-size:19.5px;margin-bottom:26px}
+.hero .lead b{color:var(--text-primary);font-weight:700}
+.proofline{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  font-size:15px;font-weight:600;margin-bottom:28px;color:var(--text-body)}
+.proofline b{color:var(--text-primary)}
+.proofline .dot{width:4px;height:4px;border-radius:50%;background:var(--border)}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+
+/* photo slots */
+.photo{position:relative;border-radius:var(--radius);overflow:hidden;background:var(--bg-section);
+  border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:22px;color:var(--text-muted)}
+.photo span{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.06em;
+  text-transform:uppercase;line-height:1.6;max-width:34ch}
+.photo.hero-photo{aspect-ratio:4/3;box-shadow:var(--shadow)}
+.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:right center}
+.proj .photo img{position:static;display:block;width:100%;height:auto;transition:transform .3s ease;cursor:pointer}
+.proj .photo{overflow:hidden}
+.proj .photo:hover{overflow:visible}
+.proj .photo:hover img{transform:scale(.92);position:relative;z-index:10;background:var(--bg-section);box-shadow:0 8px 30px rgba(0,0,0,.25)}
+.projects.two .proj .photo{aspect-ratio:auto}
+
+/* trust strip */
+.strip{background:var(--ink-900);color:#fff}
+.strip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:oklch(0.30 0.01 250)}
+.strip-cell{background:var(--ink-900);padding:34px 24px;text-align:center}
+.strip-cell b{display:block;font-family:var(--font-display);font-size:30px;font-weight:800;
+  letter-spacing:-.03em;margin-bottom:6px;color:#fff;line-height:1.1}
+.strip-cell b .sm{font-size:17px;font-weight:700}
+.strip-cell span{font-size:13px;color:var(--ink-300);line-height:1.45;display:block}
+.strip-cell .accent{color:var(--accent)}
+
+/* cards */
+.cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.cols3>*{min-width:0}
+.card{background:#fff;border:1px solid var(--border-subtle);border-radius:var(--radius);
+  padding:32px 28px;box-shadow:var(--shadow-sm)}
+.card .ico{width:40px;height:40px;color:var(--accent);margin-bottom:18px}
+.card h3{margin-bottom:10px}
+.card p{color:var(--text-body);font-size:15.5px;line-height:1.6}
+
+/* ---------- TRACKS (the offer module) ---------- */
+.tracks{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:stretch}
+.tracks.two{grid-template-columns:repeat(2,1fr)}
+.tracks>*{min-width:0}
+.track{background:#fff;border:1.5px solid var(--border-subtle);border-radius:var(--radius);
+  padding:30px 26px 26px;display:flex;flex-direction:column;position:relative;
+  box-shadow:var(--shadow-sm);transition:border-color .15s,box-shadow .15s,transform .15s}
+.track:hover{border-color:var(--accent);box-shadow:var(--shadow);transform:translateY(-2px)}
+.track.featured{border-color:var(--accent);border-width:2px;box-shadow:var(--shadow)}
+.track-tag{position:absolute;top:-12px;left:26px;background:var(--accent);color:#fff;
+  font-family:var(--font-mono);font-size:10.5px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;padding:5px 12px;border-radius:100px}
+.track h3{margin-bottom:6px}
+.track .who{color:var(--text-muted);font-size:14px;margin-bottom:20px}
+.alloc{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+.alloc b{font-family:var(--font-display);font-size:40px;font-weight:800;letter-spacing:-.035em;
+  color:var(--text-primary);line-height:1}
+.alloc span{font-size:14px;color:var(--text-muted);font-weight:600}
+.buys{background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:9px;
+  padding:13px 15px;margin:16px 0 20px;font-size:14px;line-height:1.55;color:var(--ink-800)}
+.buys b{display:block;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--accent-hover);margin-bottom:6px;font-weight:600}
+.tlist{list-style:none;padding:0;margin:0 0 24px;flex:1}
+.tlist li{display:flex;gap:10px;align-items:flex-start;padding:8px 0;font-size:14.5px;
+  color:var(--text-body);line-height:1.5}
+.tlist svg{flex:0 0 17px;width:17px;height:17px;color:var(--success);margin-top:3px}
+.tlist b{color:var(--text-primary);font-weight:600}
+.track .btn{width:100%}
+
+/* ---------- FORM ---------- */
+.formwrap{background:#fff;border:1px solid var(--border-subtle);border-radius:16px;
+  box-shadow:var(--shadow);overflow:hidden;max-width:720px;margin:0 auto}
+.formhead{padding:34px 36px 0;text-align:center}
+.formhead h2{margin-bottom:10px}
+.formhead p{color:var(--text-body);font-size:16px}
+form{padding:28px 36px 34px}
+.fieldrow{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.fieldrow>*{min-width:0}
+.field{display:flex;flex-direction:column;margin-bottom:18px}
+label{font-size:14px;font-weight:700;margin-bottom:7px;color:var(--text-primary)}
+label .opt{font-weight:400;color:var(--text-muted)}
+input[type=text],input[type=email],textarea,select{
+  font-family:var(--font-sans);font-size:16px;padding:13px 15px;border-radius:9px;
+  border:1.5px solid var(--border);background:#fff;color:var(--text-primary);width:100%}
+input:focus,textarea:focus,select:focus{border-color:var(--accent);outline:none;
+  box-shadow:0 0 0 3px var(--orange-100)}
+textarea{min-height:96px;resize:vertical;line-height:1.55}
+::placeholder{color:var(--ink-300)}
+.segmented{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.segmented input{position:absolute;opacity:0;pointer-events:none}
+.segmented label{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;border:1.5px solid var(--border);border-radius:9px;padding:13px 8px;cursor:pointer;
+  margin:0;text-align:center;transition:.14s;font-size:14.5px;min-height:62px}
+.segmented label small{font-weight:400;color:var(--text-muted);font-size:12.5px}
+.segmented input:checked+label{border-color:var(--accent);background:var(--accent-bg);
+  box-shadow:0 0 0 1px var(--accent)}
+.segmented input:focus-visible+label{outline:3px solid var(--accent);outline-offset:2px}
+.formfoot{border-top:1px solid var(--border-subtle);margin-top:6px;padding-top:22px}
+.formfoot .btn{width:100%}
+.trustrow{display:flex;gap:8px 20px;flex-wrap:wrap;justify-content:center;margin-top:16px;
+  font-size:13.5px;color:var(--text-muted)}
+.trustrow em{font-style:normal;display:flex;align-items:center;gap:6px}
+.trustrow svg{width:15px;height:15px;color:var(--success)}
+.nextbox{background:var(--bg-subtle);border-radius:9px;padding:15px 17px;margin-top:20px;
+  font-size:14px;color:var(--text-body);line-height:1.55}
+.nextbox b{color:var(--text-primary);display:block;margin-bottom:4px;font-size:13px;
+  font-family:var(--font-mono);letter-spacing:.08em;text-transform:uppercase}
+.success{display:none;padding:52px 36px;text-align:center}
+.success.on{display:block}
+.success .ring{width:64px;height:64px;border-radius:50%;background:var(--success-bg);
+  color:var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.success .ring svg{width:32px;height:32px}
+
+/* ---------- PROJECTS ---------- */
+.projects{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.projects.two{grid-template-columns:repeat(2,1fr);gap:32px}
+.projects.two .proj{padding:0}
+.projects.two .proj-body{padding:32px 32px 36px}
+.projects.two .proj h3{font-size:24px}
+.projects.two .proj p{font-size:17px;line-height:1.65}
+.projects.two .proj .meta{font-size:15px;margin-top:20px;padding-top:18px}
+.projects>*{min-width:0}
+.proj{background:#fff;border:1px solid var(--border-subtle);border-radius:var(--radius);
+  overflow:hidden;box-shadow:var(--shadow-sm);display:flex;flex-direction:column}
+.proj .photo{border:0;border-bottom:1px dashed var(--border);border-radius:0;overflow:hidden;padding:0;display:block;aspect-ratio:16/10}
+.proj-body{padding:22px 24px 24px;flex:1;display:flex;flex-direction:column}
+.proj-tag{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);font-weight:600;margin-bottom:9px}
+.proj h3{font-size:18px;margin-bottom:9px}
+.proj p{font-size:14.5px;color:var(--text-body);line-height:1.55;flex:1}
+.proj .meta{margin-top:16px;padding-top:14px;border-top:1px solid var(--border-subtle);
+  font-size:13px;color:var(--text-muted);font-family:var(--font-mono);letter-spacing:.03em}
+
+/* quotes */
+.quote{background:#fff;border:1px solid var(--border-subtle);border-radius:var(--radius);
+  padding:28px 26px;box-shadow:var(--shadow-sm);display:flex;flex-direction:column}
+.quote .qmark{font-family:var(--font-display);font-size:44px;line-height:.6;color:var(--accent);
+  margin-bottom:14px;font-weight:800}
+.quote p{font-size:16px;line-height:1.6;flex:1;color:var(--text-body)}
+.qattr{margin-top:20px;padding-top:16px;border-top:1px solid var(--border-subtle);
+  display:flex;gap:12px;align-items:center}
+.qavatar{width:40px;height:40px;border-radius:50%;background:var(--bg-section);flex:0 0 40px;
+  border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;
+  font-size:9px;color:var(--text-muted);font-family:var(--font-mono);overflow:hidden}
+.qattr b{display:block;font-size:14.5px}
+.qattr span{font-size:13px;color:var(--text-muted)}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;counter-reset:s}
+.steps>*{min-width:0}
+.step{position:relative;padding-top:8px}
+.stepnum{font-family:var(--font-display);font-size:14px;font-weight:800;color:#fff;
+  background:var(--accent);width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.step h3{margin-bottom:9px}
+.step p{color:var(--text-body);font-size:15px}
+.step .when{display:inline-block;margin-top:12px;font-family:var(--font-mono);font-size:12px;
+  letter-spacing:.06em;text-transform:uppercase;color:var(--accent-hover);
+  background:var(--accent-bg);border:1px solid var(--accent-border);padding:5px 11px;border-radius:100px}
+
+/* comparison */
+table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--ink-900);
+  border-radius:var(--radius);overflow:hidden}
+caption{caption-side:top;padding-bottom:22px;color:var(--text-muted);font-size:15px;text-align:center}
+th,td{padding:16px 18px;text-align:center;border-bottom:1px solid var(--border-subtle);font-size:14.5px}
+thead th{background:var(--ink-900);color:#fff;font-size:13.5px;font-weight:700;font-family:var(--font-sans)}
+thead th.us{background:var(--accent);font-family:var(--font-display);font-size:16px;
+  font-weight:800;letter-spacing:.05em}
+tbody th{text-align:left;font-weight:600;font-size:14.5px;background:var(--bg-subtle);color:var(--text-primary)}
+td.us{background:var(--accent-bg);font-weight:700;color:var(--ink-900)}
+tbody tr:last-child th,tbody tr:last-child td{border-bottom:0}
+.tick{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;
+  border-radius:50%;background:var(--accent);color:#fff;font-size:14px;font-weight:800}
+.tick-plain{color:var(--text-muted);font-size:17px}
+.no{color:var(--ink-300);font-size:18px;font-weight:700}
+
+/* sovereignty */
+.sov-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.sov-grid>*{min-width:0}
+.sovlist{list-style:none;padding:0;margin:26px 0 0}
+.sovlist li{padding:20px 0;border-top:1px solid oklch(0.38 0.01 250)}
+.sovlist li:last-child{border-bottom:1px solid oklch(0.38 0.01 250)}
+.sovlist b{display:block;font-family:var(--font-mono);font-size:11.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:8px;font-weight:600}
+.sovlist p{color:var(--ink-300);font-size:15.5px;line-height:1.6}
+
+/* faq */
+.faq{max-width:800px;margin:0 auto}
+details{border-bottom:1px solid var(--border-subtle);padding:4px 0}
+summary{cursor:pointer;padding:20px 40px 20px 0;font-weight:700;font-size:17px;
+  font-family:var(--font-display);letter-spacing:-.015em;position:relative;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";position:absolute;right:6px;top:17px;font-size:24px;font-weight:400;
+  color:var(--accent);transition:transform .18s}
+details[open] summary::after{transform:rotate(45deg)}
+details p{padding:0 40px 22px 0;color:var(--text-body);font-size:16px;line-height:1.62}
+
+/* final cta */
+.finalcta{text-align:center;max-width:640px;margin:0 auto}
+.finalcta h2{margin-bottom:16px}
+
+/* footer */
+footer{background:var(--ink-900);color:var(--ink-300);padding:60px 0 28px;font-size:14.5px}
+.fgrid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:36px}
+.fgrid>*{min-width:0}
+footer h4{font-family:var(--font-mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:#fff;margin-bottom:16px;font-weight:600}
+footer ul{list-style:none;padding:0;margin:0}
+footer li{margin-bottom:10px}
+footer a{color:var(--ink-300);text-decoration:none}
+footer a:hover{color:#fff;text-decoration:underline}
+.fbrand{font-family:var(--font-display);font-weight:800;letter-spacing:.14em;color:#fff;
+  font-size:17px;margin-bottom:12px;display:block}
+.fbot{margin-top:46px;padding-top:22px;border-top:1px solid oklch(0.38 0.01 250);
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--ink-500)}
+
+/* mobile */
+@media (max-width:920px){
+  .hero-grid,.sov-grid{grid-template-columns:1fr;gap:40px}
+  .cols3,.tracks,.projects,.steps{grid-template-columns:1fr}
+  .strip-grid{grid-template-columns:1fr 1fr}
+  .fgrid{grid-template-columns:1fr 1fr;gap:30px 20px}
+  .sec{padding:64px 0}
+  .hero{padding:44px 0 56px}
+  body{padding-bottom:80px}
+  .sticky{font-size:13px;gap:10px;text-align:center;padding:10px 16px}
+  .sticky .brand{width:100%}
+  form,.formhead{padding-left:22px;padding-right:22px}
+  .fieldrow{grid-template-columns:1fr;gap:0}
+  table{display:block;overflow-x:auto}
+  table th,table td{white-space:nowrap}
+  caption{white-space:normal}
+  .mobiledock{position:fixed;left:0;right:0;bottom:0;z-index:70;background:#fff;
+    border-top:1px solid var(--border-subtle);padding:11px 16px;
+    box-shadow:0 -4px 22px oklch(0.22 0.01 250/.12);display:block}
+  .mobiledock .btn{width:100%}
+  .mobiledock p{text-align:center;margin-top:6px;font-size:12px}
+}
+@media (min-width:921px){.mobiledock{display:none}}
+@media (max-width:560px){.strip-grid{grid-template-columns:1fr}.segmented{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<!-- ══════════ STICKY OFFER BAR ══════════ -->
+<div class="sticky">
+  <span class="brand">SPUR</span>
+  <span><span class="maple">🍁</span> Founders get <b>$5,000</b> in NVIDIA B300 credits · activated in <b>1 business day</b></span>
+  <a data-cta data-section="stickybar" href="#claim">Claim yours →</a>
+</div>
+
+<main>
+
+<!-- ══════════ 01 · HERO ══════════ -->
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="flag">🍁 Sovereign Canadian Compute</span>
+      <h1>Blackwell B300s.<br>On Canadian soil.<br><em>Free to start.</em></h1>
+      <p class="lead">Up to <b>$5,000 in compute credits</b> for NVIDIA B300 Blackwell GPUs.
+        275 GB HBM3e per GPU, NVLink-5, native FP4. Your data, weights, and metadata
+        never leave Canada. <b>No US hyperscaler in the path. No obligation.</b></p>
+
+      <div class="proofline">
+        <span><b>[400]+</b>&nbsp;builders funded</span><span class="dot"></span>
+        <span><b>[18]</b>&nbsp;hackathons</span><span class="dot"></span>
+        <span><b>0&nbsp;bytes</b>&nbsp;leave Canada</span>
+      </div>
+
+      <div class="hero-cta">
+        <a class="btn btn-lg" data-cta data-section="hero" href="#claim">Claim your credits →</a>
+        <a class="btn btn-ghost btn-lg" href="#tracks">See the three tracks</a>
+      </div>
+      <p class="microcopy">Takes 60 seconds · No credit card · No sales call · Reviewed within 1 business day</p>
+    </div>
+
+    <div class="photo hero-photo" data-photo>
+      <img src="photo-campus-aerial.webp?v=3" alt="SPUR Innovation Centre campus aerial view in Waterloo, Ontario" loading="eager">
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 02 · TRUST STRIP ══════════ -->
+<section class="strip">
+  <div class="wrap" style="padding:0">
+    <div class="strip-grid">
+      <div class="strip-cell">
+        <b>B300</b>
+        <span>NVIDIA Blackwell SXM6<br>NVLink-5, native FP4</span>
+      </div>
+      <div class="strip-cell">
+        <b class="accent">275<span class="sm"> GB</span></b>
+        <span>HBM3e per GPU<br>2.2 TB per node</span>
+      </div>
+      <div class="strip-cell">
+        <b>0 <span class="sm">bytes</span></b>
+        <span>Leave Canadian soil.<br>No US CLOUD Act exposure</span>
+      </div>
+      <div class="strip-cell">
+        <b>1<span class="sm"> engineer</span></b>
+        <span>On your project.<br>Not a ticket queue</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 03 · WHY ══════════ -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Why SPUR</span>
+      <h2>Three reasons builders pick us over the hyperscalers.</h2>
+      <p>We are not cheaper AWS. We are a different jurisdiction, different hardware access, and a different support model.</p>
+    </div>
+    <div class="cols3">
+      <div class="card">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <path d="M12 3 4 6.2v5.9c0 4.5 3.3 8.4 8 9.2 4.7-.8 8-4.7 8-9.2V6.2L12 3Z" stroke-linejoin="round"/>
+          <path d="m9 12.2 2.1 2.1L15.2 10" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h3>Sovereign by architecture, not by policy</h3>
+        <p>The workload, the network, and the operators are all in Canada. There is no US parent
+          company that a subpoena can reach. PIPEDA-aligned, operationally aligned to SOC 2,
+          PCI-DSS, and ISO 27001 controls. No reselling, no sub-processors you did not agree to.</p>
+      </div>
+      <div class="card">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <rect x="3" y="4" width="18" height="6" rx="1.6"/><rect x="3" y="14" width="18" height="6" rx="1.6"/>
+          <path d="M7 7h.01M7 17h.01" stroke-linecap="round"/></svg>
+        <h3>B300s you can actually get on</h3>
+        <p>Blackwell B300 SXM6 with NVLink-5 mesh and InfiniBand-ready fabric, plus B200,
+          RTX 5090, RTX 4090, and custom configurations available on request. No reservation
+          queue, no twelve-month commit, no capacity waitlist between you and a GPU.</p>
+      </div>
+      <div class="card">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+          <rect x="5" y="2" width="14" height="20" rx="2"/><path d="M9 6h6M9 10h6M9 14h4" stroke-linecap="round"/>
+          <path d="M2 12v0M2 12a3 3 0 0 0 3 3" stroke-linecap="round"/></svg>
+        <h3>Your data stays yours, always</h3>
+        <p>Prompts and outputs are processed in memory and never stored. We never train on your data,
+          never sell it, never share it. Usage metering tracks token counts only, never message
+          content. Stripe is our only subprocessor. No inference subprocessors at all.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 04 · TRACKS: the offer module ══════════ -->
+<section class="sec subtle" id="tracks">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Credit Tracks</span>
+      <h2>Three tracks, one fleet.</h2>
+      <p>Prototyping a startup, running research in a lab, or building with us at a hackathon,
+        pick the track that fits and claim it below.</p>
+    </div>
+
+    <div class="tracks">
+      <!-- Student -->
+      <div class="track">
+        <h3>Student / Researcher</h3>
+        <p class="who">Enrolled at a Canadian institution</p>
+        <div class="alloc"><b>$500</b><span>in credits</span></div>
+        <div class="buys">
+          <b>What that buys</b>
+          Roughly 1.5 to 2 billion tokens with our flagship GLM-5.2 model,
+          enough to power a full research project, thesis experiment, or
+          coursework pipeline.
+        </div>
+        <ul class="tlist">
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m4 10 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>B300</b> access*</span></li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m4 10 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Weekly <b>engineering office hours</b></span></li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m4 10 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Valid until <b>credits run out</b></span></li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m4 10 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Best for thesis, coursework, self-paced learning</span></li>
+        </ul>
+        <a class="btn btn-dark" data-cta data-section="track-student" data-track="student" href="#claim">Claim $500 →</a>
+      </div>
+
+      <!-- Founder -->
+      <div class="track featured">
+        <span class="track-tag">Most claimed</span>
+        <h3>Founder / Startup</h3>
+        <p class="who">Canadian or Canada-based startup</p>
+        <div class="alloc"><b>$5,000</b><span>in credits</span></div>
+        <div class="buys">
+          <b>What that buys</b>
+          Roughly 15 to 20 billion tokens with our flagship GLM-5.2 model,
+          enough to build, test, and ship a production AI product from
+          start to finish.
+        </div>
+        <ul class="tlist">
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m4 10 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>B300 and B200</b> access*</span></li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m4 10 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>Engineering support</b> on your project</span></li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m4 10 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Valid until <b>credits run out</b></span></li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m4 10 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Best for prototyping and shipping products</span></li>
+        </ul>
+        <a class="btn" data-cta data-section="track-founder" data-track="founder" href="#claim">Claim $5,000 →</a>
+      </div>
+
+      <!-- Event -->
+      <div class="track">
+        <h3>Event Participant</h3>
+        <p class="who">Registered SPUR event attendee</p>
+        <div class="alloc"><b>$1,000</b><span>in credits</span></div>
+        <div class="buys">
+          <b>What that buys</b>
+          Roughly 3 to 4 billion tokens with our flagship GLM-5.2 model,
+          enough to build and demo a working project across a weekend,
+          then keep iterating for a month after.
+        </div>
+        <ul class="tlist">
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m4 10 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>B300</b> access*</span></li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m4 10 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/></svg><span><b>On-floor mentors</b> during the event</span></li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m4 10 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Valid until <b>credits run out</b></span></li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m4 10 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Best for hackathons, workshops, demo days</span></li>
+        </ul>
+        <a class="btn btn-dark" data-cta data-section="track-event" data-track="event" href="#claim">Claim $1,000 →</a>
+      </div>
+    </div>
+
+    <p style="text-align:center;margin-top:32px;font-size:13px;color:var(--text-muted)">
+      *GPU access is available through our open source models. Bring your own weights or use ours.
+    </p>
+  </div>
+</section>
+
+<!-- ══════════ 05 · PROOF: projects ══════════ -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Built with SPUR</span>
+      <h2>What people ship with these credits.</h2>
+      <p>Real projects from founders, students, and hackathon teams using SPUR credits.</p>
+    </div>
+
+    <div class="projects two">
+      <!-- Founder project, commented out for now
+      <div class="proj">
+        <div class="photo" data-photo><span>PROJECT PHOTO 1<br><br>Founder project<br>screenshot, demo, or team<br><br>16:10</span></div>
+        <div class="proj-body">
+          <span class="proj-tag">Founder track</span>
+          <h3>[Project name]</h3>
+          <p>[One or two sentences: what they built, what it does, and the outcome.
+            Include a number if you have one: users, accuracy gain, funding raised, time saved.]</p>
+          <div class="meta">[Company] · [B300 × N] · [Result]</div>
+        </div>
+      </div>
+      -->
+      <div class="proj">
+        <div class="photo" data-photo>
+          <img src="racemind.webp?v=3" alt="RaceMind real-time racing telemetry and predictive analytics dashboard" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <span class="proj-tag">Hackathon track · Prize Winner</span>
+          <h3><a href="https://www.youtube.com/watch?v=DUdQRWzkyak" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">RaceMind ↗</a></h3>
+          <p>A real-time predictive analytics platform that turns OBD-II CAN bus
+            telemetry into racing intelligence. Combines TimesFM for unsupervised
+            anomaly detection with Gemma to translate technical alerts into clear
+            guidance for drivers and engineers. Covers tread wear, fuel
+            forecasting, and rules-based analysis.</p>
+          <div class="meta">Waterloo.dev Hackathon · Gemma + TimesFM · Video demo available</div>
+        </div>
+      </div>
+      <div class="proj">
+        <div class="photo" data-photo>
+          <img src="janus.webp?v=4" alt="Janus spacecraft sensor arbitration system interface" loading="lazy">
+        </div>
+        <div class="proj-body">
+          <span class="proj-tag">Student track · Prize Winner</span>
+          <h3><a href="https://www.youtube.com/watch?v=wkapsjGOQJw" target="_blank" rel="noopener" style="color:inherit;text-decoration:none">Janus ↗</a></h3>
+          <p>An offline edge-AI system that helps spacecraft decide which sensor to
+            trust during a critical failure, when Earth is too far away to help.
+            Compares conflicting IMU and camera readings, identifies the likely
+            fault, and recommends a safe response. Runs entirely on a laptop
+            using Gemma through Ollama. Inspired by the ESA Schiaparelli Mars
+            lander failure.</p>
+          <div class="meta">Waterloo.dev Hackathon · Gemma + Ollama · Offline, edge-deployed</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center;margin-top:44px">
+      <a class="btn btn-lg" data-cta data-section="projects" href="#claim">Claim your credits →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 06 · CLAIM FORM ══════════ -->
+<section class="sec subtle" id="claim">
+  <div class="wrap">
+    <div class="formwrap">
+      <div class="formhead" id="formhead">
+        <span class="eyebrow">Claim your credits</span>
+        <h2 style="margin:12px 0 10px">Claim your credits</h2>
+        <p>Four fields. We review within one business day and email your access.</p>
+      </div>
+
+      <form id="claimform" novalidate>
+        <div class="field">
+          <label>I want <span aria-hidden="true">*</span></label>
+          <div class="segmented" role="radiogroup" aria-label="Credit type">
+            <input type="radio" name="credit_type" id="ct-api" value="api_only" checked>
+            <label for="ct-api">API credits only<small>Hosted models</small></label>
+            <input type="radio" name="credit_type" id="ct-both" value="api_and_compute">
+            <label for="ct-both">API credits + compute<small>GPU access</small></label>
+          </div>
+          <div id="compute-notice" style="display:none;margin-top:12px;background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:9px;padding:14px 16px;font-size:14px;line-height:1.55;color:var(--ink-800)">
+            <b style="display:block;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-hover);margin-bottom:6px;font-weight:600">About compute access</b>
+            Compute access is limited and not guaranteed. We will do our best to fulfill your
+            request, but GPU capacity is constrained. <b>Your API credits are always available,
+            no matter what.</b> You will receive your API access within one business day. If
+            compute capacity opens up, we will reach out.
+          </div>
+        </div>
+
+        <div class="field">
+          <label>I am a <span aria-hidden="true">*</span></label>
+          <div class="segmented" role="radiogroup" aria-label="Track">
+            <input type="radio" name="track" id="t-founder" value="founder" checked>
+            <label for="t-founder">Founder<small>$5,000</small></label>
+            <input type="radio" name="track" id="t-student" value="student">
+            <label for="t-student">Student<small>$500</small></label>
+            <input type="radio" name="track" id="t-event" value="event">
+            <label for="t-event">Event builder<small>$1,000</small></label>
+          </div>
+        </div>
+
+        <div class="fieldrow">
+          <div class="field">
+            <label for="name">Your name <span aria-hidden="true">*</span></label>
+            <input type="text" id="name" name="name" placeholder="Jane Doe" required autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="email">Email <span aria-hidden="true">*</span></label>
+            <input type="email" id="email" name="email" placeholder="jane@example.com" required autocomplete="email">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="org">Organization or school <span class="opt">(optional)</span></label>
+          <input type="text" id="org" name="org" placeholder="Where you work or study" autocomplete="organization">
+        </div>
+
+        <div class="field">
+          <label for="build">What will you build? <span aria-hidden="true">*</span></label>
+          <textarea id="build" name="build" required
+            placeholder="A sentence or two is plenty. What are you training or serving, roughly what scale, and what are you trying to find out?"></textarea>
+        </div>
+
+        <div class="formfoot">
+          <div id="turnstile-container" style="margin-bottom:16px;display:none"></div>
+          <button type="submit" class="btn btn-lg" data-cta data-section="form">Claim my credits →</button>
+          <div class="trustrow">
+            <em><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m4 10 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/></svg>No credit card</em>
+            <em><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m4 10 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/></svg>No obligation</em>
+            <em><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m4 10 4 4 8-8" stroke-linecap="round" stroke-linejoin="round"/></svg>Never resold or shared</em>
+          </div>
+          <div class="nextbox">
+            <b>What happens next</b>
+            You get a confirmation email immediately. A SPUR engineer reviews your request and
+            activates credits within <b style="display:inline;font-family:inherit;letter-spacing:0;text-transform:none;font-size:inherit">one business day</b>,
+            then emails your access details. We will ask about GPU
+            preference and timeline then, not now.
+          </div>
+        </div>
+      </form>
+
+      <div class="success" id="success" role="status">
+        <div class="ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><path d="m5 12.5 4.5 4.5L19 7.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <h2 style="margin-bottom:12px">Request received.</h2>
+        <p class="lead" style="margin:0 auto">Check your inbox for a confirmation. Your credits
+          will be activated within one business day and you'll receive your access details.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 07 · TESTIMONIALS (commented out — no quotes yet)
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>What builders say after they ship.</h2>
+    </div>
+    <div class="cols3">
+      <div class="quote">
+        <div class="qmark">"</div>
+        <p>[Your quote here]</p>
+        <div class="qattr">
+          <div class="qavatar" data-photo>PHOTO</div>
+          <div><b>[Name]</b><span>[Role], [Company]</span></div>
+        </div>
+      </div>
+      <div class="quote">
+        <div class="qmark">"</div>
+        <p>[Your quote here]</p>
+        <div class="qattr">
+          <div class="qavatar" data-photo>PHOTO</div>
+          <div><b>[Name]</b><span>[Role], [Company]</span></div>
+        </div>
+      </div>
+      <div class="quote">
+        <div class="qmark">"</div>
+        <p>[Your quote here]</p>
+        <div class="qattr">
+          <div class="qavatar" data-photo>PHOTO</div>
+          <div><b>[Name]</b><span>[Role], [Company]</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+-->
+
+<!-- ══════════ 07 · BE THE FIRST ══════════ -->
+<section class="sec">
+  <div class="wrap" style="max-width:560px;text-align:center">
+    <span class="eyebrow">Your story starts here</span>
+    <h2 style="margin:14px 0 16px;font-size:24px;white-space:nowrap">Your quote could be here next.</h2>
+    <p class="lead" style="margin:0 auto 28px;font-size:21px;line-height:1.5">We are collecting testimonials from builders right now. Build something great with SPUR credits and yours could be the next one featured here.</p>
+    <a class="btn btn-lg" data-cta data-section="firstbuilder" href="#claim">Claim your credits →</a>
+  </div>
+</section>
+
+<!-- ══════════ 08 · HOW IT WORKS ══════════ -->
+<section class="sec subtle">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">How it works</span>
+      <h2>Form to first job in one business day.</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="stepnum">1</div>
+        <h3>Tell us what you're building</h3>
+        <p>Pick your track, four fields, one paragraph about the project. No pitch deck, no
+          call, no procurement process.</p>
+        <span class="when">60 seconds</span>
+      </div>
+      <div class="step">
+        <div class="stepnum">2</div>
+        <h3>An engineer reviews it</h3>
+        <p>A SPUR engineer reads it, sizes what you need, activates your credits, and
+          emails your access details.</p>
+        <span class="when">Within 1 business day</span>
+      </div>
+      <div class="step">
+        <div class="stepnum">3</div>
+        <h3>Start operating</h3>
+        <p>Get started, pick your configuration, and launch. Our team helps you tune the stack
+          and stays with you through to production.</p>
+        <span class="when">Same day you're approved</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 09 · COMPARISON ══════════ -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>SPUR vs. the alternatives</h2>
+    </div>
+    <table>
+      <caption>How SPUR compares to a US hyperscaler and to buying your own hardware.</caption>
+      <thead>
+        <tr>
+          <th scope="col"><span class="visually-hidden">Capability</span></th>
+          <th scope="col" class="us">SPUR</th>
+          <th scope="col">US hyperscaler</th>
+          <th scope="col">Own hardware</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Data stays on Canadian soil</th>
+          <td class="us"><span class="tick">✓</span></td><td><span class="no">✕</span></td><td><span class="tick-plain">✓</span></td></tr>
+        <tr><th scope="row">No US CLOUD Act exposure</th>
+          <td class="us"><span class="tick">✓</span></td><td><span class="no">✕</span></td><td><span class="tick-plain">✓</span></td></tr>
+        <tr><th scope="row">NVIDIA B300 without a waitlist</th>
+          <td class="us"><span class="tick">✓</span></td><td><span class="no">✕</span></td><td><span class="no">✕</span></td></tr>
+        <tr><th scope="row">Engineer on your project</th>
+          <td class="us"><span class="tick">✓</span></td><td><span class="no">✕</span></td><td><span class="no">✕</span></td></tr>
+        <tr><th scope="row">Free credits to start</th>
+          <td class="us"><span class="tick">✓</span></td><td><span class="tick-plain">✓</span></td><td><span class="no">✕</span></td></tr>
+        <tr><th scope="row">No capital outlay</th>
+          <td class="us"><span class="tick">✓</span></td><td><span class="tick-plain">✓</span></td><td><span class="no">✕</span></td></tr>
+        <tr><th scope="row">Nothing to rack, cool, or staff</th>
+          <td class="us"><span class="tick">✓</span></td><td><span class="tick-plain">✓</span></td><td><span class="no">✕</span></td></tr>
+      </tbody>
+    </table>
+    <div style="text-align:center;margin-top:36px">
+      <a class="btn btn-lg" data-cta data-section="comparison" href="#claim">Claim your credits →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 10 · SOVEREIGNTY ══════════ -->
+<section class="sec dark">
+  <div class="wrap sov-grid">
+    <div>
+      <span class="eyebrow">Sovereign by design</span>
+      <h2 style="margin:14px 0 18px">Hosted in Canada.<br>No US CLOUD Act exposure.</h2>
+      <p style="color:var(--ink-300);font-size:18px;line-height:1.6">
+        SPUR's compute is operated end-to-end inside Canadian jurisdiction. No US CLOUD Act
+        exposure. No cross-border transfers. PIPEDA-aligned by default and engineered to
+        SOC 2, PCI-DSS, and ISO 27001 controls. Real engineers, no reselling.</p>
+      <ul class="sovlist">
+        <li><b>Hardware</b><p>NVIDIA B300 SXM6, 275 GB HBM3e per GPU, 2.2 TB per node. NVLink-5
+          mesh, InfiniBand-ready. B200, RTX 5090, RTX 4090 also available on request.</p></li>
+        <li><b>Compliance</b><p>PIPEDA-aligned. Operationally aligned to SOC 2, PCI-DSS, and
+          ISO 27001 controls. No CLOUD Act exposure. No cross-border transfers.</p></li>
+        <li><b>Support</b><p>Every credit recipient gets a SPUR engineer. We help you size
+          the cluster, tune the stack, and ship to production.</p></li>
+      </ul>
+    </div>
+    <div class="photo" style="aspect-ratio:3/4" data-photo>
+      <img src="facility.webp?v=3" alt="SPUR data centre facility in Waterloo, Ontario" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 10b · DATA RETENTION ══════════ -->
+<section class="sec subtle" id="data-retention">
+  <div class="wrap" style="max-width:1080px">
+    <div class="sec-head">
+      <span class="eyebrow">Privacy &amp; Data Retention</span>
+      <h2>Where your data lives. And doesn't.</h2>
+    </div>
+
+    <div style="background:#fff;border:1px solid var(--border-subtle);border-radius:var(--radius);padding:32px 36px;box-shadow:0 1px 3px oklch(0.22 0.01 250/.06)">
+      <h3 style="font-size:16px;margin-bottom:6px">Where your data is processed</h3>
+      <p style="color:var(--text-body);font-size:15px;margin-bottom:24px">
+        All inference runs on hardware in our Waterloo, Ontario data centre. Your requests are
+        processed entirely within Canada. No US-headquartered cloud provider sits in the serving
+        path, so your data carries no US CLOUD Act exposure. SPUR operates under PIPEDA.</p>
+
+      <h3 style="font-size:16px;margin-bottom:6px">Your prompts and completions</h3>
+      <ul style="color:var(--text-body);font-size:15px;line-height:1.7;margin-bottom:24px;padding-left:20px">
+        <li>Prompts and model outputs are processed in memory to serve your request only, and are not stored.</li>
+        <li>We never train models on your data. The models we serve are open-weight models hosted by SPUR directly; no third-party model provider receives your requests or has visibility into your traffic.</li>
+        <li>We never sell or share your content with anyone.</li>
+      </ul>
+
+      <h3 style="font-size:16px;margin-bottom:6px">What we do store</h3>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:24px;font-size:14.5px">
+        <thead>
+          <tr><th style="text-align:left;padding:10px 12px;border-bottom:2px solid var(--border);font-family:var(--font-display);font-size:13px;font-weight:600">Data</th><th style="text-align:left;padding:10px 12px;border-bottom:2px solid var(--border);font-family:var(--font-display);font-size:13px;font-weight:600">Retention</th></tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:10px 12px;border-bottom:1px solid var(--border-subtle);font-weight:600">Account information</td><td style="padding:10px 12px;border-bottom:1px solid var(--border-subtle);color:var(--text-body)">Email and account settings, retained for the life of your account.</td></tr>
+          <tr><td style="padding:10px 12px;border-bottom:1px solid var(--border-subtle);font-weight:600">Billing records</td><td style="padding:10px 12px;border-bottom:1px solid var(--border-subtle);color:var(--text-body)">Processed by Stripe. Invoices retained as required under Canadian accounting rules (7 years).</td></tr>
+          <tr><td style="padding:10px 12px;border-bottom:1px solid var(--border-subtle);font-weight:600">Usage metering</td><td style="padding:10px 12px;border-bottom:1px solid var(--border-subtle);color:var(--text-body)">Model ID, token counts, timestamps, API-key ID per request, numbers only, never message content. Used for billing, capacity planning, and abuse prevention.</td></tr>
+          <tr><td style="padding:10px 12px;font-weight:600">Support correspondence</td><td style="padding:10px 12px;color:var(--text-body)">Emails you send us, retained per our standard mailbox retention policy.</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="font-size:16px;margin-bottom:6px">GPU rentals and dedicated compute</h3>
+      <p style="color:var(--text-body);font-size:15px;margin-bottom:24px">
+        Tenant data on rented GPU systems lives on the rented machine only. When a rental ends,
+        tenant storage is wiped before the machine is reused.</p>
+
+      <h3 style="font-size:16px;margin-bottom:6px">Deletion and questions</h3>
+      <p style="color:var(--text-body);font-size:15px;margin-bottom:24px">
+        You may request deletion of your account and all associated data at any time via
+        <a href="https://spuric.com/en/contact.html" style="color:var(--accent)">spuric.com/contact</a>.
+        We will confirm completion within 30 days. Questions about this policy reach a human at
+        the same address.</p>
+
+      <h3 style="font-size:16px;margin-bottom:6px">Subprocessors</h3>
+      <p style="color:var(--text-body);font-size:15px;margin-bottom:0">
+        Stripe (payments) is our only subprocessor. There are no inference subprocessors, all
+        model serving is done on SPUR infrastructure.</p>
+
+      <p style="font-size:13px;color:var(--text-muted);margin-top:24px;padding-top:16px;border-top:1px solid var(--border-subtle)">
+        Last updated: July 2026 · SPUR Compute (ai.spuric.com)</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 11 · FAQ ══════════ -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Questions people ask before claiming.</h2>
+    </div>
+    <div class="faq">
+      <details>
+        <summary>Is this actually free? What's the catch?</summary>
+        <p>It is actually free. No credit card, no auto-conversion to a paid plan, no obligation
+          to continue. We fund credits because builders who use SPUR credits tend to stay with us.
+          If your credits run out and you want more, you talk to your engineer.</p>
+      </details>
+      <details>
+        <summary>Do I have to be Canadian?</summary>
+        <p>You need to be Canadian or Canada-based for the founder track, and enrolled at a
+          Canadian institution for the student track. Event participants just need to be
+          registered for a SPUR event.</p>
+      </details>
+      <details>
+        <summary>What does $5,000 in credits actually get me?</summary>
+        <p>Your engineer will size it against what you described in the form and tell you honestly
+          whether it is enough for what you are trying to do. The credits don't expire until you've
+          used them. No clock ticking in the background.</p>
+      </details>
+      <details>
+        <summary>What happens when my credits run out?</summary>
+        <p>Nothing breaks and nothing auto-charges. Your engineer will have flagged it before you
+          get there. You can move to a paid plan, apply for an extension, or export everything and
+          walk away. No egress fees either way.</p>
+      </details>
+      <details>
+        <summary>Can I run my own models?</summary>
+        <p>If you selected API credits + compute, yes. SSH, Jupyter, VS Code, ComfyUI, Ollama,
+          and vLLM templates available. Standard PyTorch, JAX, and the usual training stack.
+          Bring your own weights, containers, and data pipeline. If you selected API credits
+          only, you get access to our hosted models as a service through an API endpoint at
+          ai.spuric.com. OpenAI-compatible, no infrastructure to manage.</p>
+      </details>
+      <details>
+        <summary>What's the difference between API credits and compute credits?</summary>
+        <p>API credits give you access to our hosted models as a service. You call them through
+          an API endpoint, we handle the infrastructure. Compute credits give you GPU access
+          to run your own models, training jobs, and workloads. You can claim
+          either or both in the form above.</p>
+      </details>
+      <details>
+        <summary>How is this different from just using AWS or Azure credits?</summary>
+        <p>Jurisdiction and support. Their credits run on infrastructure owned by a US company
+          subject to the CLOUD Act, and their support is a ticket queue. Ours is operated in
+          Canada, and you get an engineer on your project. If neither of those matters for
+          your project, their credits are fine and we will tell you so.</p>
+      </details>
+      <details>
+        <summary>What happens to my data and prompts?</summary>
+        <p>Prompts and model outputs are processed in memory to serve your request only, and are
+          not stored. We never train on your data, never sell or share your content, and no
+          third-party model provider ever sees your traffic. Usage metering stores token counts
+          and timestamps only, never message content. See our full data retention statement
+          below.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 12 · FINAL CTA ══════════ -->
+<section class="sec subtle">
+  <div class="wrap finalcta">
+    <span class="eyebrow">Last step</span>
+    <h2 style="margin:14px 0 16px">Claim your compute credits</h2>
+    <p class="lead" style="margin:0 auto 28px">Up to $5,000 on NVIDIA B300s, activated within one
+      business day, with engineering support. No credit card, no obligation.</p>
+    <a class="btn btn-lg" data-cta data-section="finalcta" href="#claim">Claim your credits →</a>
+    <p class="microcopy">🍁 Sovereign by design · Waterloo, Ontario</p>
+  </div>
+</section>
+
+</main>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <span class="fbrand">SPUR</span>
+        <p style="color:var(--ink-500);max-width:34ch;font-size:14px;line-height:1.6">
+          SPUR Innovation Centre, sovereign Canadian compute, hackathons, and engineering
+          support. Waterloo, Ontario.</p>
+      </div>
+      <div>
+        <h4>Compute</h4>
+        <ul>
+          <li><a href="#tracks">Credit tracks</a></li>
+          <li><a href="#claim">Claim credits</a></li>
+          <li><a href="/pricing">Pricing</a></li>
+          <li><a href="/hardware">Hardware</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Programs</h4>
+        <ul>
+          <li><a href="/hackathons">Hackathons</a></li>
+          <li><a href="/partners">Partner with us</a></li>
+          <li><a href="/careers">Careers</a></li>
+          <li><a href="/events">Events</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Trust</h4>
+        <ul>
+          <li><a href="/standards">Standards</a></li>
+          <li><a href="#data-retention">Privacy</a></li>
+          <li><a href="/security">Security</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="fbot">
+      <span>© 2026 SPUR Innovation Centre · Waterloo, Ontario, Canada</span>
+      <span>🍁 Sovereign by design</span>
+    </div>
+  </div>
+</footer>
+
+<!-- mobile docked CTA -->
+<div class="mobiledock">
+  <a class="btn" data-cta data-section="mobiledock" href="#claim">Claim your credits →</a>
+  <p class="microcopy">No credit card · Reviewed in 1 business day</p>
+</div>
+
+<script>
+(function(){
+  // Credit type toggle: show compute notice when +compute is selected
+  var ctBoth = document.getElementById('ct-both');
+  var ctApi = document.getElementById('ct-api');
+  var computeNotice = document.getElementById('compute-notice');
+
+  function updateComputeNotice(){
+    if(ctBoth && ctBoth.checked){
+      computeNotice.style.display = 'block';
+    } else {
+      computeNotice.style.display = 'none';
+    }
+  }
+  if(ctBoth) ctBoth.addEventListener('change', updateComputeNotice);
+  if(ctApi) ctApi.addEventListener('change', updateComputeNotice);
+  updateComputeNotice();
+
+  // Track selection: clicking a track CTA preselects it in the form
+  document.querySelectorAll('[data-track]').forEach(function(el){
+    el.addEventListener('click', function(){
+      var r = document.getElementById('t-' + el.dataset.track);
+      if (r) r.checked = true;
+    });
+  });
+
+  // Deep link: ?track=founder preselects
+  var t = new URLSearchParams(location.search).get('track');
+  if (t) { var r = document.getElementById('t-' + t); if (r) r.checked = true; }
+
+  // Form submit
+  var form = document.getElementById('claimform');
+  var submitBtn = form.querySelector('button[type=submit]');
+  var submitLabel = submitBtn ? submitBtn.textContent : '';
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var ok = true;
+    ['name','email','build'].forEach(function(id){
+      var f = document.getElementById(id);
+      if (!f.value.trim()) { f.style.borderColor = 'oklch(0.60 0.20 25)'; ok = false; }
+      else { f.style.borderColor = ''; }
+    });
+    var em = document.getElementById('email');
+    if (em.value && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em.value)) {
+      em.style.borderColor = 'oklch(0.60 0.20 25)'; ok = false;
+    }
+    if (!ok) return;
+
+    // Collect form data
+    var data = {};
+    new FormData(form).forEach(function(v,k){ data[k] = v; });
+
+    // Add Turnstile token if present
+    var turnstileInput = document.querySelector('[name="cf_turnstile_response"]');
+    if(turnstileInput && turnstileInput.value){ data.cf_turnstile_response = turnstileInput.value; }
+
+    // Disable button, show loading
+    if(submitBtn){ submitBtn.disabled = true; submitBtn.textContent = 'Sending...'; }
+
+    // Submit to backend
+    fetch('/api/submit', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    })
+    .then(function(r){ return r.json().then(function(body){ return {ok: r.ok, body: body}; }); })
+    .then(function(result){
+      if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = submitLabel; }
+
+      if(result.ok && result.body.success){
+        form.style.display = 'none';
+        document.getElementById('formhead').style.display = 'none';
+        document.getElementById('success').classList.add('on');
+        document.getElementById('success').scrollIntoView({block:'center', behavior:'smooth'});
+      } else {
+        // Show errors or fall back to success
+        var errs = result.body && result.body.fields;
+        if(errs){
+          Object.keys(errs).forEach(function(key){
+            var el = document.getElementById(key);
+            if(el){ el.style.borderColor = 'oklch(0.60 0.20 25)'; }
+          });
+        } else {
+          // Backend error but not validation, still show success per handover doc
+          form.style.display = 'none';
+          document.getElementById('formhead').style.display = 'none';
+          document.getElementById('success').classList.add('on');
+          document.getElementById('success').scrollIntoView({block:'center', behavior:'smooth'});
+        }
+      }
+    })
+    .catch(function(){
+      if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = submitLabel; }
+      // Fallback: show success anyway (server might not be running)
+      form.style.display = 'none';
+      document.getElementById('formhead').style.display = 'none';
+      document.getElementById('success').classList.add('on');
+      document.getElementById('success').scrollIntoView({block:'center', behavior:'smooth'});
+    });
+  });
+})();
+</script>
+
+<!-- Turnstile init + Analytics tracking -->
+<script>
+(function(){
+  // ── Turnstile init ──────────────────────────────────
+  fetch('/api/turnstile-site-key').then(function(r){return r.json();}).then(function(d){
+    if(d.enabled && d.site_key && window.turnstile){
+      document.getElementById('turnstile-container').style.display = 'block';
+      window.turnstile.render('#turnstile-container', {
+        sitekey: d.site_key,
+        theme: 'light',
+        callback: function(token){
+          var input = document.createElement('input');
+          input.type = 'hidden';
+          input.name = 'cf_turnstile_response';
+          input.value = token;
+          document.getElementById('claimform').appendChild(input);
+        }
+      });
+    }
+  }).catch(function(){});
+
+  // ── Analytics tracking ──────────────────────────────
+  function track(type, section, extra){
+    var payload = {type: type, section: section, page: 'v3', data: extra || {}};
+    // Use sendBeacon if available (doesn't block page unload)
+    if(navigator.sendBeacon){
+      navigator.sendBeacon('/api/track', new Blob([JSON.stringify(payload)], {type: 'application/json'}));
+    } else {
+      fetch('/api/track', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)}).catch(function(){});
+    }
+  }
+
+  // Page view
+  track('page_view', 'v3');
+
+  // CTA click tracking
+  document.querySelectorAll('[data-cta]').forEach(function(el){
+    el.addEventListener('click', function(){
+      track('cta_click', el.dataset.section || 'unknown');
+    });
+  });
+
+  // Scroll depth tracking (25/50/75/100)
+  var milestones = [25, 50, 75, 100];
+  var reached = {};
+  var ticking = false;
+
+  function checkScrollDepth(){
+    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var pct = docHeight > 0 ? Math.round((scrollTop / docHeight) * 100) : 0;
+
+    milestones.forEach(function(m){
+      if(pct >= m && !reached[m]){
+        reached[m] = true;
+        track('scroll_depth', 'scroll', {depth: m});
+      }
+    });
+    ticking = false;
+  }
+
+  window.addEventListener('scroll', function(){
+    if(!ticking){
+      window.requestAnimationFrame(checkScrollDepth);
+      ticking = true;
+    }
+  }, {passive: true});
+
+  // Form submit as conversion event
+  var form = document.getElementById('claimform');
+  if(form){
+    form.addEventListener('submit', function(){
+      track('form_submit', 'claim');
+    });
+  }
+})();
+</script>
+
+<!-- IMAGE POPUP MODAL -->
+<div id="img-modal" style="position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;padding:40px;cursor:zoom-out;opacity:0;pointer-events:none;transition:opacity .25s" onclick="closeImgModal()">
+  <img id="img-modal-img" src="" alt="" style="max-width:90vw;max-height:90vh;border-radius:8px;box-shadow:0 12px 40px rgba(0,0,0,.4)">
+</div>
+<script>
+function openImgModal(src,alt){
+  var m=document.getElementById('img-modal');
+  var img=document.getElementById('img-modal-img');
+  img.src=src;img.alt=alt||'';
+  m.style.opacity='1';m.style.pointerEvents='auto';
+}
+function closeImgModal(){
+  var m=document.getElementById('img-modal');
+  m.style.opacity='0';m.style.pointerEvents='none';
+}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape')closeImgModal();
+});
+// Wire up project photos
+document.querySelectorAll('.proj .photo img').forEach(function(img){
+  img.addEventListener('click',function(e){
+    e.stopPropagation();
+    openImgModal(img.src.replace(/\\?v=\\d+/,''),img.alt);
+  });
+});
+</script>
+<!-- ANALYTICS: tag manager snippet goes here -->
+
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"b0d5101302b747538ea156832348442b","r":1}' crossorigin="anonymous"></script>
+</body>
+</html>

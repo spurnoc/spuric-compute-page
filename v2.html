@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Compute Credits — SPUR</title>
+  <meta name="description" content="Sovereign Canadian AI compute credits for founders, students, and event participants. NVIDIA B300 GPUs, hosted in Canada.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── DESIGN TOKENS ────────────────────────────────── */
+    :root {
+      /* Primitive palette (OKLCH for perceptual uniformity) */
+      --orange-500: oklch(0.70 0.18 45);
+      --orange-600: oklch(0.63 0.19 42);
+      --orange-100: oklch(0.96 0.03 45);
+      --orange-050: oklch(0.98 0.015 45);
+
+      --green-600: oklch(0.55 0.15 155);
+      --green-100: oklch(0.95 0.03 155);
+
+      --ink-900: oklch(0.22 0.01 250);
+      --ink-700: oklch(0.38 0.01 250);
+      --ink-500: oklch(0.55 0.01 250);
+      --ink-300: oklch(0.75 0.005 250);
+      --ink-100: oklch(0.90 0.003 250);
+      --ink-050: oklch(0.96 0.002 250);
+      --paper:   oklch(0.99 0.001 250);
+
+      --blue-600: oklch(0.50 0.18 260);
+      --blue-100: oklch(0.94 0.03 260);
+
+      /* Semantic tokens */
+      --bg:           var(--paper);
+      --bg-subtle:    var(--ink-050);
+      --bg-section:   var(--ink-100);
+      --text-primary: var(--ink-900);
+      --text-body:    var(--ink-700);
+      --text-muted:   var(--ink-500);
+      --border:       var(--ink-300);
+      --border-subtle:var(--ink-100);
+      --accent:       var(--orange-500);
+      --accent-hover: var(--orange-600);
+      --accent-bg:    var(--orange-050);
+      --accent-border:var(--orange-100);
+      --success:      var(--green-600);
+      --success-bg:   var(--green-100);
+      --info:         var(--blue-600);
+      --info-bg:      var(--blue-100);
+
+      /* Typography */
+      --font-display: 'Sora', system-ui, -apple-system, sans-serif;
+      --font-sans:    'DM Sans', system-ui, -apple-system, sans-serif;
+      --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+
+      /* Sizing */
+      --radius: 8px;
+      --radius-sm: 5px;
+      --maxw: 1080px;
+      --pad: 24px;
+    }
+
+    /* ── RESET ────────────────────────────────────────── */
+    *,*::before,*::after{box-sizing:border-box;}
+    html{scroll-behavior:smooth;}
+    html,body{margin:0;padding:0;}
+    body{
+      font-family:var(--font-sans);
+      background:var(--bg);
+      color:var(--text-primary);
+      font-size:16px;
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+      text-rendering:optimizeLegibility;
+    }
+    a{color:var(--accent);text-decoration:none;}
+    a:hover{text-decoration:underline;}
+    ::selection{background:var(--accent-bg);}
+
+    /* ── LAYOUT ────────────────────────────────────────── */
+    .wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--pad);}
+    .section{padding:72px 0;}
+    .section-tight{padding:48px 0;}
+
+    /* ── TYPOGRAPHY ────────────────────────────────────── */
+    h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;letter-spacing:-0.02em;line-height:1.1;margin:0;}
+    h1{font-size:clamp(32px,5vw,52px);font-weight:600;}
+    h2{font-size:clamp(26px,3.5vw,38px);}
+    h3{font-size:20px;font-weight:600;}
+    h4{font-size:16px;font-weight:600;}
+    p{margin:0 0 16px;color:var(--text-body);}
+    .lead{font-size:clamp(17px,1.5vw,20px);line-height:1.55;color:var(--text-body);max-width:62ch;}
+    .mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+    .label{font-family:var(--font-mono);font-size:12px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);}
+    .num{font-variant-numeric:tabular-nums;font-family:var(--font-mono);}
+
+    /* ── HEADER ────────────────────────────────────────── */
+    .header{
+      position:sticky;top:0;z-index:100;
+      background:var(--bg);
+      border-bottom:1px solid var(--border);
+    }
+    .header-inner{
+      display:flex;align-items:center;justify-content:space-between;
+      height:60px;
+    }
+    .logo{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:700;font-size:15px;letter-spacing:-0.01em;color:var(--text-primary);}
+    .logo:hover{text-decoration:none;}
+    .logo .mark{
+      width:28px;height:28px;border-radius:var(--radius-sm);
+      background:var(--accent);color:#fff;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:700;font-size:14px;
+    }
+    .nav{display:flex;align-items:center;gap:4px;}
+    .nav a{
+      font-family:var(--font-sans);font-size:14px;font-weight:500;
+      color:var(--text-body);padding:8px 12px;border-radius:var(--radius-sm);
+      transition:color .15s,background .15s;
+    }
+    .nav a:hover{color:var(--text-primary);background:var(--bg-subtle);text-decoration:none;}
+    .nav a.active{color:var(--accent);font-weight:700;}
+    .nav .nav-cta{
+      background:var(--accent);color:#fff !important;font-weight:700;padding:8px 16px;
+      border-radius:var(--radius-sm);margin-left:8px;
+    }
+    .nav .nav-cta:hover{background:var(--accent-hover);color:#fff !important;text-decoration:none;}
+    .nav .nav-cta.active{background:var(--accent);color:#fff !important;}
+    .nav-toggle{display:none;background:none;border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;cursor:pointer;font-family:var(--font-sans);font-size:14px;}
+    @media(max-width:768px){
+      .nav{display:none;position:absolute;top:60px;left:0;right:0;flex-direction:column;background:var(--bg);border-bottom:1px solid var(--border);padding:12px var(--pad);gap:2px;align-items:stretch;}
+      .nav.open{display:flex;}
+      .nav a{padding:12px;border-radius:var(--radius-sm);}
+      .nav .nav-cta{text-align:center;margin:4px 0 0 0;}
+      .nav-toggle{display:block;}
+    }
+
+    /* ── HERO + FORM (split) ────────────────────────────── */
+    .hero{padding:64px 0 48px;border-bottom:1px solid var(--border-subtle);}
+    .hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;}
+    @media(max-width:860px){.hero-grid{grid-template-columns:1fr;gap:32px;}}
+    .hero-left h1{margin-bottom:16px;}
+    .hero-left .lead{margin-bottom:24px;}
+    .hero-bullets{list-style:none;padding:0;margin:0 0 24px;display:flex;flex-direction:column;gap:12px;}
+    .hero-bullets li{display:flex;align-items:flex-start;gap:10px;font-size:15px;color:var(--text-body);}
+    .hero-bullets li .check{color:var(--success);font-weight:700;flex-shrink:0;margin-top:1px;}
+    .hero-sov{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 14px;border-radius:999px;
+      background:var(--success-bg);color:var(--success);
+      font-size:13px;font-weight:500;
+      border:1px solid oklch(0.85 0.05 155);
+      margin-bottom:20px;
+    }
+
+    /* ── FORM (Configure surface) ─────────────────────── */
+    .form-card{
+      background:var(--bg);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:32px;
+    }
+    @media(max-width:768px){.form-card{padding:24px;}}
+    .form-card h3{margin-bottom:6px;}
+    .form-card .form-hint{font-size:14px;color:var(--text-muted);margin-bottom:24px;}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+    @media(max-width:560px){.form-row{grid-template-columns:1fr;}}
+    .field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px;}
+    .field label{font-size:14px;font-weight:500;color:var(--text-primary);}
+    .field label .req{color:var(--accent);margin-left:2px;}
+    .field input[type=text],.field input[type=email],.field select,.field textarea{
+      width:100%;padding:10px 12px;
+      background:var(--bg);color:var(--text-primary);
+      border:1px solid var(--border);border-radius:var(--radius-sm);
+      font-family:var(--font-sans);font-size:15px;
+      transition:border-color .15s,box-shadow .15s;
+    }
+    .field input::placeholder,.field textarea::placeholder{color:var(--ink-300);}
+    .field select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23757065' stroke-width='1.5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;}
+    .field textarea{min-height:80px;resize:vertical;line-height:1.5;}
+    .field input:focus,.field select:focus,.field textarea:focus{
+      outline:none;border-color:var(--accent);
+      box-shadow:0 0 0 3px oklch(0.70 0.18 45 / 0.15);
+    }
+    .field .err{color:oklch(0.50 0.18 25);font-size:13px;font-weight:500;display:none;}
+    .field.invalid input,.field.invalid select,.field.invalid textarea{border-color:oklch(0.50 0.18 25);}
+    .field.invalid .err{display:block;}
+
+    /* Segmented control (track selector) */
+    .segment{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:16px;}
+    .segment input{position:absolute;opacity:0;pointer-events:none;}
+    .segment label{
+      text-align:center;padding:10px 8px;cursor:pointer;
+      font-size:13px;font-weight:500;color:var(--text-muted);
+      transition:background .15s,color .15s;
+      border-right:1px solid var(--border);
+    }
+    .segment label:last-child{border-right:none;}
+    .segment label:hover{background:var(--bg-subtle);color:var(--text-primary);}
+    .segment input:checked + label{background:var(--accent-bg);color:var(--accent);font-weight:700;}
+    .segment input:focus-visible + label{box-shadow:0 0 0 3px oklch(0.70 0.18 45 / 0.15);position:relative;z-index:1;}
+    .field.invalid .segment{border-color:oklch(0.50 0.18 25);}
+
+    /* Pill group */
+    .pills{display:flex;flex-wrap:wrap;gap:8px;}
+    .pills input[type=radio]{position:absolute;opacity:0;pointer-events:none;}
+    .pills label.pill{
+      cursor:pointer;padding:7px 14px;border:1px solid var(--border);
+      border-radius:999px;font-size:13px;font-weight:500;color:var(--text-body);
+      transition:border-color .15s,background .15s,color .15s;
+    }
+    .pills label.pill:hover{border-color:var(--accent);color:var(--text-primary);}
+    .pills input:checked + label.pill{background:var(--accent-bg);border-color:var(--accent);color:var(--accent);font-weight:700;}
+    .pills input:focus-visible + label.pill{box-shadow:0 0 0 3px oklch(0.70 0.18 45 / 0.15);}
+
+    /* Buttons */
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:6px;
+      padding:10px 20px;border-radius:var(--radius-sm);
+      font-family:var(--font-sans);font-size:15px;font-weight:700;
+      border:1px solid transparent;cursor:pointer;
+      transition:background .15s,transform .08s;
+    }
+    .btn-primary{background:var(--accent);color:#fff;}
+    .btn-primary:hover{background:var(--accent-hover);text-decoration:none;}
+    .btn-primary:active{transform:scale(0.98);}
+    .btn-ghost{background:transparent;color:var(--text-primary);border:1px solid var(--border);}
+    .btn-ghost:hover{background:var(--bg-subtle);text-decoration:none;}
+    .btn-block{width:100%;padding:12px;}
+
+    .form-submit{display:flex;flex-direction:column;gap:8px;margin-top:20px;}
+    .form-fineprint{font-size:13px;color:var(--text-muted);text-align:center;}
+
+    /* Success state */
+    .form-success{display:none;text-align:center;padding:40px 20px;}
+    .form-success.on{display:block;}
+    .form-success .check{
+      width:56px;height:56px;border-radius:50%;
+      background:var(--success-bg);color:var(--success);
+      display:flex;align-items:center;justify-content:center;
+      font-size:24px;margin:0 auto 16px;
+      border:2px solid var(--success);
+    }
+    .form-success h3{margin-bottom:8px;}
+    .form-success p{color:var(--text-body);max-width:46ch;margin:0 auto;}
+
+    /* ── HOW IT WORKS — rotating banner ────────────────── */
+    .how-banner{
+      position:relative;overflow:hidden;
+      border-top:1px solid var(--border-subtle);
+      border-bottom:1px solid var(--border-subtle);
+      background:var(--bg-subtle);
+    }
+    .how-slides{position:relative;min-height:180px;}
+    .how-slide{
+      position:absolute;inset:0;display:flex;align-items:center;
+      padding:40px var(--pad);opacity:0;transform:translateX(24px);
+      transition:opacity .5s ease,transform .5s ease;
+      pointer-events:none;
+    }
+    .how-slide.active{opacity:1;transform:translateX(0);pointer-events:auto;position:relative;}
+    .how-slide-inner{max-width:var(--maxw);margin:0 auto;display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;width:100%;}
+    .how-num{
+      flex-shrink:0;width:56px;height:56px;border-radius:50%;
+      background:var(--accent);color:#fff;
+      display:flex;align-items:center;justify-content:center;
+      font-family:var(--font-mono);font-size:22px;font-weight:700;
+    }
+    .how-text .step-label{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;}
+    .how-text h4{font-size:22px;font-weight:600;margin-bottom:6px;}
+    .how-text p{font-size:15px;color:var(--text-muted);margin:0;line-height:1.5;max-width:42ch;}
+    .how-dots{display:flex;gap:8px;justify-content:center;padding:0 0 20px;}
+    .how-dot{
+      width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;
+      background:var(--border);padding:0;transition:background .2s,width .2s;
+    }
+    .how-dot.active{background:var(--accent);width:24px;border-radius:4px;}
+    @media(prefers-reduced-motion:reduce){
+      .how-slide{transition:none;transform:none;}
+    }
+
+    /* ── AUDIENCE COMPARISON ───────────────────────────── */
+    .compare-table{width:100%;border-collapse:collapse;}
+    .compare-table th,.compare-table td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--border-subtle);font-size:15px;}
+    .compare-table th{font-family:var(--font-display);font-weight:600;font-size:14px;color:var(--text-primary);border-bottom:2px solid var(--border);}
+    .compare-table th:first-child{width:30%;}
+    .compare-table td:first-child{font-weight:500;color:var(--text-muted);font-size:14px;}
+    .compare-table td{color:var(--text-body);}
+    .compare-table .num-cell{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-weight:700;color:var(--accent);}
+    .compare-table tr:last-child td{border-bottom:none;}
+    @media(max-width:640px){
+      .compare-wrap{overflow-x:auto;}
+      .compare-table{min-width:560px;}
+    }
+
+    /* ── SOVEREIGN SECTION ─────────────────────────────── */
+    .sov-section{background:var(--ink-900);color:oklch(0.92 0.005 250);padding:64px 0;}
+    .sov-section h2{color:#fff;margin-bottom:16px;}
+    .sov-section p{color:oklch(0.78 0.005 250);font-size:17px;line-height:1.55;max-width:62ch;margin-bottom:24px;}
+    .sov-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:32px;}
+    @media(max-width:768px){.sov-grid{grid-template-columns:1fr;gap:24px;}}
+    .sov-item h4{font-family:var(--font-mono);font-size:13px;font-weight:500;color:var(--accent);margin-bottom:6px;letter-spacing:0.04em;text-transform:uppercase;}
+    .sov-item p{font-size:15px;color:oklch(0.75 0.005 250);margin:0;}
+
+    /* ── FOOTER ────────────────────────────────────────── */
+    .footer{border-top:1px solid var(--border);padding:32px 0;}
+    .footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+    .footer p{font-size:13px;color:var(--text-muted);margin:0;}
+    .footer-links{display:flex;gap:16px;}
+    .footer-links a{font-size:13px;color:var(--text-muted);}
+    .footer-links a:hover{color:var(--text-primary);}
+
+    /* ── FADE-IN ANIMATION ─────────────────────────────── */
+    .fade-in{opacity:0;transform:translateY(12px);transition:opacity .5s ease,transform .5s ease;}
+    .fade-in.visible{opacity:1;transform:translateY(0);}
+    @media(prefers-reduced-motion:reduce){
+      .fade-in{opacity:1;transform:none;transition:none;}
+      html{scroll-behavior:auto;}
+    }
+
+    /* ── FOCUS STATES ──────────────────────────────────── */
+    a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+      outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--radius-sm);
+    }
+
+    /* IMPACT STRIP */
+    .impact-strip{border-top:1px solid var(--border);padding:32px 0;text-align:center;background:var(--bg-subtle);}
+    .impact-strip h3{font-family:var(--font-display);font-weight:600;font-size:clamp(18px,2vw,22px);margin:0 0 8px;color:var(--text-primary);}
+    .impact-strip .impact-stats{font-size:14px;color:var(--text-muted);line-height:1.8;}
+    .impact-strip .impact-stats strong{color:var(--text-primary);font-weight:700;}
+    .impact-strip .impact-date{font-size:12px;color:var(--text-muted);margin-top:8px;font-family:var(--font-mono);}
+
+    /* ── PRINT ──────────────────────────────────────────── */
+    @media print{
+      *{
+        -webkit-print-color-adjust:exact !important;
+        print-color-adjust:exact !important;
+      }
+      body{background:var(--paper) !important;color:var(--text-primary) !important;font-size:11pt;line-height:1.4;}
+      .header,.nav,.nav-toggle{display:none !important;}
+      .hero{padding:24px 0 16px !important;border-bottom:1px solid var(--border-subtle) !important;}
+      .hero-grid{grid-template-columns:1fr !important;gap:20px !important;}
+      .hero-sov{background:var(--success-bg) !important;border:1px solid oklch(0.85 0.05 155) !important;color:var(--success) !important;}
+      .hero-left h1{color:var(--text-primary) !important;}
+      .hero-left .lead{color:var(--text-body) !important;}
+      .hero-bullets li .check{color:var(--success) !important;}
+      .hero-bullets li{color:var(--text-body) !important;}
+      .form-card{background:var(--bg) !important;border:1px solid var(--border) !important;box-shadow:none !important;padding:20px !important;}
+      .form-card h3{color:var(--text-primary) !important;}
+      .form-hint{color:var(--text-muted) !important;}
+      .field label{color:var(--text-primary) !important;}
+      .field input,.field select,.field textarea{
+        background:var(--bg) !important;border:1px solid var(--border) !important;color:var(--text-primary) !important;
+        font-size:10pt;padding:6px 8px;
+      }
+      .field input::placeholder,.field textarea::placeholder{color:var(--ink-300) !important;}
+      .segment label{background:var(--bg-subtle) !important;border:1px solid var(--border) !important;color:var(--text-muted) !important;}
+      .pills label.pill{background:var(--bg-subtle) !important;border:1px solid var(--border) !important;color:var(--text-body) !important;}
+      .btn,.form-submit,.nav-toggle{display:none !important;}
+      .form-success{display:block !important;}
+      .form-success .check{background:var(--success-bg) !important;color:var(--success) !important;border:2px solid var(--success) !important;}
+      .form-success h3{color:var(--text-primary) !important;}
+      .form-success p{color:var(--text-body) !important;}
+      .form-fineprint{color:var(--text-muted) !important;}
+      .fade-in{opacity:1 !important;transform:none !important;}
+      .how-banner{background:var(--bg-subtle) !important;border-top:1px solid var(--border-subtle) !important;border-bottom:1px solid var(--border-subtle) !important;}
+      .how-slide{display:none !important;}
+      .how-slide.active{display:flex !important;opacity:1 !important;transform:none !important;position:relative !important;}
+      .how-num{background:var(--accent) !important;color:#fff !important;}
+      .how-text .step-label{color:var(--accent) !important;}
+      .how-text h4{color:var(--text-primary) !important;}
+      .how-text p{color:var(--text-muted) !important;}
+      .how-dots{display:none !important;}
+      .compare-wrap{display:block !important;}
+      .compare-table th{color:var(--text-primary) !important;border-bottom:2px solid var(--border) !important;background:var(--bg-subtle) !important;}
+      .compare-table td{color:var(--text-body) !important;border-bottom:1px solid var(--border-subtle) !important;}
+      .compare-table td:first-child{color:var(--text-muted) !important;}
+      .compare-table .num-cell{color:var(--accent) !important;}
+      .section{padding:24px 0 !important;}
+      .label{color:var(--accent) !important;}
+      .sov-section{background:var(--ink-900) !important;color:oklch(0.92 0.005 250) !important;}
+      .sov-section h2{color:#fff !important;}
+      .sov-section p{color:oklch(0.78 0.005 250) !important;}
+      .sov-item h4{color:var(--accent) !important;}
+      .sov-item p{color:oklch(0.75 0.005 250) !important;}
+      .footer{border-top:1px solid var(--border) !important;background:var(--bg) !important;}
+      .footer p{color:var(--text-muted) !important;}
+      .footer-links a{color:var(--text-muted) !important;}
+      a{color:var(--accent) !important;text-decoration:none !important;}
+      .wrap{max-width:100% !important;padding:0 16px !important;}
+      h2,h3,h4{page-break-after:avoid;}
+      .form-card,.field,.how-slide,.compare-wrap{page-break-inside:avoid;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="wrap header-inner">
+    <a class="logo" href="#" aria-label="SPUR Innovation">
+      <span class="mark">S</span>
+      <span>SPUR Compute Credits</span>
+    </a>
+    <button class="nav-toggle" aria-label="Toggle menu" onclick="document.getElementById('main-nav').classList.toggle('open')">Menu</button>
+    <nav class="nav" id="main-nav" aria-label="Primary">
+      <a href="/v1">Claim</a>
+      <a href="#audiences">Founders</a>
+      <a href="#audiences">Students</a>
+      <a href="#audiences">Events</a>
+      <a href="#how">How it works</a>
+      <a href="#form" class="nav-cta">Apply</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO + FORM -->
+<section class="hero" id="overview">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div class="hero-left fade-in">
+        <div class="hero-sov">Small business mindset AI · Hosted in Canada — no US Cloud Act exposure</div>
+        <h1>Apply for compute credits.</h1>
+        <p class="lead">
+          SPUR provides compute credits on NVIDIA B300 GPUs to founders, students, and event participants building on sovereign Canadian infrastructure. Tell us about your project and we will review your application within one business day.
+        </p>
+        <ul class="hero-bullets">
+          <li><span class="check">&#10003;</span> NVIDIA B300 Blackwell GPUs with NVLink fabric</li>
+          <li><span class="check">&#10003;</span> Named SPUR engineer for every credit recipient</li>
+          <li><span class="check">&#10003;</span> Credits activated in under one business day</li>
+          <li><span class="check">&#10003;</span> No obligation — build first, scale when ready</li>
+        </ul>
+        <a href="#form" class="btn btn-primary">Apply now &rarr;</a>
+      </div>
+
+      <!-- INTAKE FORM -->
+      <div class="hero-right fade-in" id="form">
+        <div class="form-card">
+          <h3>Apply for compute credits</h3>
+          <p class="form-hint">Tell us about your project. We review applications within one business day.</p>
+
+          <form id="credits-form-v2" novalidate>
+            <!-- Track selector -->
+            <div class="field" data-field="track">
+              <label>I am a<span class="req">*</span></label>
+              <div class="segment">
+                <input type="radio" id="seg-founder" name="track" value="founder" required>
+                <label for="seg-founder">Founder</label>
+                <input type="radio" id="seg-student" name="track" value="student">
+                <label for="seg-student">Student</label>
+                <input type="radio" id="seg-event" name="track" value="event">
+                <label for="seg-event">Event</label>
+              </div>
+              <div class="err">Please select a track.</div>
+            </div>
+
+            <!-- Name + Email -->
+            <div class="form-row">
+              <div class="field" data-field="name">
+                <label for="v2-name">Name<span class="req">*</span></label>
+                <input id="v2-name" type="text" name="name" autocomplete="name" required placeholder="Jane Doe">
+                <div class="err">Enter your name.</div>
+              </div>
+              <div class="field" data-field="email">
+                <label for="v2-email">Email<span class="req">*</span></label>
+                <input id="v2-email" type="email" name="email" autocomplete="email" required placeholder="jane@example.com">
+                <div class="err">Enter a valid email.</div>
+              </div>
+            </div>
+
+            <!-- Org + Role -->
+            <div class="form-row">
+              <div class="field" data-field="organization">
+                <label for="v2-org">Organization / School</label>
+                <input id="v2-org" type="text" name="organization" autocomplete="organization" placeholder="Optional">
+              </div>
+              <div class="field" data-field="role">
+                <label for="v2-role">Role<span class="req">*</span></label>
+                <select id="v2-role" name="role" required>
+                  <option value="">Select role</option>
+                  <option>Founder / CEO</option>
+                  <option>CTO / Engineer</option>
+                  <option>Student</option>
+                  <option>Researcher</option>
+                  <option>Event Participant</option>
+                  <option>Educator</option>
+                  <option>Other</option>
+                </select>
+                <div class="err">Select a role.</div>
+              </div>
+            </div>
+
+            <!-- Event code -->
+            <div class="field" data-field="event_code" id="event-code-field" style="display:none;">
+              <label for="v2-event">Event code</label>
+              <input id="v2-event" type="text" name="event_code" placeholder="e.g. HACK-WATERLOO-2026">
+            </div>
+
+            <!-- Workload -->
+            <div class="form-row">
+              <div class="field" data-field="use_case">
+                <label for="v2-use">Use case<span class="req">*</span></label>
+                <select id="v2-use" name="use_case" required>
+                  <option value="">Select use case</option>
+                  <option value="training">Training</option>
+                  <option value="inference">Inference</option>
+                  <option value="fine_tuning">Fine-tuning</option>
+                  <option value="research">Research</option>
+                  <option value="batch">Batch / offline</option>
+                  <option value="other">Other</option>
+                </select>
+                <div class="err">Select a use case.</div>
+              </div>
+              <div class="field" data-field="gpu_pref">
+                <label>GPU preference<span class="req">*</span></label>
+                <div class="pills">
+                  <input type="radio" id="p-b300" name="gpu_pref" value="b300" required>
+                  <label class="pill" for="p-b300">B300</label>
+                  <input type="radio" id="p-h100" name="gpu_pref" value="h100">
+                  <label class="pill" for="p-h100">H100</label>
+                  <input type="radio" id="p-np" name="gpu_pref" value="no_pref">
+                  <label class="pill" for="p-np">No preference</label>
+                </div>
+                <div class="err">Pick a GPU.</div>
+              </div>
+            </div>
+
+            <!-- Project description -->
+            <div class="field" data-field="description">
+              <label for="v2-desc">What will you build?<span class="req">*</span></label>
+              <textarea id="v2-desc" name="description" required placeholder="What are you building? What models? What scale?"></textarea>
+              <div class="err">Describe your project.</div>
+            </div>
+
+            <!-- Duration -->
+            <div class="field" data-field="duration">
+              <label>How long do you need compute?<span class="req">*</span></label>
+              <div class="pills">
+                <input type="radio" id="d-1w" name="duration" value="week" required>
+                <label class="pill" for="d-1w">1 week</label>
+                <input type="radio" id="d-1m" name="duration" value="month">
+                <label class="pill" for="d-1m">1 month</label>
+                <input type="radio" id="d-3m" name="duration" value="3_months">
+                <label class="pill" for="d-3m">3 months</label>
+                <input type="radio" id="d-on" name="duration" value="ongoing">
+                <label class="pill" for="d-on">Ongoing</label>
+              </div>
+              <div class="err">Pick a duration.</div>
+            </div>
+
+            <!-- honeypot -->
+            <input type="text" name="website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+
+            <div class="form-submit">
+              <button type="submit" class="btn btn-primary btn-block">Submit application</button>
+              <p class="form-fineprint">By submitting you agree to SPUR's Privacy Policy. Data stays in Canada.</p>
+            </div>
+          </form>
+
+          <!-- Success -->
+          <div class="form-success" id="v2-success">
+            <div class="check">&#10003;</div>
+            <h3>Credits requested</h3>
+            <p id="v2-success-msg">We have received your request. Check your email for next steps.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section-tight" id="how" style="padding:0;">
+  <div class="how-banner">
+    <div class="how-slides" id="how-slides">
+      <div class="how-slide active">
+        <div class="how-slide-inner">
+          <div class="how-num">1</div>
+          <div class="how-text">
+            <div class="step-label">Step 01</div>
+            <h4>Tell us about you</h4>
+            <p>Fill out the intake form. Pick your track and describe your project.</p>
+          </div>
+        </div>
+      </div>
+      <div class="how-slide">
+        <div class="how-slide-inner">
+          <div class="how-num">2</div>
+          <div class="how-text">
+            <div class="step-label">Step 02</div>
+            <h4>Get approved</h4>
+            <p>We review and activate your credits — usually within one business day.</p>
+          </div>
+        </div>
+      </div>
+      <div class="how-slide">
+        <div class="how-slide-inner">
+          <div class="how-num">3</div>
+          <div class="how-text">
+            <div class="step-label">Step 03</div>
+            <h4>Start building</h4>
+            <p>Access the SPUR console, spin up GPUs, deploy. Data stays in Canada.</p>
+          </div>
+        </div>
+      </div>
+      <div class="how-slide">
+        <div class="how-slide-inner">
+          <div class="how-num">4</div>
+          <div class="how-text">
+            <div class="step-label">Step 04</div>
+            <h4>Get support</h4>
+            <p>Every recipient gets a named SPUR engineer for sizing and tuning help.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="how-dots" id="how-dots">
+      <button class="how-dot active" aria-label="Step 1"></button>
+      <button class="how-dot" aria-label="Step 2"></button>
+      <button class="how-dot" aria-label="Step 3"></button>
+      <button class="how-dot" aria-label="Step 4"></button>
+    </div>
+  </div>
+</section>
+
+<!-- AUDIENCE COMPARISON -->
+<section class="section" id="audiences">
+  <div class="wrap">
+    <span class="label fade-in">Credit tracks</span>
+    <h2 class="fade-in" style="margin-top:8px;margin-bottom:8px;">Three tracks, one fleet.</h2>
+    <p class="lead fade-in" style="margin-bottom:32px;">Whether you are prototyping a startup, running research in a lab, or joining us at a hackathon — there is a credit track for you.</p>
+
+    <div class="compare-wrap fade-in">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Founder / Startup</th>
+            <th>Student / Researcher</th>
+            <th>Event Participant</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Credit allocation</td>
+            <td class="num-cell">$5,000</td>
+            <td class="num-cell">$500</td>
+            <td class="num-cell">$1,000</td>
+          </tr>
+          <tr>
+            <td>GPU access</td>
+            <td>B300, H100</td>
+            <td>B300</td>
+            <td>B300</td>
+          </tr>
+          <tr>
+            <td>Engineering support</td>
+            <td>Named engineer</td>
+            <td>Office hours</td>
+            <td>Event mentors</td>
+          </tr>
+          <tr>
+            <td>Duration</td>
+            <td>Up to 6 months</td>
+            <td>Up to 3 months</td>
+            <td>Event + 30 days</td>
+          </tr>
+          <tr>
+            <td>Best for</td>
+            <td>Prototyping & shipping products</td>
+            <td>Thesis, coursework, self-paced learning</td>
+            <td>Hackathons, workshops, demo days</td>
+          </tr>
+          <tr>
+            <td>Eligibility</td>
+            <td>Canadian or Canada-based startup</td>
+            <td>Enrolled at a Canadian institution</td>
+            <td>Registered SPUR event attendee</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:24px;" class="fade-in">
+      <a href="#form" class="btn btn-primary">Apply now &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- SOVEREIGN SECTION -->
+<section class="sov-section">
+  <div class="wrap">
+    <span class="label" style="color:var(--accent);">Sovereign by design</span>
+    <h2 style="margin-top:8px;">Hosted in Canada. No US Cloud Act exposure.</h2>
+    <p>SPUR's compute fleet is owned and operated in data centres across Ontario and Quebec. Your data, weights, and metadata never leave Canadian soil. PIPEDA-aligned controls, real engineers, no reselling.</p>
+
+    <div class="sov-grid">
+      <div class="sov-item">
+        <h4>Hardware</h4>
+        <p>NVIDIA B300 Blackwell GPUs with high-bandwidth NVLink fabric. H100, H200, and custom server configurations also available.</p>
+      </div>
+      <div class="sov-item">
+        <h4>Compliance</h4>
+        <p>PIPEDA-aligned controls. No CLOUD Act exposure. The workload, the network, and the operators are all in Canada.</p>
+      </div>
+      <div class="sov-item">
+        <h4>Support</h4>
+        <p>Every credit recipient gets a named SPUR engineer. We help you size the cluster, tune the stack, and ship to production.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT STRIP -->
+<section class="impact-strip">
+  <div class="wrap">
+    <h3>Compute turning into GDP</h3>
+    <div class="impact-stats">
+      <strong>59</strong> people employed across SPUR and our portfolio · <strong>5</strong> data centre sites · <strong>2</strong> companies funded · <strong>100%</strong> Canadian-owned and operated
+    </div>
+    <div class="impact-date">Updated 15 August 2026</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <p>&copy; 2026 SPUR Innovation Centre — Waterloo, Ontario, Canada</p>
+    <div class="footer-links">
+      <a href="https://spuric.com/en/standards.html">Standards</a>
+      <a href="https://spuric.com/en/privacy.html">Privacy</a>
+      <a href="https://spuric.com/en/contact.html">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var form = document.getElementById('credits-form-v2');
+  var success = document.getElementById('v2-success');
+
+  /* ── Show/hide event code field based on track ── */
+  var eventField = document.getElementById('event-code-field');
+  document.querySelectorAll('input[name="track"]').forEach(function(r){
+    r.addEventListener('change', function(){
+      eventField.style.display = (this.value === 'event') ? 'flex' : 'none';
+    });
+  });
+
+  /* ── Field validation ── */
+  function validateField(field){
+    var name = field.dataset.field;
+    var input = field.querySelector('input[type=text],input[type=email],select,textarea');
+    var radioGroup = field.querySelector('.segment, .pills');
+
+    if(radioGroup){
+      var checked = field.querySelector('input[type=radio]:checked');
+      if(!checked){ field.classList.add('invalid'); return false; }
+      field.classList.remove('invalid'); return true;
+    }
+
+    if(input && input.required){
+      var val = (input.value || '').trim();
+      var valid = !!val;
+      if(input.type === 'email' && val){
+        valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+      }
+      field.classList.toggle('invalid', !valid);
+      return valid;
+    }
+
+    field.classList.remove('invalid');
+    return true;
+  }
+
+  function validateAll(){
+    var fields = form.querySelectorAll('.field[data-field]');
+    var allValid = true;
+    fields.forEach(function(f){ if(!validateField(f)) allValid = false; });
+    return allValid;
+  }
+
+  form.addEventListener('blur', function(e){
+    var field = e.target.closest('.field[data-field]');
+    if(field) validateField(field);
+  }, true);
+
+  form.addEventListener('change', function(e){
+    var field = e.target.closest('.field[data-field]');
+    if(field) validateField(field);
+  }, true);
+
+  var submitBtn = form.querySelector('button[type=submit]');
+  var submitLabel = submitBtn ? submitBtn.textContent : '';
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(!validateAll()){
+      var firstInvalid = form.querySelector('.field.invalid');
+      if(firstInvalid){
+        firstInvalid.scrollIntoView({behavior:'smooth',block:'center'});
+        var input = firstInvalid.querySelector('input,select,textarea');
+        if(input) input.focus();
+      }
+      return;
+    }
+
+    var data = {};
+    new FormData(form).forEach(function(v,k){ data[k] = v; });
+
+    // Disable button, show loading
+    if(submitBtn){ submitBtn.disabled = true; submitBtn.textContent = 'Sending...'; }
+
+    // Submit to backend
+    fetch('/api/submit', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    })
+    .then(function(r){ return r.json().then(function(body){ return {ok: r.ok, body: body}; }); })
+    .then(function(result){
+      if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = submitLabel; }
+
+      if(result.ok && result.body.success){
+        form.style.display = 'none';
+        success.classList.add('on');
+
+        document.getElementById('v2-success-msg').innerHTML = result.body.message +
+          (result.body.email_sent
+            ? '<br><br>A confirmation email is on its way to your inbox.'
+            : '<br><br><span style="color:var(--text-muted);font-size:13px;">(Email delivery is being configured — your request was still received.)</span>');
+
+        success.scrollIntoView({behavior:'smooth',block:'center'});
+      } else {
+        var errs = result.body && result.body.fields;
+        if(errs){
+          Object.keys(errs).forEach(function(key){
+            var field = form.querySelector('.field[data-field="' + key + '"]');
+            if(field){
+              field.classList.add('invalid');
+              var errDiv = field.querySelector('.err');
+              if(errDiv) errDiv.textContent = errs[key];
+            }
+          });
+        } else {
+          alert(result.body && result.body.error ? result.body.error : 'Something went wrong. Please try again.');
+        }
+        if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = submitLabel; }
+      }
+    })
+    .catch(function(err){
+      if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = submitLabel; }
+      // Fallback: show success anyway (server might not be running)
+      form.style.display = 'none';
+      success.classList.add('on');
+      document.getElementById('v2-success-msg').innerHTML =
+        'Thanks, ' + (data.name || 'there') + '! We received your request. ' +
+        '<br><br><span style="color:var(--text-muted);font-size:13px;">(The server is not running — start it with: python credits_server.py)</span>';
+      success.scrollIntoView({behavior:'smooth',block:'center'});
+    });
+  });
+
+  /* ── Smooth scroll for anchor links ── */
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var target = document.querySelector(this.getAttribute('href'));
+      if(target){
+        e.preventDefault();
+        target.scrollIntoView({behavior:'smooth',block:'start'});
+        document.getElementById('main-nav').classList.remove('open');
+      }
+    });
+  });
+
+  /* ── How-it-works rotating banner ── */
+  var howSlides = document.querySelectorAll('.how-slide');
+  var howDots = document.querySelectorAll('.how-dot');
+  var howCurrent = 0;
+  var howTimer = null;
+  var HOW_INTERVAL = 2200;
+
+  function showHowSlide(idx){
+    howSlides.forEach(function(s,i){ s.classList.toggle('active', i === idx); });
+    howDots.forEach(function(d,i){ d.classList.toggle('active', i === idx); });
+    howCurrent = idx;
+  }
+
+  function nextHowSlide(){
+    showHowSlide((howCurrent + 1) % howSlides.length);
+  }
+
+  function startHowTimer(){
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    stopHowTimer();
+    howTimer = setInterval(nextHowSlide, HOW_INTERVAL);
+  }
+
+  function stopHowTimer(){
+    if(howTimer){ clearInterval(howTimer); howTimer = null; }
+  }
+
+  howDots.forEach(function(dot, i){
+    dot.addEventListener('click', function(){
+      showHowSlide(i);
+      startHowTimer(); // restart timer after manual interaction
+    });
+  });
+
+  // Pause on hover, resume on leave
+  var howBanner = document.querySelector('.how-banner');
+  if(howBanner){
+    howBanner.addEventListener('mouseenter', stopHowTimer);
+    howBanner.addEventListener('mouseleave', startHowTimer);
+  }
+
+  // Start the rotation
+  startHowTimer();
+
+  /* ── Fade-in on scroll ── */
+  var observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+
+  document.querySelectorAll('.fade-in').forEach(function(el){ observer.observe(el); });
+
+  /* ── Active nav tracking ── */
+  var sections = [
+    {id:'overview',nav:'overview'},
+    {id:'audiences',nav:'audiences'},
+    {id:'how',nav:'how'},
+    {id:'form',nav:'form'}
+  ];
+  var navLinks = document.querySelectorAll('.nav a');
+
+  var navObserver = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        var id = entry.target.id;
+        navLinks.forEach(function(link){
+          var href = link.getAttribute('href').replace('#','');
+          if(href === id){
+            link.classList.add('active');
+          } else if(href !== 'form') {
+            link.classList.remove('active');
+          }
+        });
+      }
+    });
+  }, {threshold:0.3,rootMargin:'-60px 0px -50% 0px'});
+
+  sections.forEach(function(s){
+    var el = document.getElementById(s.id);
+    if(el) navObserver.observe(el);
+  });
+})();
+</script>
+
+</body>
+</html>

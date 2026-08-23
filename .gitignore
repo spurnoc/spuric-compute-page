@@ -1,0 +1,10 @@
+# Runtime data (not for git)
+submissions.json
+analytics_events.json
+__pycache__/
+*.pyc
+
+# Images are large, but we need them in the repo for Docker builds
+# Only ignore temp files
+*.tmp
+*.bak

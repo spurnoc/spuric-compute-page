@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Compute Credits - SPUR Innovation</title>
+  <meta name="description" content="Get started with sovereign Canadian AI compute credits. Simple intake for founders, students, and event participants. NVIDIA B300 GPUs, hosted in Canada, no US Cloud Act exposure.">
+  <link rel="icon" href="https://spuric.com/assets/logo-mark.png">
+  <style>
+    :root{
+      --bg:#070a12;
+      --panel:#0c1220;
+      --panel2:#0f1a2d;
+      --text:#eaf0ff;
+      --muted:#9aa7c2;
+      --border: rgba(255,255,255,.10);
+      --shadow: 0 18px 50px rgba(0,0,0,.55);
+      --radius: 18px;
+      --max: 1120px;
+      --pad: 22px;
+      --orange:#F87820;
+      --slate:#607890;
+      --slate2:#384868;
+      --focus: rgba(248,120,32,.45);
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+    *{box-sizing:border-box;}
+    html,body{margin:0;padding:0;}
+    body{
+      font-family:var(--font);
+      background:
+        radial-gradient(1000px 520px at 15% 0%, rgba(96,120,144,.22), transparent 60%),
+        radial-gradient(900px 520px at 85% 10%, rgba(248,120,32,.18), transparent 55%),
+        var(--bg);
+      color:var(--text);
+      line-height:1.55;
+      -webkit-font-smoothing:antialiased;
+    }
+    a{color:inherit;text-decoration:none;}
+    a:focus{outline:3px solid var(--focus);outline-offset:3px;border-radius:10px;}
+    .container{max-width:var(--max);margin:0 auto;padding:0 var(--pad);}
+
+    /* HEADER */
+    .header{
+      position:sticky;top:0;z-index:50;
+      background:rgba(7,10,18,.72);
+      backdrop-filter:blur(12px);
+      border-bottom:1px solid var(--border);
+    }
+    .header-inner{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0;}
+    .brand{display:flex;align-items:center;gap:12px;min-width:220px;}
+    .brand .logo-mark{width:32px;height:32px;border-radius:8px;background:var(--orange);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;color:#120a06;}
+    .brand .meta{line-height:1.1;}
+    .brand .meta strong{display:block;font-size:14px;letter-spacing:.02em;}
+    .brand .meta small{display:block;color:var(--muted);font-weight:650;margin-top:3px;font-size:12px;}
+    .nav{display:flex;flex-wrap:wrap;gap:6px;align-items:center;justify-content:flex-end;}
+    .nav a{color:var(--muted);font-weight:750;font-size:13px;padding:9px 10px;border-radius:14px;}
+    .nav a:hover{color:var(--text);background:rgba(255,255,255,.06);}
+    .nav a.active{color:var(--text);background:rgba(96,120,144,.16);border:1px solid var(--border);}
+    .nav .nav-cta{
+      background:linear-gradient(135deg,var(--orange),rgba(248,120,32,.82));
+      color:#120a06;font-weight:900;padding:9px 16px;border-radius:14px;font-size:13px;
+    }
+    .nav .nav-cta:hover{transform:translateY(-1px);opacity:.96;}
+    .nav-toggle{display:none;width:44px;height:44px;border:1px solid rgba(255,255,255,.25);border-radius:10px;background:rgba(0,0,0,.15);cursor:pointer;align-items:center;justify-content:center;gap:5px;}
+    .nav-toggle span{display:block;width:18px;height:2px;background:#fff;border-radius:2px;}
+    .nav-links{display:flex;gap:22px;align-items:center;}
+    @media(max-width:900px){
+      .nav-toggle{display:flex;}
+      .nav{position:relative;}
+      .nav-links{
+        display:none;position:absolute;right:0;top:calc(100% + 10px);
+        flex-direction:column;align-items:flex-start;padding:14px;min-width:240px;
+        background:rgba(15,15,20,.95);border:1px solid rgba(255,255,255,.15);
+        border-radius:14px;box-shadow:0 16px 40px rgba(0,0,0,.35);z-index:999;
+      }
+      .nav-links.open{display:flex;}
+      .nav-links a{width:100%;padding:10px 8px;}
+    }
+
+    /* HERO */
+    .cc-hero{position:relative;padding:90px 0 60px;border-bottom:1px solid var(--border);
+      background:radial-gradient(900px 600px at 18% 28%,rgba(248,120,32,.14),transparent 60%),
+      radial-gradient(700px 500px at 85% 60%,rgba(79,110,247,.10),transparent 55%);isolation:isolate;}
+    .cc-hero .kicker{color:var(--orange);font-weight:900;letter-spacing:.18em;text-transform:uppercase;font-size:12px;}
+    .cc-hero h1{font-size:clamp(34px,4.6vw,56px);line-height:1.06;letter-spacing:-.01em;margin:12px 0 18px;max-width:22ch;font-weight:900;}
+    .cc-hero h1 em{color:var(--orange);font-style:normal;}
+    .cc-hero .lead{font-size:clamp(17px,1.8vw,22px);color:#c9d3e8;max-width:64ch;line-height:1.55;}
+    .cc-hero .cc-promise{display:inline-flex;align-items:center;gap:10px;padding:8px 14px;margin:22px 0 18px;border-radius:999px;background:rgba(26,188,156,.10);border:1px solid rgba(26,188,156,.35);color:#7fe2cb;font-size:13px;font-weight:800;}
+    .cc-hero .cc-promise::before{content:"";display:inline-block;width:8px;height:8px;border-radius:99px;background:#1abc9c;box-shadow:0 0 10px rgba(26,188,156,.6);}
+    .cc-hero .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;}
+    @media(max-width:720px){.cc-hero{padding:60px 0 50px}.cc-hero h1{font-size:34px}}
+
+    /* METRICS */
+    .metrics-bar{border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+    .metrics-bar .container{display:flex;flex-wrap:wrap;gap:18px 30px;justify-content:space-around;padding:26px 0;text-align:center;}
+    .metric{flex:1 1 220px;max-width:360px;}
+    .metric .num{font-size:clamp(24px,2.8vw,34px);font-weight:900;color:var(--orange);line-height:1;}
+    .metric .label{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.4;}
+
+    /* AUDIENCE TILES */
+    .audience-section{padding:56px 0;border-bottom:1px solid var(--border);}
+    .audience-section .kicker{font-size:13px;font-weight:800;letter-spacing:.08em;color:var(--orange);text-transform:uppercase;margin-bottom:10px;}
+    .audience-section h2{font-size:clamp(26px,3.2vw,42px);font-weight:900;letter-spacing:-.01em;margin:0 0 14px;}
+    .audience-section .sub{color:var(--muted);font-size:clamp(15px,1.6vw,18px);line-height:1.6;max-width:66ch;margin:0 0 24px;}
+    .audience-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
+    @media(max-width:860px){.audience-grid{grid-template-columns:1fr;}}
+    .audience-tile{position:relative;padding:26px;background:rgba(12,18,32,.82);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);transition:transform .15s,border-color .15s,box-shadow .15s;}
+    .audience-tile::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:var(--orange);border-radius:var(--radius) var(--radius) 0 0;}
+    .audience-tile:hover{transform:translateY(-3px);border-color:rgba(248,120,32,.4);box-shadow:0 24px 60px rgba(0,0,0,.45);}
+    .audience-tile .tile-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(248,120,32,.12);color:var(--orange);margin-bottom:14px;font-size:22px;}
+    .audience-tile h3{margin:0 0 8px;font-size:18px;color:var(--text);}
+    .audience-tile p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.6;}
+    .audience-tile .credit-amount{margin-top:14px;font-size:13px;font-weight:800;color:var(--orange);letter-spacing:.04em;text-transform:uppercase;}
+
+    /* FORM */
+    .cc-form-wrap{padding:60px 0;}
+    .cc-form-wrap .kicker{font-size:13px;font-weight:800;letter-spacing:.08em;color:var(--orange);text-transform:uppercase;margin-bottom:10px;}
+    .cc-form-wrap h2{font-size:clamp(26px,3.2vw,42px);font-weight:900;letter-spacing:-.01em;margin:0 0 8px;}
+    .cc-form-wrap .sub{color:var(--muted);margin:0 0 22px;max-width:70ch;font-size:clamp(15px,1.6vw,18px);line-height:1.6;}
+    .cc-form-card{padding:30px;background:rgba(12,18,32,.82);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);}
+    @media(max-width:720px){.cc-form-card{padding:22px}}
+    .cc-form-section{padding:22px 0;border-top:1px dashed rgba(255,255,255,.08);}
+    .cc-form-section:first-of-type{border-top:0;padding-top:6px;}
+    .cc-form-section h3{margin:0 0 4px;font-size:18px;color:var(--text);}
+    .cc-form-section .cc-section-hint{color:var(--muted);font-size:13.5px;margin:0 0 16px;}
+    .cc-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    @media(max-width:720px){.cc-grid-2{grid-template-columns:1fr;}}
+    .field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px;}
+    .field label{font-size:13px;font-weight:800;color:var(--text);}
+    .field label .req{color:var(--orange);margin-left:3px;}
+    .field input[type=text],.field input[type=email],.field select,.field textarea{
+      width:100%;padding:12px 14px;background:rgba(7,10,18,.6);color:var(--text);
+      border:1px solid var(--border);border-radius:12px;font-family:var(--font);font-size:14.5px;
+      transition:border-color .15s,box-shadow .15s;
+    }
+    .field select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239aa7c2' stroke-width='2'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+    .field textarea{min-height:92px;resize:vertical;line-height:1.55;}
+    .field input::placeholder,.field textarea::placeholder{color:rgba(154,167,194,.5);}
+    .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 3px var(--focus);}
+    .field .cc-error{color:#ff8c8c;font-size:12.5px;font-weight:700;display:none;}
+    .field.invalid input,.field.invalid select,.field.invalid textarea{border-color:#ff8c8c;}
+    .field.invalid .cc-error{display:block;}
+
+    /* Radio pill groups */
+    .pill-group{display:flex;flex-wrap:wrap;gap:8px;}
+    .pill-group input[type=radio]{position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;overflow:hidden;}
+    .pill-group label.pill{cursor:pointer;display:inline-flex;align-items:center;padding:9px 14px;background:rgba(7,10,18,.6);border:1px solid var(--border);border-radius:999px;font-size:13.5px;color:var(--text);font-weight:600;transition:border-color .15s,background .15s,color .15s;}
+    .pill-group label.pill:hover{border-color:rgba(248,120,32,.5);}
+    .pill-group input[type=radio]:checked + label.pill{background:rgba(248,120,32,.14);border-color:var(--orange);color:#ffd9bf;}
+    .pill-group input[type=radio]:focus + label.pill{box-shadow:0 0 0 3px var(--focus);}
+    .field.invalid .pill-group label.pill{border-color:#ff8c8c;}
+
+    .cc-submit{display:flex;flex-direction:column;align-items:stretch;gap:8px;margin-top:18px;}
+    .cc-submit .btn{font-size:15px;padding:16px 18px;}
+    .cc-submit .cc-fineprint{color:var(--muted);font-size:12.5px;text-align:center;}
+
+    /* BUTTONS */
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      padding:12px 14px;border-radius:14px;font-weight:900;
+      border:1px solid transparent;transition:transform .08s ease,opacity .08s ease;
+      cursor:pointer;font-family:var(--font);font-size:14px;
+    }
+    .btn.primary{background:linear-gradient(135deg,var(--orange),rgba(248,120,32,.82));color:#120a06;box-shadow:var(--shadow);}
+    .btn.secondary{background:rgba(96,120,144,.14);color:var(--text);border:1px solid var(--border);}
+    .btn:hover{transform:translateY(-1px);opacity:.96;}
+
+    /* SOVEREIGN BANNER */
+    .sov-section{background:linear-gradient(135deg,#0c1430,#1b2a66);padding:48px 20px;color:#fff;text-align:center;}
+    .sov-section .container{max-width:var(--max);}
+    .sov-section h2{font-size:clamp(26px,3.4vw,44px);font-weight:900;letter-spacing:-.01em;margin:0 0 16px;color:#fff;}
+    .sov-section p{font-size:clamp(16px,1.7vw,20px);color:#dbe3ff;line-height:1.55;max-width:66ch;margin:0 auto 22px;}
+    .sov-badge{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.03em;color:#8effa6;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.45);padding:8px 18px;border-radius:999px;}
+
+    /* FOOTER */
+    .footer{border-top:1px solid var(--border);padding:26px 0;color:var(--muted);}
+    .footer .container{padding:32px 20px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+    .footer a{color:var(--text);}
+
+    /* SUCCESS STATE */
+    .cc-success{display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:50px 20px;text-align:center;}
+    .cc-success.on{display:flex;}
+    .cc-success .check{width:64px;height:64px;border-radius:50%;background:rgba(16,185,129,.15);border:2px solid #1abc9c;display:flex;align-items:center;justify-content:center;color:#1abc9c;font-size:28px;}
+    .cc-success h3{margin:0;font-size:24px;color:var(--text);}
+    .cc-success p{margin:0;color:var(--muted);font-size:15px;max-width:50ch;line-height:1.6;}
+
+    /* HOW IT WORKS */
+    .how-section{padding:56px 0;border-top:1px solid var(--border);background:rgba(7,10,18,.4);}
+    .how-section .kicker{font-size:13px;font-weight:800;letter-spacing:.08em;color:var(--orange);text-transform:uppercase;margin-bottom:10px;}
+    .how-section h2{font-size:clamp(26px,3.2vw,42px);font-weight:900;letter-spacing:-.01em;margin:0 0 24px;}
+    .how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+    @media(max-width:1000px){.how-grid{grid-template-columns:repeat(2,1fr);}}
+    @media(max-width:560px){.how-grid{grid-template-columns:1fr;}}
+    .how-step{position:relative;padding:22px 22px 22px 70px;background:rgba(12,18,32,.82);border:1px solid var(--border);border-radius:var(--radius);min-height:120px;}
+    .how-step .how-num{position:absolute;left:18px;top:18px;width:38px;height:38px;border-radius:99px;background:var(--orange);color:#120a06;font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center;}
+    .how-step h4{margin:0 0 6px;font-size:15.5px;color:var(--text);}
+    .how-step p{margin:0;color:var(--muted);font-size:13.5px;line-height:1.55;}
+
+    /* IMPACT STRIP */
+    .impact-strip{border-top:1px solid var(--border);padding:26px 0;text-align:center;background:rgba(7,10,18,.6);}
+    .impact-strip h3{font-size:clamp(18px,2vw,22px);font-weight:900;margin:0 0 8px;color:var(--text);}
+    .impact-strip .impact-stats{font-size:14px;color:var(--muted);line-height:1.8;}
+    .impact-strip .impact-stats strong{color:var(--text);font-weight:700;}
+    .impact-strip .impact-date{font-size:12px;color:var(--muted);margin-top:8px;font-family:var(--font);}
+
+    /* ── PRINT ──────────────────────────────────────────── */
+    @media print{
+      *{
+        -webkit-print-color-adjust:exact !important;
+        print-color-adjust:exact !important;
+      }
+      html{background:#070a12 !important;}
+      body{
+        background:#070a12 !important;color:#eaf0ff !important;
+        font-size:11pt;line-height:1.4;
+      }
+      .header,.nav,.nav-toggle{display:none !important;}
+      .cc-hero{padding:0 0 16px;border:none;background:#0a0f1c !important;}
+      .cc-hero .kicker{color:#F87820 !important;}
+      .cc-hero h1{font-size:24pt;color:#eaf0ff !important;}
+      .cc-hero h1 em{color:#F87820 !important;}
+      .cc-hero .lead{color:#c9d3e8 !important;font-size:11pt;}
+      .cc-promise{border:1px solid rgba(26,188,156,.35) !important;color:#7fe2cb !important;background:rgba(26,188,156,.10) !important;}
+      .metrics-bar{border-top:1px solid rgba(255,255,255,.10) !important;border-bottom:1px solid rgba(255,255,255,.10) !important;background:#070a12 !important;}
+      .metrics-bar .container{display:flex !important;flex-wrap:wrap !important;gap:18px 30px !important;justify-content:space-around !important;padding:26px 0 !important;text-align:center !important;}
+      .metric .num{color:#F87820 !important;font-weight:900 !important;}
+      .metric .label{color:#9aa7c2 !important;}
+      .how-section{background:#0a0f1c !important;border-top:1px solid rgba(255,255,255,.10) !important;}
+      .how-section .kicker{color:#F87820 !important;}
+      .how-section h2{color:#eaf0ff !important;}
+      .how-step{background:#0c1220 !important;border:1px solid rgba(255,255,255,.10) !important;box-shadow:0 18px 50px rgba(0,0,0,.55) !important;}
+      .how-step .how-num{background:#F87820 !important;color:#120a06 !important;}
+      .how-step h4{color:#eaf0ff !important;}
+      .how-step p{color:#9aa7c2 !important;}
+      .audience-section{background:#070a12 !important;}
+      .audience-section .kicker{color:#F87820 !important;}
+      .audience-section h2{color:#eaf0ff !important;}
+      .audience-section .sub{color:#9aa7c2 !important;}
+      .audience-tile{background:#0c1220 !important;border:1px solid rgba(255,255,255,.10) !important;box-shadow:0 18px 50px rgba(0,0,0,.55) !important;}
+      .audience-tile::before{background:#F87820 !important;}
+      .audience-tile .tile-icon{background:rgba(248,120,32,.12) !important;color:#F87820 !important;}
+      .audience-tile h3{color:#eaf0ff !important;}
+      .audience-tile p{color:#9aa7c2 !important;}
+      .audience-tile .credit-amount{color:#F87820 !important;}
+      .cc-form-wrap{padding:0;background:#070a12 !important;}
+      .cc-form-wrap .kicker{color:#F87820 !important;}
+      .cc-form-wrap h2{font-size:16pt;color:#eaf0ff !important;}
+      .cc-form-wrap .sub{color:#9aa7c2 !important;}
+      .cc-form-card{border:1px solid rgba(255,255,255,.10) !important;box-shadow:0 18px 50px rgba(0,0,0,.55) !important;padding:16px;background:#0c1220 !important;}
+      .cc-form-section{border-color:rgba(255,255,255,.08) !important;}
+      .cc-form-section h3{font-size:12pt;color:#eaf0ff !important;}
+      .cc-form-section .cc-section-hint{color:#9aa7c2 !important;}
+      .field label{color:#eaf0ff !important;font-weight:700;}
+      .field input,.field select,.field textarea{
+        border:1px solid rgba(255,255,255,.10) !important;background:#070a12 !important;color:#eaf0ff !important;
+        font-size:10pt;padding:6px 8px;
+      }
+      .field input::placeholder,.field textarea::placeholder{color:rgba(154,167,194,.5) !important;}
+      .pill-group label.pill{border:1px solid rgba(255,255,255,.10) !important;color:#9aa7c2 !important;background:#070a12 !important;}
+      .btn,.cc-submit{display:none !important;}
+      .cc-success{display:block !important;}
+      .cc-success .check{border-color:#1abc9c !important;color:#1abc9c !important;background:rgba(16,185,129,.15) !important;}
+      .cc-success h3{color:#eaf0ff !important;}
+      .cc-success p{color:#9aa7c2 !important;}
+      #claim-gate{display:none !important;}
+      #claim-form-wrap{display:block !important;}
+      .cc-fineprint{color:#9aa7c2 !important;}
+      .sov-section{background:#0c1430 !important;color:#fff !important;display:block !important;}
+      .sov-section h2{color:#fff !important;}
+      .sov-section p{color:#dbe3ff !important;}
+      .sov-badge{background:rgba(16,185,129,.12) !important;border:1px solid rgba(16,185,129,.45) !important;color:#8effa6 !important;}
+      .footer{border-top:1px solid rgba(255,255,255,.10) !important;color:#9aa7c2 !important;display:block !important;background:#070a12 !important;}
+      .footer a{color:#eaf0ff !important;}
+      a{color:#F87820 !important;text-decoration:none !important;}
+      .container{max-width:100% !important;padding:0 !important;}
+      h2,h3,h4{page-break-after:avoid;}
+      .cc-form-section,.audience-tile,.how-step{page-break-inside:avoid;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="container header-inner">
+    <a class="brand" href="https://spuric.com" aria-label="SPUR Innovation Home">
+      <div class="logo-mark">S</div>
+      <span class="meta"><strong>SPUR Innovation</strong><small>Compute Credits</small></span>
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <button class="nav-toggle" aria-label="Menu" aria-controls="primary-nav" aria-expanded="false" onclick="document.getElementById('primary-nav').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </button>
+      <div id="primary-nav" class="nav-links">
+        <a href="/v2">Apply</a>
+        <a href="https://spuric.com/en/contact.html">Contact</a>
+        <a class="nav-cta" href="#cc-form">Claim credits</a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="cc-hero">
+  <div class="container">
+    <div class="kicker">Small business mindset AI · Sovereign Canadian compute credits</div>
+    <h1>Claim your <em>compute</em>.</h1>
+    <p class="lead">
+      You have been selected to receive SPUR compute credits. Enter your claim code below to unlock your allocation on NVIDIA B300 GPUs -- fully Canadian-owned, PIPEDA-aligned, never routed through US hyperscalers.
+    </p>
+    <div class="cc-promise">Credits activated instantly. No obligation.</div>
+  </div>
+</section>
+
+<!-- METRICS -->
+<section class="metrics-bar">
+  <div class="container">
+    <div class="metric">
+      <div class="num">NVIDIA B300</div>
+      <div class="label">Latest-generation Blackwell GPUs</div>
+    </div>
+    <div class="metric">
+      <div class="num">100%</div>
+      <div class="label">Canadian-owned and operated</div>
+    </div>
+    <div class="metric">
+      <div class="num">0 bytes</div>
+      <div class="label">Leave Canadian soil</div>
+    </div>
+  </div>
+</section>
+
+<!-- CLAIM CODE GATE + FORM -->
+<section class="cc-form-wrap" id="cc-form">
+  <div class="container">
+    <div class="kicker">Claim your compute credits</div>
+    <h2>Enter your claim code.</h2>
+    <p class="sub">You should have received a claim code from SPUR. Enter it below to unlock your credits.</p>
+
+    <div class="cc-form-card" id="cc-form-card">
+
+      <!-- STAGE 1: CLAIM CODE ENTRY -->
+      <div id="claim-gate">
+        <div class="cc-form-section" style="border-top:0;padding-top:6px;">
+          <h3>Claim code</h3>
+          <p class="cc-section-hint">Found in your invitation email or event handout.</p>
+
+          <div class="field" data-field="claim_code" id="claim-code-field">
+            <label for="f-claim-code">Your claim code<span class="req" aria-hidden="true">*</span></label>
+            <input id="f-claim-code" type="text" name="claim_code" required placeholder="e.g. FOUNDER-SPUR2026" style="text-transform:uppercase;font-family:var(--font);letter-spacing:0.04em;">
+            <div class="cc-error" id="claim-code-error">Please enter your claim code.</div>
+          </div>
+
+          <div class="cc-submit">
+            <button type="button" class="btn primary" id="claim-verify-btn">Unlock my credits</button>
+            <div class="cc-fineprint">Don't have a code? <a href="/v2" style="color:var(--orange);text-decoration:underline;">Apply for compute credits instead</a></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- STAGE 2: UNLOCKED CLAIM FORM (hidden until code verified) -->
+      <div id="claim-form-wrap" style="display:none;">
+        <div style="display:flex;align-items:center;gap:10px;padding:14px 18px;margin-bottom:20px;border-radius:12px;background:rgba(26,188,156,.10);border:1px solid rgba(26,188,156,.35);">
+          <span style="color:#1abc9c;font-size:18px;">&#10003;</span>
+          <span style="color:#7fe2cb;font-size:14px;font-weight:700;">Code verified — <span id="claim-track-label">Founder</span> track unlocked (<span id="claim-credits-label">$5,000</span> in credits)</span>
+        </div>
+
+        <form id="credits-form" novalidate>
+
+          <!-- About You -->
+          <div class="cc-form-section">
+            <h3>Claim your credits</h3>
+            <p class="cc-section-hint">Tell us where to send your activation. This takes 30 seconds.</p>
+            <div class="cc-grid-2">
+              <div class="field" data-field="name">
+                <label for="f-name">Your name<span class="req" aria-hidden="true">*</span></label>
+                <input id="f-name" type="text" name="name" autocomplete="name" required placeholder="Jane Doe">
+                <div class="cc-error">Please enter your name.</div>
+              </div>
+              <div class="field" data-field="email">
+                <label for="f-email">Email<span class="req" aria-hidden="true">*</span></label>
+                <input id="f-email" type="email" name="email" autocomplete="email" required placeholder="jane@example.com">
+                <div class="cc-error">Please enter a valid email.</div>
+              </div>
+              <div class="field" data-field="organization">
+                <label for="f-org">Organization / School</label>
+                <input id="f-org" type="text" name="organization" autocomplete="organization" placeholder="Optional">
+              </div>
+              <div class="field" data-field="role">
+                <label for="f-role">Your role<span class="req" aria-hidden="true">*</span></label>
+                <select id="f-role" name="role" required>
+                  <option value="">Select your role</option>
+                  <option>Founder / CEO</option>
+                  <option>Student</option>
+                  <option>Researcher / Academic</option>
+                  <option>CTO / Engineer</option>
+                  <option>Event Participant</option>
+                  <option>Educator / Teacher</option>
+                  <option>Other</option>
+                </select>
+                <div class="cc-error">Please select your role.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GPU Config -->
+          <div class="cc-form-section">
+            <h3>Configuration</h3>
+            <p class="cc-section-hint">Pick the closest match. You can change this later.</p>
+
+            <div class="field" data-field="gpu_preference">
+              <label>GPU preference<span class="req" aria-hidden="true">*</span></label>
+              <div class="pill-group" role="radiogroup" aria-label="GPU preference">
+                <input type="radio" id="gpu-b300" name="gpu_preference" value="b300" required>
+                <label class="pill" for="gpu-b300">NVIDIA B300</label>
+                <input type="radio" id="gpu-h100" name="gpu_preference" value="h100">
+                <label class="pill" for="gpu-h100">NVIDIA H100</label>
+                <input type="radio" id="gpu-nopref" name="gpu_preference" value="no_preference">
+                <label class="pill" for="gpu-nopref">No preference</label>
+              </div>
+              <div class="cc-error">Please pick a GPU option.</div>
+            </div>
+
+            <div class="field" data-field="description">
+              <label for="f-description">What will you build?<span class="req" aria-hidden="true">*</span></label>
+              <textarea id="f-description" name="description" required placeholder="Briefly describe what you plan to build with your credits."></textarea>
+              <div class="cc-error">Please describe your project.</div>
+            </div>
+          </div>
+
+          <!-- honeypot -->
+          <input type="text" name="website" id="f-website" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+
+          <div class="cc-submit">
+            <button type="submit" class="btn primary">Claim my credits</button>
+            <div class="cc-fineprint">By claiming, you agree to SPUR's Privacy Policy. Your data stays in Canada. No US Cloud Act exposure.</div>
+          </div>
+        </form>
+      </div>
+
+      <!-- SUCCESS -->
+      <div class="cc-success" id="cc-success">
+        <div class="check">&#10003;</div>
+        <h3>Credits claimed!</h3>
+        <p id="cc-success-msg">Your compute credits have been activated. Check your email for your SPUR console access.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOVEREIGN BANNER -->
+<section class="sov-section">
+  <div class="container">
+    <h2>Hosted in Canada. No US Cloud Act exposure.</h2>
+    <p>SPUR's compute fleet is owned and operated in data centres across Ontario. Your data, weights, and metadata never leave Canadian soil. PIPEDA-aligned controls, real engineers, no reselling.</p>
+    <div class="sov-badge">&#127809; Sovereign by design</div>
+  </div>
+</section>
+
+<!-- IMPACT STRIP -->
+<section class="impact-strip">
+  <div class="container">
+    <h3>Compute turning into GDP</h3>
+    <div class="impact-stats">
+      <strong>59</strong> people employed across SPUR and our portfolio · <strong>5</strong> data centre sites · <strong>2</strong> companies funded · <strong>100%</strong> Canadian-owned and operated
+    </div>
+    <div class="impact-date">Updated 15 August 2026</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div>&copy; 2026 SPUR Innovation Centre &middot; Waterloo, Ontario, Canada</div>
+    <div>
+      <a href="https://spuric.com/en/standards.html">Standards</a> &middot;
+      <a href="https://spuric.com/en/privacy.html">Privacy</a> &middot;
+      <a href="https://spuric.com/en/contact.html">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var form = document.getElementById('credits-form');
+  var success = document.getElementById('cc-success');
+  var claimGate = document.getElementById('claim-gate');
+  var claimFormWrap = document.getElementById('claim-form-wrap');
+  var verifyBtn = document.getElementById('claim-verify-btn');
+  var claimCodeInput = document.getElementById('f-claim-code');
+  var claimCodeField = document.getElementById('claim-code-field');
+  var claimCodeError = document.getElementById('claim-code-error');
+  var verifiedTrack = '';
+
+  /* ── Stage 1: Verify claim code ── */
+  if(verifyBtn){
+    verifyBtn.addEventListener('click', function(){
+      var code = (claimCodeInput.value || '').trim();
+      claimCodeField.classList.remove('invalid');
+
+      if(!code){
+        claimCodeField.classList.add('invalid');
+        claimCodeError.textContent = 'Please enter your claim code.';
+        return;
+      }
+
+      verifyBtn.disabled = true;
+      verifyBtn.textContent = 'Verifying...';
+
+      fetch('/api/claim', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({claim_code: code})
+      })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        verifyBtn.disabled = false;
+        verifyBtn.textContent = 'Unlock my credits';
+
+        if(data.valid){
+          verifiedTrack = data.track;
+          document.getElementById('claim-track-label').textContent = data.label;
+          document.getElementById('claim-credits-label').textContent = data.credits;
+          claimGate.style.display = 'none';
+          claimFormWrap.style.display = 'block';
+
+          /* Inject track + claim_code into the form as hidden fields */
+          var trackInput = document.createElement('input');
+          trackInput.type = 'hidden';
+          trackInput.name = 'track';
+          trackInput.value = data.track;
+          form.appendChild(trackInput);
+
+          var codeInput = document.createElement('input');
+          codeInput.type = 'hidden';
+          codeInput.name = 'claim_code';
+          codeInput.value = data.claim_code;
+          form.appendChild(codeInput);
+
+          /* Also set use_case and duration defaults so the claim form doesn't require them */
+          var useCaseInput = document.createElement('input');
+          useCaseInput.type = 'hidden';
+          useCaseInput.name = 'use_case';
+          useCaseInput.value = 'claim';
+          form.appendChild(useCaseInput);
+
+          var durationInput = document.createElement('input');
+          durationInput.type = 'hidden';
+          durationInput.name = 'duration';
+          durationInput.value = 'ongoing';
+          form.appendChild(durationInput);
+
+          claimFormWrap.scrollIntoView({behavior:'smooth',block:'start'});
+        } else {
+          claimCodeField.classList.add('invalid');
+          claimCodeError.textContent = data.error || 'Invalid or expired claim code.';
+        }
+      })
+      .catch(function(err){
+        verifyBtn.disabled = false;
+        verifyBtn.textContent = 'Unlock my credits';
+        claimCodeField.classList.add('invalid');
+        claimCodeError.textContent = 'Could not verify code. Check your connection and try again.';
+      });
+    });
+
+    /* Allow Enter key to submit the claim code */
+    claimCodeInput.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        verifyBtn.click();
+      }
+    });
+  }
+
+  /* ── Stage 2: Form validation and submission ── */
+  function validateField(field){
+    var input = field.querySelector('input[type=text],input[type=email],select,textarea');
+    var radioGroup = field.querySelector('.pill-group');
+
+    if(radioGroup){
+      var checked = field.querySelector('input[type=radio]:checked');
+      if(!checked){ field.classList.add('invalid'); return false; }
+      field.classList.remove('invalid'); return true;
+    }
+
+    if(input && input.required){
+      var val = (input.value || '').trim();
+      var valid = !!val;
+      if(input.type === 'email' && val){
+        valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+      }
+      field.classList.toggle('invalid', !valid);
+      return valid;
+    }
+
+    field.classList.remove('invalid');
+    return true;
+  }
+
+  function validateAll(){
+    var fields = form.querySelectorAll('.field[data-field]');
+    var allValid = true;
+    fields.forEach(function(f){ if(!validateField(f)) allValid = false; });
+    return allValid;
+  }
+
+  form.addEventListener('blur', function(e){
+    var field = e.target.closest('.field[data-field]');
+    if(field) validateField(field);
+  }, true);
+
+  form.addEventListener('change', function(e){
+    var field = e.target.closest('.field[data-field]');
+    if(field) validateField(field);
+  }, true);
+
+  var submitBtn = form.querySelector('button[type=submit]');
+  var submitLabel = submitBtn ? submitBtn.textContent : '';
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(!validateAll()){
+      var firstInvalid = form.querySelector('.field.invalid');
+      if(firstInvalid){
+        firstInvalid.scrollIntoView({behavior:'smooth',block:'center'});
+        var input = firstInvalid.querySelector('input,select,textarea');
+        if(input) input.focus();
+      }
+      return;
+    }
+
+    var data = {};
+    var formData = new FormData(form);
+    formData.forEach(function(v,k){ data[k] = v; });
+
+    if(submitBtn){ submitBtn.disabled = true; submitBtn.textContent = 'Sending...'; }
+
+    fetch('/api/submit', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(data)
+    })
+    .then(function(r){ return r.json().then(function(body){ return {ok: r.ok, body: body}; }); })
+    .then(function(result){
+      if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = submitLabel; }
+
+      if(result.ok && result.body.success){
+        form.style.display = 'none';
+        success.classList.add('on');
+
+        var msg = document.getElementById('cc-success-msg');
+        msg.innerHTML = result.body.message +
+          (result.body.email_sent
+            ? '<br><br>A confirmation email is on its way to your inbox.'
+            : '<br><br><span style="color:var(--muted);font-size:13px;">(Email delivery is being configured — your request was still received.)</span>');
+
+        success.scrollIntoView({behavior:'smooth',block:'center'});
+      } else {
+        var errs = result.body && result.body.fields;
+        if(errs){
+          Object.keys(errs).forEach(function(key){
+            var field = form.querySelector('.field[data-field="' + key + '"]');
+            if(field){
+              field.classList.add('invalid');
+              var errDiv = field.querySelector('.cc-error');
+              if(errDiv) errDiv.textContent = errs[key];
+            }
+          });
+        } else {
+          alert(result.body && result.body.error ? result.body.error : 'Something went wrong. Please try again.');
+        }
+        if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = submitLabel; }
+      }
+    })
+    .catch(function(err){
+      if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = submitLabel; }
+      form.style.display = 'none';
+      success.classList.add('on');
+      var msg = document.getElementById('cc-success-msg');
+      msg.innerHTML = 'Thanks, ' + (data.name || 'there') + '! We received your claim. ' +
+        '<br><br><span style="color:var(--muted);font-size:13px;">(The server is not running — start it with: python credits_server.py)</span>';
+      success.scrollIntoView({behavior:'smooth',block:'center'});
+    });
+  });
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var target = document.querySelector(this.getAttribute('href'));
+      if(target){
+        e.preventDefault();
+        target.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
