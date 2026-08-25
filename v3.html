@@ -717,15 +717,44 @@ footer a:hover{color:#fff;text-decoration:underline}
 </section>
 -->
 
-<!-- ══════════ 07 · BE THE FIRST ══════════ -->
-<section class="sec">
-  <div class="wrap" style="max-width:560px;text-align:center">
+<!-- ══════════ 07 · TESTIMONIALS (dynamic) ══════════ -->
+<section class="sec" id="testimonials-section">
+  <div id="testimonials-empty" class="wrap" style="max-width:560px;text-align:center">
     <span class="eyebrow">Your story starts here</span>
     <h2 style="margin:14px 0 16px;font-size:24px;white-space:nowrap">Your quote could be here next.</h2>
     <p class="lead" style="margin:0 auto 28px;font-size:21px;line-height:1.5">We are collecting testimonials from builders right now. Build something great with SPUR credits and yours could be the next one featured here.</p>
     <a class="btn btn-lg" data-cta data-section="firstbuilder" href="#claim">Claim your credits →</a>
   </div>
+  <div id="testimonials-grid" class="wrap" style="display:none">
+    <div class="sec-head">
+      <h2>What builders say after they ship.</h2>
+    </div>
+    <div class="cols3" id="testimonials-cards"></div>
+  </div>
 </section>
+<script>
+(function(){
+  fetch("/api/testimonials").then(function(r){return r.json()}).then(function(data){
+    var ts = data.testimonials || [];
+    if(ts.length >= 3){
+      document.getElementById("testimonials-empty").style.display = "none";
+      document.getElementById("testimonials-grid").style.display = "block";
+      var cards = document.getElementById("testimonials-cards");
+      ts.forEach(function(t){
+        var card = document.createElement("div");
+        card.className = "quote";
+        card.innerHTML = '<div class="qmark">"</div>'
+          + "<p>" + t.quote + "</p>"
+          + '<div class="qattr">'
+          + '<div class="qavatar">PHOTO</div>'
+          + "<div><b>" + t.name + "</b><span>" + (t.role || "") + (t.company ? ", " + t.company : "") + "</span></div>"
+          + "</div>";
+        cards.appendChild(card);
+      });
+    }
+  }).catch(function(){});
+})();
+</script>
 
 <!-- ══════════ 08 · HOW IT WORKS ══════════ -->
 <section class="sec subtle">

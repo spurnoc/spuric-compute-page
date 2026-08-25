@@ -445,6 +445,8 @@ class CreditsHandler(BaseHTTPRequestHandler):
             self._handle_admin_analytics()
         elif path == "/api/fomo/feed":
             self._handle_fomo_feed()
+        elif path == "/api/testimonials":
+            self._handle_testimonials()
         elif path == "/api/track":
             self._handle_track()
         elif path == "/api/turnstile-site-key":
@@ -757,6 +759,17 @@ class CreditsHandler(BaseHTTPRequestHandler):
                 "submitted_at": s.get("submitted_at", ""),
             })
         self._json_response({"submissions": anon})
+
+    def _handle_testimonials(self):
+        """GET /api/testimonials - returns approved testimonials."""
+        testimonials_path = os.path.join(os.path.dirname(__file__), "testimonials.json")
+        try:
+            with open(testimonials_path, "r", encoding="utf-8") as f:
+                testimonials = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            testimonials = []
+        approved = [t for t in testimonials if t.get("approved", False)]
+        self._json_response({"testimonials": approved})
 
     def _handle_admin_submissions(self):
         """GET /api/admin/submissions — return all submissions + claim codes."""
