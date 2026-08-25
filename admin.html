@@ -344,7 +344,7 @@
     }
     @media(max-width:768px){.codes-grid{grid-template-columns:1fr;}}
     .code-card{
-      background:var(--bg);border:1px solid var(--border-subtle);
+      position:relative;background:var(--bg);border:1px solid var(--border-subtle);
       border-radius:var(--radius);padding:20px;
     }
     .code-card .code-label{font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;}
@@ -580,7 +580,7 @@
           <button class="btn-secondary" onclick="resetCodeForm()">Cancel</button>
         </div>
       </div>
-      <div id="codes-list"></div>
+      <div id="codes-list" class="codes-grid"></div>
     </div>
 
     <!-- ANALYTICS PANEL -->
@@ -885,13 +885,15 @@ function renderCodes(){
     return;
   }
   list.innerHTML = CLAIM_CODES.map(function(c){
-    return '<div class="code-row">' +
-      '<div class="code-code">' + esc(c.code) + '</div>' +
-      '<div class="code-info"><b>' + esc(c.label || c.track) + '</b> &middot; ' + esc(c.credits) + ' &middot; Track: ' + esc(c.track) + '</div>' +
-      '<div class="code-actions">' +
+    return '<div class="code-card">' +
+      '<div class="code-actions" style="position:absolute;top:12px;right:12px;display:flex;gap:6px">' +
         '<button class="btn-sm" onclick="editCode(\'' + esc(c.code) + '\')">Edit</button>' +
         '<button class="btn-sm danger" onclick="deleteCode(\'' + esc(c.code) + '\')">Delete</button>' +
       '</div>' +
+      '<div class="code-label">' + esc(c.label || c.track) + '</div>' +
+      '<div class="code-value">' + esc(c.code) + '</div>' +
+      '<div class="code-credits">' + esc(c.credits) + '</div>' +
+      '<div class="code-track">Track: ' + esc(c.track) + '</div>' +
     '</div>';
   }).join('');
 }
