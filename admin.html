@@ -351,6 +351,24 @@
     .code-card .code-value{font-family:var(--font-mono);font-size:18px;font-weight:700;color:var(--text-primary);margin-bottom:4px;}
     .code-card .code-credits{font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--accent);}
     .code-card .code-track{font-size:13px;color:var(--text-muted);margin-top:4px;}
+    .code-card .card-actions{
+      display:flex;gap:8px;margin-top:16px;padding-top:14px;
+      border-top:1px solid var(--border-subtle);
+    }
+    .code-card .card-btn{
+      flex:1;padding:8px 14px;font-size:13px;font-weight:600;border-radius:6px;
+      cursor:pointer;transition:all .15s;text-align:center;
+    }
+    .code-card .card-btn.edit{
+      border:1px solid var(--border-subtle);background:var(--bg);color:var(--text-body);
+    }
+    .code-card .card-btn.edit:hover{border-color:var(--accent);color:var(--accent);background:oklch(0.98 0.01 250);}
+    .code-card .card-btn.delete{
+      border:1px solid var(--border-subtle);background:var(--bg);color:var(--text-muted);
+    }
+    .code-card .card-btn.delete:hover{border-color:oklch(0.62 0.22 25);color:oklch(0.55 0.22 25);background:oklch(0.97 0.02 25);}
+    .codes-add-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+    .codes-add-bar .btn-primary{padding:9px 20px;font-size:14px;font-weight:600;border-radius:6px;cursor:pointer;border:none}
 
     /* ── LOADING ────────────────────────────────────────── */
     .loading{text-align:center;padding:48px;color:var(--text-muted);font-size:14px;}
@@ -557,28 +575,12 @@
 
     <!-- CLAIM CODES PANEL -->
     <div class="tab-panel" id="panel-codes">
-      <div class="section-title">
-        <h2>Claim Codes</h2>
-        <span class="count" id="codes-count"></span>
-      </div>
-      <div class="code-form">
-        <h3 id="code-form-title">Add new claim code</h3>
-        <div class="form-row three">
-          <input type="text" id="cc-code" placeholder="e.g. FOUNDER-SPUR2026" style="font-family:var(--font-mono)">
-          <select id="cc-track">
-            <option value="founder">Founder / Startup</option>
-            <option value="student">Student / Researcher</option>
-            <option value="event">Event Participant</option>
-          </select>
-          <input type="text" id="cc-credits" placeholder="e.g. $5,000">
+      <div class="codes-add-bar">
+        <div class="section-title">
+          <h2>Claim Codes</h2>
+          <span class="count" id="codes-count"></span>
         </div>
-        <div class="form-row">
-          <input type="text" id="cc-label" placeholder="Label (defaults to track name)">
-        </div>
-        <div class="form-actions">
-          <button class="btn-primary" onclick="saveCode()">Save code</button>
-          <button class="btn-secondary" onclick="resetCodeForm()">Cancel</button>
-        </div>
+        <button class="btn-primary" onclick="openCodeModal()">+ Add code</button>
       </div>
       <div id="codes-list" class="codes-grid"></div>
     </div>
@@ -635,6 +637,42 @@
     </div>
     <div class="modal-body" id="modal-body"></div>
     <div class="modal-actions" id="modal-actions"></div>
+  </div>
+</div>
+
+<!-- CODE MODAL -->
+<div class="modal-overlay" id="code-modal-overlay" onclick="if(event.target===this)closeCodeModal()">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-header">
+      <h3 id="code-modal-title">Add claim code</h3>
+      <button class="modal-close" onclick="closeCodeModal()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="margin-bottom:14px">
+        <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text-body)">Code</label>
+        <input type="text" id="cc-code" placeholder="e.g. FOUNDER-SPUR2026" style="width:100%;padding:10px 14px;font-size:14px;border:1px solid var(--border-subtle);border-radius:6px;font-family:var(--font-mono);box-sizing:border-box">
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text-body)">Track</label>
+        <select id="cc-track" style="width:100%;padding:10px 14px;font-size:14px;border:1px solid var(--border-subtle);border-radius:6px;box-sizing:border-box">
+          <option value="founder">Founder / Startup</option>
+          <option value="student">Student / Researcher</option>
+          <option value="event">Event Participant</option>
+        </select>
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text-body)">Credits</label>
+        <input type="text" id="cc-credits" placeholder="e.g. $5,000" style="width:100%;padding:10px 14px;font-size:14px;border:1px solid var(--border-subtle);border-radius:6px;box-sizing:border-box">
+      </div>
+      <div style="margin-bottom:6px">
+        <label style="display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--text-body)">Label</label>
+        <input type="text" id="cc-label" placeholder="Defaults to track name" style="width:100%;padding:10px 14px;font-size:14px;border:1px solid var(--border-subtle);border-radius:6px;box-sizing:border-box">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeCodeModal()" style="padding:9px 20px;font-size:14px;font-weight:600;border-radius:6px;cursor:pointer;border:1px solid var(--border-subtle);background:var(--bg);color:var(--text-body)">Cancel</button>
+      <button class="btn-primary" onclick="saveCode()" style="padding:9px 20px;font-size:14px;font-weight:600;border-radius:6px;cursor:pointer;border:none">Save</button>
+    </div>
   </div>
 </div>
 
@@ -881,21 +919,36 @@ function renderCodes(){
   if(count) count.textContent = CLAIM_CODES.length + ' active';
   if(!list) return;
   if(CLAIM_CODES.length === 0){
-    list.innerHTML = '<p style="color:var(--text-muted);padding:20px 0">No claim codes yet. Add one above.</p>';
+    list.innerHTML = '<p style="color:var(--text-muted);padding:20px 0">No claim codes yet. Click "Add code" to create one.</p>';
     return;
   }
   list.innerHTML = CLAIM_CODES.map(function(c){
     return '<div class="code-card">' +
-      '<div class="code-actions" style="position:absolute;top:12px;right:12px;display:flex;gap:6px">' +
-        '<button class="btn-sm" onclick="editCode(\'' + esc(c.code) + '\')">Edit</button>' +
-        '<button class="btn-sm danger" onclick="deleteCode(\'' + esc(c.code) + '\')">Delete</button>' +
-      '</div>' +
       '<div class="code-label">' + esc(c.label || c.track) + '</div>' +
       '<div class="code-value">' + esc(c.code) + '</div>' +
       '<div class="code-credits">' + esc(c.credits) + '</div>' +
       '<div class="code-track">Track: ' + esc(c.track) + '</div>' +
+      '<div class="card-actions">' +
+        '<button class="card-btn edit" onclick="editCode(\'' + esc(c.code) + '\')">Edit</button>' +
+        '<button class="card-btn delete" onclick="deleteCode(\'' + esc(c.code) + '\')">Delete</button>' +
+      '</div>' +
     '</div>';
   }).join('');
+}
+
+function openCodeModal(){
+  editingCode = null;
+  document.getElementById('code-modal-title').textContent = 'Add claim code';
+  document.getElementById('cc-code').value = '';
+  document.getElementById('cc-code').readOnly = false;
+  document.getElementById('cc-track').value = 'founder';
+  document.getElementById('cc-credits').value = '';
+  document.getElementById('cc-label').value = '';
+  document.getElementById('code-modal-overlay').classList.add('show');
+}
+
+function closeCodeModal(){
+  document.getElementById('code-modal-overlay').classList.remove('show');
 }
 
 function saveCode(){
@@ -917,7 +970,7 @@ function saveCode(){
         CLAIM_CODES.push(r.body.claim_code);
       }
       renderCodes();
-      resetCodeForm();
+      closeCodeModal();
     } else {
       toast(r.body.error || 'Failed to save');
     }
@@ -928,12 +981,13 @@ function editCode(code){
   var c = CLAIM_CODES.find(function(x){ return x.code.toUpperCase() === code.toUpperCase(); });
   if(!c) return;
   editingCode = code;
-  document.getElementById('code-form-title').textContent = 'Edit ' + code;
+  document.getElementById('code-modal-title').textContent = 'Edit ' + code;
   document.getElementById('cc-code').value = c.code;
   document.getElementById('cc-code').readOnly = true;
   document.getElementById('cc-track').value = c.track;
   document.getElementById('cc-credits').value = c.credits;
   document.getElementById('cc-label').value = c.label || '';
+  document.getElementById('code-modal-overlay').classList.add('show');
 }
 
 function deleteCode(code){
@@ -947,16 +1001,6 @@ function deleteCode(code){
       toast(r.body.error || 'Failed to delete');
     }
   });
-}
-
-function resetCodeForm(){
-  editingCode = null;
-  document.getElementById('code-form-title').textContent = 'Add new claim code';
-  document.getElementById('cc-code').value = '';
-  document.getElementById('cc-code').readOnly = false;
-  document.getElementById('cc-track').value = 'founder';
-  document.getElementById('cc-credits').value = '';
-  document.getElementById('cc-label').value = '';
 }
 
 // ── CSV EXPORT ──────────────────────────────────────────
