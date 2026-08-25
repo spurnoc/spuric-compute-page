@@ -376,11 +376,28 @@
     /* ── ANALYTICS ──────────────────────────────────────── */
     .tabs{display:flex;gap:0;border-bottom:1px solid var(--border-subtle);margin-bottom:24px}
     .tab{padding:12px 20px;font-size:14px;font-weight:600;color:var(--text-muted);
-      cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+      border-bottom:2px solid transparent;cursor:pointer;user-select:none;}
     .tab:hover{color:var(--text-primary)}
     .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
     .tab-panel{display:none}
     .tab-panel.active{display:block}
+    .code-row{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1px solid var(--border-subtle);border-radius:var(--radius);margin-bottom:10px;background:#fff}
+    .code-row .code-code{font-family:var(--font-mono);font-size:15px;font-weight:700;min-width:200px}
+    .code-row .code-info{flex:1;font-size:13px;color:var(--text-muted)}
+    .code-row .code-info b{color:var(--text-primary)}
+    .code-row .code-actions{display:flex;gap:8px}
+    .code-row .btn-sm{padding:6px 14px;font-size:12px;border-radius:6px;cursor:pointer;border:1px solid var(--border-subtle);background:#fff;color:var(--text-body)}
+    .code-row .btn-sm:hover{border-color:var(--accent);color:var(--accent)}
+    .code-row .btn-sm.danger:hover{border-color:#e5484d;color:#e5484d}
+    .code-form{background:#fff;border:1px solid var(--border-subtle);border-radius:var(--radius);padding:20px;margin-bottom:20px}
+    .code-form h3{font-size:15px;margin-bottom:14px}
+    .code-form .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+    .code-form .form-row.three{grid-template-columns:1fr 1fr 1fr}
+    .code-form input,.code-form select{width:100%;padding:9px 12px;font-size:14px;border:1px solid var(--border-subtle);border-radius:6px;font-family:inherit}
+    .code-form input:focus,.code-form select:focus{outline:none;border-color:var(--accent)}
+    .code-form .form-actions{display:flex;gap:10px;margin-top:4px}
+    .code-form .btn-primary{padding:9px 20px;font-size:14px;font-weight:600;border-radius:6px;cursor:pointer;border:none;background:var(--accent);color:#fff}
+    .code-form .btn-secondary{padding:9px 20px;font-size:14px;font-weight:600;border-radius:6px;cursor:pointer;border:1px solid var(--border-subtle);background:#fff;color:var(--text-body)}
 
     /* bar chart */
     .bar-chart{display:flex;align-items:flex-end;gap:4px;height:120px;margin:16px 0;padding:0 4px}
@@ -456,6 +473,7 @@
     <!-- TABS -->
     <div class="tabs">
       <div class="tab active" onclick="switchTab('submissions')">Submissions</div>
+      <div class="tab" onclick="switchTab('codes')">Claim Codes</div>
       <div class="tab" onclick="switchTab('analytics')">Analytics</div>
     </div>
 
@@ -535,14 +553,35 @@
       <p>Compute credit requests will appear here once the intake form goes live.</p>
     </div>
 
-    <!-- CLAIM CODES -->
-    <div class="section-title">
-      <h2>Claim codes</h2>
-      <span class="count" id="codes-count"></span>
-    </div>
-    <div class="codes-grid" id="codes-grid"></div>
-
     </div><!-- /panel-submissions -->
+
+    <!-- CLAIM CODES PANEL -->
+    <div class="tab-panel" id="panel-codes">
+      <div class="section-title">
+        <h2>Claim Codes</h2>
+        <span class="count" id="codes-count"></span>
+      </div>
+      <div class="code-form">
+        <h3 id="code-form-title">Add new claim code</h3>
+        <div class="form-row three">
+          <input type="text" id="cc-code" placeholder="e.g. FOUNDER-SPUR2026" style="font-family:var(--font-mono)">
+          <select id="cc-track">
+            <option value="founder">Founder / Startup</option>
+            <option value="student">Student / Researcher</option>
+            <option value="event">Event Participant</option>
+          </select>
+          <input type="text" id="cc-credits" placeholder="e.g. $5,000">
+        </div>
+        <div class="form-row">
+          <input type="text" id="cc-label" placeholder="Label (defaults to track name)">
+        </div>
+        <div class="form-actions">
+          <button class="btn-primary" onclick="saveCode()">Save code</button>
+          <button class="btn-secondary" onclick="resetCodeForm()">Cancel</button>
+        </div>
+      </div>
+      <div id="codes-list"></div>
+    </div>
 
     <!-- ANALYTICS PANEL -->
     <div class="tab-panel" id="panel-analytics">
@@ -833,18 +872,89 @@ function updateStatus(idx, status){
   });
 }
 
-// ── CLAIM CODES ─────────────────────────────────────────
+// ── CLAIM CODES CRUD ─────────────────────────────────────
+var editingCode = null;
+
 function renderCodes(){
-  var grid = document.getElementById('codes-grid');
-  document.getElementById('codes-count').textContent = CLAIM_CODES.length + ' active';
-  grid.innerHTML = CLAIM_CODES.map(function(c){
-    return '<div class="code-card">' +
-      '<div class="code-label">' + esc(c.label) + '</div>' +
-      '<div class="code-value">' + esc(c.code) + '</div>' +
-      '<div class="code-credits">' + esc(c.credits) + '</div>' +
-      '<div class="code-track">Track: ' + esc(c.track) + '</div>' +
+  var list = document.getElementById('codes-list');
+  var count = document.getElementById('codes-count');
+  if(count) count.textContent = CLAIM_CODES.length + ' active';
+  if(!list) return;
+  if(CLAIM_CODES.length === 0){
+    list.innerHTML = '<p style="color:var(--text-muted);padding:20px 0">No claim codes yet. Add one above.</p>';
+    return;
+  }
+  list.innerHTML = CLAIM_CODES.map(function(c){
+    return '<div class="code-row">' +
+      '<div class="code-code">' + esc(c.code) + '</div>' +
+      '<div class="code-info"><b>' + esc(c.label || c.track) + '</b> &middot; ' + esc(c.credits) + ' &middot; Track: ' + esc(c.track) + '</div>' +
+      '<div class="code-actions">' +
+        '<button class="btn-sm" onclick="editCode(\'' + esc(c.code) + '\')">Edit</button>' +
+        '<button class="btn-sm danger" onclick="deleteCode(\'' + esc(c.code) + '\')">Delete</button>' +
+      '</div>' +
     '</div>';
   }).join('');
+}
+
+function saveCode(){
+  var code = document.getElementById('cc-code').value.trim().toUpperCase();
+  var track = document.getElementById('cc-track').value;
+  var credits = document.getElementById('cc-credits').value.trim();
+  var label = document.getElementById('cc-label').value.trim();
+  if(!code){ toast('Code is required'); return; }
+
+  var endpoint = editingCode ? '/api/admin/claim-codes/update' : '/api/admin/claim-codes';
+  var payload = {code: code, track: track, credits: credits, label: label};
+
+  api(endpoint, 'POST', payload).then(function(r){
+    if(r.ok){
+      toast(editingCode ? 'Code updated' : 'Code created');
+      if(r.body.claim_codes){
+        CLAIM_CODES = r.body.claim_codes;
+      } else if(r.body.claim_code){
+        CLAIM_CODES.push(r.body.claim_code);
+      }
+      renderCodes();
+      resetCodeForm();
+    } else {
+      toast(r.body.error || 'Failed to save');
+    }
+  });
+}
+
+function editCode(code){
+  var c = CLAIM_CODES.find(function(x){ return x.code.toUpperCase() === code.toUpperCase(); });
+  if(!c) return;
+  editingCode = code;
+  document.getElementById('code-form-title').textContent = 'Edit ' + code;
+  document.getElementById('cc-code').value = c.code;
+  document.getElementById('cc-code').readOnly = true;
+  document.getElementById('cc-track').value = c.track;
+  document.getElementById('cc-credits').value = c.credits;
+  document.getElementById('cc-label').value = c.label || '';
+}
+
+function deleteCode(code){
+  if(!confirm('Delete claim code ' + code + '?')) return;
+  api('/api/admin/claim-codes/delete', 'POST', {code: code}).then(function(r){
+    if(r.ok){
+      toast('Code deleted');
+      CLAIM_CODES = r.body.claim_codes || CLAIM_CODES.filter(function(c){ return c.code.toUpperCase() !== code.toUpperCase(); });
+      renderCodes();
+    } else {
+      toast(r.body.error || 'Failed to delete');
+    }
+  });
+}
+
+function resetCodeForm(){
+  editingCode = null;
+  document.getElementById('code-form-title').textContent = 'Add new claim code';
+  document.getElementById('cc-code').value = '';
+  document.getElementById('cc-code').readOnly = false;
+  document.getElementById('cc-track').value = 'founder';
+  document.getElementById('cc-credits').value = '';
+  document.getElementById('cc-label').value = '';
 }
 
 // ── CSV EXPORT ──────────────────────────────────────────

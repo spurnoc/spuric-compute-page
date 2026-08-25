@@ -145,15 +145,19 @@ def update_submission_status(sub_id, status):
             return s
     return None
 
-# ── Static claim codes (same as /api/claim) ───────────────────────────
-CLAIM_CODES = [
-    {"code": "FOUNDER-SPUR2026", "track": "founder", "credits": "$5,000", "label": "Founder / Startup"},
-    {"code": "STUDENT-SPUR2026", "track": "student", "credits": "$500", "label": "Student / Researcher"},
-    {"code": "EVENT-SPUR2026", "track": "event", "credits": "$1,000", "label": "Event Participant"},
-    {"code": "FOUNDER-DEMO", "track": "founder", "credits": "$5,000", "label": "Founder / Startup"},
-    {"code": "STUDENT-DEMO", "track": "student", "credits": "$500", "label": "Student / Researcher"},
-    {"code": "EVENT-DEMO", "track": "event", "credits": "$1,000", "label": "Event Participant"},
-]
+# ── Claim codes (stored in claim_codes.json, CRUD via admin API) ──
+CLAIM_CODES_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "claim_codes.json")
+
+def load_claim_codes():
+    try:
+        with open(CLAIM_CODES_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return []
+
+def save_claim_codes(codes):
+    with open(CLAIM_CODES_PATH, "w", encoding="utf-8") as f:
+        json.dump(codes, f, indent=2)
 
 TRACK_LABELS = {
     "founder": "Founder / Startup",
@@ -441,6 +445,8 @@ class CreditsHandler(BaseHTTPRequestHandler):
             self._json_response({"status": "ok", "email_configured": email_ready, "provider": provider})
         elif path == "/api/admin/submissions":
             self._handle_admin_submissions()
+        elif path == "/api/admin/claim-codes":
+            self._handle_admin_claim_codes_get()
         elif path == "/api/admin/analytics":
             self._handle_admin_analytics()
         elif path == "/api/fomo/feed":
@@ -467,6 +473,12 @@ class CreditsHandler(BaseHTTPRequestHandler):
             self._handle_track()
         elif path.startswith("/api/admin/submissions/") and path.endswith("/status"):
             self._handle_admin_update_status(path)
+        elif path == "/api/admin/claim-codes":
+            self._handle_admin_claim_codes_mutate("create")
+        elif path == "/api/admin/claim-codes/update":
+            self._handle_admin_claim_codes_mutate("update")
+        elif path == "/api/admin/claim-codes/delete":
+            self._handle_admin_claim_codes_mutate("delete")
         else:
             self._json_response({"error": "Not found"}, 404)
 
@@ -622,16 +634,9 @@ class CreditsHandler(BaseHTTPRequestHandler):
             self._json_response({"valid": False, "error": "Enter a claim code."}, 422)
             return
 
-        # Valid claim codes. Format: TRACK-XXXXXX
-        # In production these would be in a database with one-time-use tracking.
-        VALID_CODES = {
-            "FOUNDER-SPUR2026": {"track": "founder", "credits": "$5,000", "label": "Founder / Startup"},
-            "STUDENT-SPUR2026": {"track": "student", "credits": "$500", "label": "Student / Researcher"},
-            "EVENT-SPUR2026": {"track": "event", "credits": "$1,000", "label": "Event Participant"},
-            "FOUNDER-DEMO": {"track": "founder", "credits": "$5,000", "label": "Founder / Startup"},
-            "STUDENT-DEMO": {"track": "student", "credits": "$500", "label": "Student / Researcher"},
-            "EVENT-DEMO": {"track": "event", "credits": "$1,000", "label": "Event Participant"},
-        }
+        # Valid claim codes loaded from claim_codes.json
+        claim_codes = load_claim_codes()
+        VALID_CODES = {c["code"].upper(): c for c in claim_codes}
 
         entry = VALID_CODES.get(claim_code)
         if not entry:
@@ -778,7 +783,7 @@ class CreditsHandler(BaseHTTPRequestHandler):
             self._json_response({"error": "Unauthorized"}, 401)
             return
         subs = load_submissions()
-        self._json_response({"submissions": subs, "claim_codes": CLAIM_CODES})
+        self._json_response({"submissions": subs, "claim_codes": load_claim_codes()})
 
     def _handle_admin_update_status(self, path):
         """PUT/POST /api/admin/submissions/{id}/status — update submission status."""
@@ -818,13 +823,96 @@ class CreditsHandler(BaseHTTPRequestHandler):
         else:
             self._json_response({"error": "Submission not found"}, 404)
 
+    def _check_admin_token(self):
+        token = self.headers.get("Authorization", "").replace("Bearer ", "").replace("Token ", "").strip()
+        return token == ADMIN_TOKEN
+
+    def _handle_admin_claim_codes_get(self):
+        """GET /api/admin/claim-codes - list all claim codes."""
+        if not self._check_admin_token():
+            self._json_response({"error": "Unauthorized"}, 401)
+            return
+        codes = load_claim_codes()
+        self._json_response({"claim_codes": codes})
+
+    def _handle_admin_claim_codes_mutate(self, action):
+        """POST /api/admin/claim-codes (create), /update, /delete."""
+        if not self._check_admin_token():
+            self._json_response({"error": "Unauthorized"}, 401)
+            return
+        content_length = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(content_length).decode("utf-8")
+        try:
+            data = json.loads(body)
+        except json.JSONDecodeError:
+            self._json_response({"error": "Invalid JSON"}, 400)
+            return
+
+        codes = load_claim_codes()
+
+        if action == "create":
+            code = (data.get("code") or "").strip().upper()
+            track = (data.get("track") or "").strip().lower()
+            credits = (data.get("credits") or "").strip()
+            label = (data.get("label") or "").strip()
+            if not code or not track:
+                self._json_response({"error": "Code and track are required"}, 422)
+                return
+            if any(c["code"].upper() == code for c in codes):
+                self._json_response({"error": "Code already exists"}, 409)
+                return
+            if track not in TRACK_LABELS:
+                self._json_response({"error": "Track must be founder, student, or event"}, 422)
+                return
+            entry = {"code": code, "track": track, "credits": credits or TRACK_CREDITS.get(track, ""), "label": label or TRACK_LABELS.get(track, "")}
+            codes.append(entry)
+            save_claim_codes(codes)
+            print(f"[ADMIN] Claim code created: {code}")
+            self._json_response({"success": True, "claim_code": entry})
+
+        elif action == "update":
+            code = (data.get("code") or "").strip().upper()
+            if not code:
+                self._json_response({"error": "Code is required"}, 422)
+                return
+            found = False
+            for c in codes:
+                if c["code"].upper() == code:
+                    if data.get("track"):
+                        c["track"] = data["track"].strip().lower()
+                    if data.get("credits"):
+                        c["credits"] = data["credits"].strip()
+                    if data.get("label"):
+                        c["label"] = data["label"].strip()
+                    found = True
+                    break
+            if not found:
+                self._json_response({"error": "Code not found"}, 404)
+                return
+            save_claim_codes(codes)
+            print(f"[ADMIN] Claim code updated: {code}")
+            self._json_response({"success": True, "claim_codes": codes})
+
+        elif action == "delete":
+            code = (data.get("code") or "").strip().upper()
+            if not code:
+                self._json_response({"error": "Code is required"}, 422)
+                return
+            new_codes = [c for c in codes if c["code"].upper() != code]
+            if len(new_codes) == len(codes):
+                self._json_response({"error": "Code not found"}, 404)
+                return
+            save_claim_codes(new_codes)
+            print(f"[ADMIN] Claim code deleted: {code}")
+            self._json_response({"success": True, "claim_codes": new_codes})
+
     def _json_response(self, data, status=200):
         body = json.dumps(data).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
         self.wfile.write(body)
@@ -832,7 +920,7 @@ class CreditsHandler(BaseHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(204)
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
 
