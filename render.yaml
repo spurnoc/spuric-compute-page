@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: spur-compute-credits
+    env: docker
+    repo: https://github.com/spurnoc/spuric-compute-page
+    branch: main
+    plan: free
+    envVars:
+      - key: TURSO_URL
+        sync: false
+      - key: TURSO_TOKEN
+        sync: false
+      - key: ADMIN_TOKEN
+        sync: false
+      - key: BASE_URL
+        sync: false

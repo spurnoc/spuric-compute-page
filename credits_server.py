@@ -69,10 +69,6 @@ RESEND_API_URL = "https://api.resend.com/emails"
 
 PAGES_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# ── Submission persistence ────────────────────────────────────────────
-SUBMISSIONS_FILE = os.path.join(PAGES_DIR, "submissions.json")
-EVENTS_FILE = os.path.join(PAGES_DIR, "analytics_events.json")
-
 ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "spurnoc")
 
 # ── Cloudflare Turnstile (free bot protection) ───────────────────────
@@ -80,25 +76,57 @@ TURNSTILE_SITE_KEY = os.getenv("TURNSTILE_SITE_KEY", "")  # set to enable
 TURNSTILE_SECRET_KEY = os.getenv("TURNSTILE_SECRET_KEY", "")  # set to enable
 TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
 
-# ── Analytics persistence ─────────────────────────────────────────────
-def load_events():
+# ── Turso (libSQL) database ──────────────────────────────────────────
+TURSO_URL = os.getenv("TURSO_URL", "")
+TURSO_TOKEN = os.getenv("TURSO_TOKEN", "")
+TURSO_API_URL = f"{TURSO_URL}/v2/pipeline" if TURSO_URL else ""
+
+
+def turso_execute(sql, args=None):
+    """Execute a SQL statement on Turso. Returns the raw response dict."""
+    if not TURSO_API_URL:
+        print("[TURSO] No TURSO_URL configured")
+        return {"results": [{"type": "error", "error": {"message": "No database configured"}}]}
+    stmt = {"sql": sql}
+    if args:
+        stmt["args"] = [{"type": "text", "value": str(a)} for a in args]
+    payload = json.dumps({"requests": [{"type": "execute", "stmt": stmt}, {"type": "close"}]}).encode("utf-8")
+    req = urllib.request.Request(
+        TURSO_API_URL, data=payload,
+        headers={"Authorization": f"Bearer {TURSO_TOKEN}", "Content-Type": "application/json"},
+        method="POST",
+    )
     try:
-        with open(EVENTS_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except Exception as e:
+        print(f"[TURSO] Error executing SQL: {e}")
+        return {"results": [{"type": "error", "error": {"message": str(e)}}]}
+
+
+def turso_query(sql, args=None):
+    """Execute a SELECT and return rows as list of dicts."""
+    data = turso_execute(sql, args)
+    results = data.get("results", [])
+    if not results or results[0].get("type") != "ok":
+        err = results[0].get("error", {}).get("message", "unknown") if results else "no results"
+        print(f"[TURSO] Query error: {err}")
         return []
+    result = results[0].get("response", {}).get("result", {})
+    cols = [c["name"] for c in result.get("cols", [])]
+    rows = []
+    for row in result.get("rows", []):
+        vals = []
+        for cell in row:
+            if cell is None:
+                vals.append(None)
+            elif isinstance(cell, dict):
+                vals.append(cell.get("value"))
+            else:
+                vals.append(cell)
+        rows.append(dict(zip(cols, vals)))
+    return rows
 
-def save_events(events):
-    with open(EVENTS_FILE, "w", encoding="utf-8") as f:
-        json.dump(events, f, indent=2, ensure_ascii=False)
-
-def add_event(event):
-    events = load_events()
-    events.append(event)
-    # Keep last 5000 events to avoid unbounded growth
-    if len(events) > 5000:
-        events = events[-5000:]
-    save_events(events)
 
 def verify_turnstile(token):
     """Verify a Cloudflare Turnstile token. Returns True if valid or not configured."""
@@ -107,7 +135,7 @@ def verify_turnstile(token):
     if not token:
         return False
     try:
-        data = urllib.parse.urlencode({"secret": TURNSTILE_SECRET_KEY, "response": token}).encode()
+        data = urlencode({"secret": TURNSTILE_SECRET_KEY, "response": token}).encode()
         req = urllib.request.Request(TURNSTILE_VERIFY_URL, data=data, method="POST")
         with urllib.request.urlopen(req, timeout=10) as resp:
             result = json.loads(resp.read().decode())
@@ -116,48 +144,50 @@ def verify_turnstile(token):
         print(f"[TURNSTILE] Verification error: {e}")
         return False
 
-def load_submissions():
-    """Load submissions from JSON file."""
-    try:
-        with open(SUBMISSIONS_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        return []
 
-def save_submissions(subs):
-    """Save submissions to JSON file."""
-    with open(SUBMISSIONS_FILE, "w", encoding="utf-8") as f:
-        json.dump(subs, f, indent=2, ensure_ascii=False)
+# ── Database-backed data functions ───────────────────────────────────
+def load_submissions():
+    return turso_query("SELECT * FROM submissions ORDER BY created_at DESC")
 
 def add_submission(sub):
-    """Add a submission and persist."""
-    subs = load_submissions()
-    subs.append(sub)
-    save_submissions(subs)
+    turso_execute(
+        "INSERT INTO submissions (name, email, organization, description, track, claim_code, form_version, status, ip, user_agent, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+        [sub.get("name",""), sub.get("email",""), sub.get("organization",""), sub.get("description",""),
+         sub.get("track",""), sub.get("claim_code",""), sub.get("form_version","v3"), sub.get("status","pending"),
+         sub.get("ip",""), sub.get("user_agent",""), sub.get("submitted_at","")]
+    )
 
 def update_submission_status(sub_id, status):
-    """Update status of a submission by id. Returns the updated submission or None."""
-    subs = load_submissions()
-    for s in subs:
-        if s.get("id") == sub_id:
-            s["status"] = status
-            save_submissions(subs)
-            return s
-    return None
-
-# ── Claim codes (stored in claim_codes.json, CRUD via admin API) ──
-CLAIM_CODES_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "claim_codes.json")
+    turso_execute("UPDATE submissions SET status=? WHERE id=?", [status, sub_id])
+    rows = turso_query("SELECT * FROM submissions WHERE id=?", [sub_id])
+    return rows[0] if rows else None
 
 def load_claim_codes():
-    try:
-        with open(CLAIM_CODES_PATH, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        return []
+    return turso_query("SELECT code, track, credits, label FROM claim_codes ORDER BY id")
 
 def save_claim_codes(codes):
-    with open(CLAIM_CODES_PATH, "w", encoding="utf-8") as f:
-        json.dump(codes, f, indent=2)
+    # Replace all codes (used by admin mutate)
+    turso_execute("DELETE FROM claim_codes")
+    for c in codes:
+        turso_execute(
+            "INSERT INTO claim_codes (code, track, credits, label) VALUES (?,?,?,?)",
+            [c["code"], c["track"], c["credits"], c.get("label","")]
+        )
+
+def load_testimonials():
+    return turso_query("SELECT id, quote, name, role, company, approved FROM testimonials WHERE approved=1 ORDER BY id")
+
+def load_events():
+    return turso_query("SELECT event_type, page, section, cta, visitor_id, meta, created_at FROM analytics_events ORDER BY created_at DESC LIMIT 5000")
+
+def add_event(event):
+    import json as _json
+    meta = _json.dumps(event.get("data", {}))
+    turso_execute(
+        "INSERT INTO analytics_events (event_type, page, section, cta, visitor_id, meta, created_at) VALUES (?,?,?,?,?,?,?)",
+        [event.get("type",""), event.get("page",""), event.get("section",""), event.get("cta",""),
+         event.get("visitor_id",""), meta, event.get("timestamp","")]
+    )
 
 TRACK_LABELS = {
     "founder": "Founder / Startup",
@@ -587,25 +617,17 @@ class CreditsHandler(BaseHTTPRequestHandler):
 
         print(f"[SUBMIT] {name} <{email}> — track={track}, use_case={use_case}, gpu={gpu_pref}, email_sent={email_sent}")
 
-        # Persist submission
+        # Persist submission to Turso
         submission = {
-            "id": uuid.uuid4().hex[:12],
             "name": name,
             "email": email,
             "track": track,
-            "role": role,
             "organization": organization,
-            "event_code": event_code,
-            "use_case": use_case,
-            "workload": workload,
             "description": description,
-            "gpu_pref": gpu_pref,
-            "duration": duration,
-            "email_sent": email_sent,
+            "claim_code": "",
+            "form_version": "v3" if "build" in data else "v2",
             "status": "pending",
             "submitted_at": datetime.now(timezone.utc).isoformat(),
-            "form_version": "v3" if "build" in data else "v2",
-            "credit_type": credit_type,
         }
         add_submission(submission)
 
@@ -702,12 +724,17 @@ class CreditsHandler(BaseHTTPRequestHandler):
         status_counts = {"pending": 0, "approved": 0, "rejected": 0}
 
         for e in events:
-            etype = e.get("type", "")
+            etype = e.get("event_type", "")
             if etype == "cta_click":
                 sec = e.get("section", "unknown")
                 cta_clicks[sec] = cta_clicks.get(sec, 0) + 1
             elif etype == "scroll_depth":
-                depth = e.get("data", {}).get("depth", 0)
+                meta = e.get("meta", "")
+                try:
+                    meta_d = json.loads(meta) if isinstance(meta, str) else meta
+                    depth = int(meta_d.get("depth", 0))
+                except (json.JSONDecodeError, ValueError, TypeError):
+                    depth = 0
                 for threshold in scroll_depth:
                     if depth >= threshold:
                         scroll_depth[threshold] += 1
@@ -718,7 +745,7 @@ class CreditsHandler(BaseHTTPRequestHandler):
                 page_views[pg] = page_views.get(pg, 0) + 1
 
         for s in subs:
-            date_str = (s.get("submitted_at") or "")[:10]
+            date_str = (s.get("created_at") or s.get("submitted_at") or "")[:10]
             if date_str:
                 daily_subs[date_str] = daily_subs.get(date_str, 0) + 1
             track = s.get("track", "")
@@ -753,7 +780,7 @@ class CreditsHandler(BaseHTTPRequestHandler):
         subs = load_submissions()
         # Anonymize: only initials, track, org, timestamp. No email, no full name.
         anon = []
-        for s in subs[-20:]:  # last 20
+        for s in subs[:20]:  # last 20
             name = s.get("name", "")
             parts = name.split()
             initials = "".join([p[0] for p in parts if p])[:2].upper() or "?"
@@ -761,20 +788,25 @@ class CreditsHandler(BaseHTTPRequestHandler):
                 "name": initials + ".",
                 "track": s.get("track", ""),
                 "organization": s.get("organization", ""),
-                "submitted_at": s.get("submitted_at", ""),
+                "submitted_at": s.get("created_at") or s.get("submitted_at") or "",
             })
         self._json_response({"submissions": anon})
 
     def _handle_testimonials(self):
         """GET /api/testimonials - returns approved testimonials."""
-        testimonials_path = os.path.join(os.path.dirname(__file__), "testimonials.json")
-        try:
-            with open(testimonials_path, "r", encoding="utf-8") as f:
-                testimonials = json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError):
-            testimonials = []
-        approved = [t for t in testimonials if t.get("approved", False)]
-        self._json_response({"testimonials": approved})
+        testimonials = load_testimonials()
+        # Convert approved integer to bool for JSON
+        result = []
+        for t in testimonials:
+            result.append({
+                "id": t.get("id"),
+                "quote": t.get("quote"),
+                "name": t.get("name"),
+                "role": t.get("role"),
+                "company": t.get("company"),
+                "approved": bool(t.get("approved")),
+            })
+        self._json_response({"testimonials": result})
 
     def _handle_admin_submissions(self):
         """GET /api/admin/submissions — return all submissions + claim codes."""
@@ -848,8 +880,6 @@ class CreditsHandler(BaseHTTPRequestHandler):
             self._json_response({"error": "Invalid JSON"}, 400)
             return
 
-        codes = load_claim_codes()
-
         if action == "create":
             code = (data.get("code") or "").strip().upper()
             track = (data.get("track") or "").strip().lower()
@@ -858,15 +888,15 @@ class CreditsHandler(BaseHTTPRequestHandler):
             if not code or not track:
                 self._json_response({"error": "Code and track are required"}, 422)
                 return
-            if any(c["code"].upper() == code for c in codes):
+            existing = turso_query("SELECT code FROM claim_codes WHERE code=?", [code])
+            if existing:
                 self._json_response({"error": "Code already exists"}, 409)
                 return
             if track not in TRACK_LABELS:
                 self._json_response({"error": "Track must be founder, student, or event"}, 422)
                 return
             entry = {"code": code, "track": track, "credits": credits or TRACK_CREDITS.get(track, ""), "label": label or TRACK_LABELS.get(track, "")}
-            codes.append(entry)
-            save_claim_codes(codes)
+            turso_execute("INSERT INTO claim_codes (code, track, credits, label) VALUES (?,?,?,?)", [code, track, entry["credits"], entry["label"]])
             print(f"[ADMIN] Claim code created: {code}")
             self._json_response({"success": True, "claim_code": entry})
 
@@ -875,21 +905,17 @@ class CreditsHandler(BaseHTTPRequestHandler):
             if not code:
                 self._json_response({"error": "Code is required"}, 422)
                 return
-            found = False
-            for c in codes:
-                if c["code"].upper() == code:
-                    if data.get("track"):
-                        c["track"] = data["track"].strip().lower()
-                    if data.get("credits"):
-                        c["credits"] = data["credits"].strip()
-                    if data.get("label"):
-                        c["label"] = data["label"].strip()
-                    found = True
-                    break
-            if not found:
+            existing = turso_query("SELECT code FROM claim_codes WHERE code=?", [code])
+            if not existing:
                 self._json_response({"error": "Code not found"}, 404)
                 return
-            save_claim_codes(codes)
+            if data.get("track"):
+                turso_execute("UPDATE claim_codes SET track=? WHERE code=?", [data["track"].strip().lower(), code])
+            if data.get("credits"):
+                turso_execute("UPDATE claim_codes SET credits=? WHERE code=?", [data["credits"].strip(), code])
+            if data.get("label"):
+                turso_execute("UPDATE claim_codes SET label=? WHERE code=?", [data["label"].strip(), code])
+            codes = load_claim_codes()
             print(f"[ADMIN] Claim code updated: {code}")
             self._json_response({"success": True, "claim_codes": codes})
 
@@ -898,13 +924,14 @@ class CreditsHandler(BaseHTTPRequestHandler):
             if not code:
                 self._json_response({"error": "Code is required"}, 422)
                 return
-            new_codes = [c for c in codes if c["code"].upper() != code]
-            if len(new_codes) == len(codes):
+            existing = turso_query("SELECT code FROM claim_codes WHERE code=?", [code])
+            if not existing:
                 self._json_response({"error": "Code not found"}, 404)
                 return
-            save_claim_codes(new_codes)
+            turso_execute("DELETE FROM claim_codes WHERE code=?", [code])
+            codes = load_claim_codes()
             print(f"[ADMIN] Claim code deleted: {code}")
-            self._json_response({"success": True, "claim_codes": new_codes})
+            self._json_response({"success": True, "claim_codes": codes})
 
     def _json_response(self, data, status=200):
         body = json.dumps(data).encode("utf-8")
