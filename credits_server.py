@@ -78,17 +78,25 @@ TURNSTILE_SITE_KEY = os.getenv("TURNSTILE_SITE_KEY", "")  # set to enable
 TURNSTILE_SECRET_KEY = os.getenv("TURNSTILE_SECRET_KEY", "")  # set to enable
 TURNSTILE_VERIFY_URL = "https://challenges.cloudflare.com/turnstile/v0/siteverify"
 
-# ── Turso (libSQL) database ──────────────────────────────────────────
+# ── Turso (libSQL) database — primary ────────────────────────────────
 TURSO_URL = os.getenv("TURSO_URL", "")
 TURSO_TOKEN = os.getenv("TURSO_TOKEN", "")
 TURSO_API_URL = f"{TURSO_URL}/v2/pipeline" if TURSO_URL else ""
 
+# ── Cloudflare D1 — fallback ────────────────────────────────────────
+CF_ACCOUNT = os.getenv("CF_ACCOUNT", "")
+CF_DB = os.getenv("CF_DB", "")
+CF_TOKEN = os.getenv("CF_TOKEN", "")
+CF_API_URL = f"https://api.cloudflare.com/client/v4/accounts/{CF_ACCOUNT}/d1/database/{CF_DB}/query" if CF_ACCOUNT and CF_DB else ""
 
-def turso_execute(sql, args=None):
-    """Execute a SQL statement on Turso. Returns the raw response dict."""
+# Track which DB is active for admin display
+DB_ACTIVE = "turso"
+
+
+def _turso_execute(sql, args=None):
+    """Execute SQL on Turso. Returns raw response dict or None on failure."""
     if not TURSO_API_URL:
-        print("[TURSO] No TURSO_URL configured")
-        return {"results": [{"type": "error", "error": {"message": "No database configured"}}]}
+        return None
     stmt = {"sql": sql}
     if args:
         stmt["args"] = [{"type": "text", "value": str(a)} for a in args]
@@ -98,12 +106,59 @@ def turso_execute(sql, args=None):
         headers={"Authorization": f"Bearer {TURSO_TOKEN}", "Content-Type": "application/json"},
         method="POST",
     )
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        return json.loads(resp.read().decode("utf-8"))
+
+
+def _cf_execute(sql, args=None):
+    """Execute SQL on Cloudflare D1. Returns raw response dict or None on failure."""
+    if not CF_API_URL:
+        return None
+    body = {"sql": sql}
+    if args:
+        body["params"] = [str(a) for a in args]
+    payload = json.dumps(body).encode("utf-8")
+    req = urllib.request.Request(
+        CF_API_URL, data=payload,
+        headers={"Authorization": f"Bearer {CF_TOKEN}", "Content-Type": "application/json"},
+        method="POST",
+    )
+    with urllib.request.urlopen(req, timeout=10) as resp:
+        return json.loads(resp.read().decode("utf-8"))
+
+
+def turso_execute(sql, args=None):
+    """Execute a SQL statement. Tries Turso first, falls back to D1."""
+    global DB_ACTIVE
     try:
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            return json.loads(resp.read().decode("utf-8"))
+        data = _turso_execute(sql, args)
+        if data is not None:
+            results = data.get("results", [])
+            if results and results[0].get("type") == "ok":
+                DB_ACTIVE = "turso"
+                return data
+            # Check if it's a real error (not just no results)
+            if results and results[0].get("type") == "error":
+                err_msg = results[0].get("error", {}).get("message", "")
+                print(f"[TURSO] SQL error: {err_msg}")
     except Exception as e:
-        print(f"[TURSO] Error executing SQL: {e}")
-        return {"results": [{"type": "error", "error": {"message": str(e)}}]}
+        print(f"[TURSO] Connection failed, falling back to D1: {e}")
+
+    # Fallback to D1
+    try:
+        data = _cf_execute(sql, args)
+        if data is not None:
+            DB_ACTIVE = "d1"
+            # Normalize D1 response to match Turso format
+            return {"results": [{"type": "ok" if data.get("success") else "error",
+                                  "response": {"result": {
+                                      "cols": [{"name": k} for k in (data.get("result", [{}])[0].get("results", [{}])[0].keys() if data.get("result") and data["result"][0].get("results") else {})],
+                                      "rows": [[{"type": "text", "value": str(v)} for v in row.values()] for row in (data.get("result", [{}])[0].get("results", []) if data.get("result") else [])]
+                                  }}}]}
+    except Exception as e:
+        print(f"[D1] Fallback also failed: {e}")
+
+    return {"results": [{"type": "error", "error": {"message": "Both databases failed"}}]}
 
 
 def turso_query(sql, args=None):
@@ -480,7 +535,7 @@ class CreditsHandler(BaseHTTPRequestHandler):
         elif path == "/health":
             email_ready = bool(RESEND_API_KEY or (SMTP_HOST and SMTP_USER and SMTP_PASS))
             provider = "resend" if RESEND_API_KEY else ("smtp" if SMTP_HOST else "none")
-            self._json_response({"status": "ok", "email_configured": email_ready, "provider": provider})
+            self._json_response({"status": "ok", "email_configured": email_ready, "provider": provider, "db": DB_ACTIVE})
         elif path == "/api/admin/submissions":
             self._handle_admin_submissions()
         elif path == "/api/admin/claim-codes":

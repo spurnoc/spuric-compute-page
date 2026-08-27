@@ -10,7 +10,15 @@ services:
         sync: false
       - key: TURSO_TOKEN
         sync: false
+      - key: CF_ACCOUNT
+        sync: false
+      - key: CF_DB
+        sync: false
+      - key: CF_TOKEN
+        sync: false
       - key: ADMIN_TOKEN
+        sync: false
+      - key: FOMO_PASSWORD
         sync: false
       - key: BASE_URL
         sync: false
