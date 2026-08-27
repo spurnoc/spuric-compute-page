@@ -635,12 +635,17 @@ class CreditsHandler(BaseHTTPRequestHandler):
         }
         add_submission(submission)
 
+        if track == "notify":
+            msg = f"Thanks! We'll notify you at {email} when credits go live."
+        else:
+            msg = f"Thanks, {name}! We received your {TRACK_LABELS.get(track, track)} credit request. Check your email at {email} for confirmation."
+
         self._json_response({
             "success": True,
-            "message": f"Thanks, {name}! We received your {TRACK_LABELS.get(track, track)} credit request. Check your email at {email} for confirmation.",
+            "message": msg,
             "email_sent": email_sent,
             "track": track,
-            "credits": TRACK_CREDITS.get(track, "TBD"),
+            "credits": TRACK_CREDITS.get(track, ""),
         })
 
     def _handle_claim(self):
