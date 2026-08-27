@@ -483,8 +483,6 @@ class CreditsHandler(BaseHTTPRequestHandler):
             self._handle_admin_analytics()
         elif path == "/api/fomo/feed":
             self._handle_fomo_feed()
-        elif path == "/api/fomo/auth":
-            self._handle_fomo_auth()
         elif path == "/api/testimonials":
             self._handle_testimonials()
         elif path == "/api/track":
@@ -505,6 +503,8 @@ class CreditsHandler(BaseHTTPRequestHandler):
             self._handle_claim()
         elif path == "/api/track":
             self._handle_track()
+        elif path == "/api/fomo/auth":
+            self._handle_fomo_auth()
         elif path.startswith("/api/admin/submissions/") and path.endswith("/status"):
             self._handle_admin_update_status(path)
         elif path == "/api/admin/claim-codes":
