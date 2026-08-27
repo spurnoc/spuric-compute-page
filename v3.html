@@ -345,9 +345,87 @@ footer a:hover{color:#fff;text-decoration:underline}
 @media (min-width:921px){.mobiledock{display:none}}
 @media (max-width:560px){.strip-grid{grid-template-columns:1fr}.segmented{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ── COMING SOON OVERLAY ── */
+.cs-overlay{position:fixed;inset:0;z-index:99999;background:oklch(0.99 0.001 250);
+  display:flex;align-items:center;justify-content:center;padding:24px;overflow-y:auto}
+.cs-overlay.hide{display:none}
+.cs-card{background:#fff;border:1px solid var(--border-subtle);border-radius:16px;
+  padding:48px 40px;max-width:440px;width:100%;text-align:center;
+  box-shadow:0 12px 48px rgba(0,0,0,.06)}
+.cs-logo{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:28px}
+.cs-logo .mark{width:32px;height:32px;border-radius:8px;background:var(--accent);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;font-family:var(--font-display)}
+.cs-logo span{font-weight:700;font-size:16px;color:var(--text-primary);font-family:var(--font-display)}
+.cs-card h1{font-size:28px;margin-bottom:10px;font-family:var(--font-display)}
+.cs-card .cs-sub{font-size:16px;color:var(--text-muted);margin-bottom:28px;line-height:1.6}
+.cs-card .cs-status{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;
+  border-radius:100px;background:var(--accent-bg);border:1px solid var(--accent-border);
+  font-size:13px;font-weight:600;color:var(--accent);margin-bottom:28px;font-family:var(--font-mono)}
+.cs-card .cs-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);
+  animation:cs-pulse 2s ease-in-out infinite}
+@keyframes cs-pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.cs-form{display:flex;gap:8px;margin-bottom:12px}
+.cs-form input{flex:1;padding:12px 16px;font-size:15px;border:1px solid var(--border);
+  border-radius:8px;box-sizing:border-box;font-family:var(--font-sans)}
+.cs-form input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-bg)}
+.cs-form button{padding:12px 20px;font-size:15px;font-weight:600;border:none;border-radius:8px;
+  background:var(--accent);color:#fff;cursor:pointer;white-space:nowrap;transition:background .15s}
+.cs-form button:hover{background:var(--accent-hover)}
+.cs-msg{font-size:14px;font-weight:600;margin-bottom:16px;display:none}
+.cs-msg.show{display:block}
+.cs-msg.ok{color:var(--success)}
+.cs-msg.err{color:oklch(0.55 0.22 25)}
+.cs-links{display:flex;gap:16px;justify-content:center;margin-top:24px;padding-top:24px;
+  border-top:1px solid var(--border-subtle)}
+.cs-links a{font-size:13px;color:var(--text-muted);text-decoration:none;font-weight:500}
+.cs-links a:hover{color:var(--accent)}
+.cs-links a.active{color:var(--text-primary)}
 </style>
 </head>
 <body>
+
+<!-- COMING SOON OVERLAY -->
+<div class="cs-overlay" id="cs-overlay">
+  <div class="cs-card">
+    <div class="cs-logo">
+      <div class="mark">S</div>
+      <span>SPUR Innovation</span>
+    </div>
+    <div class="cs-status"><span class="cs-dot"></span> Coming Soon</div>
+    <h1>SPUR Compute Credits</h1>
+    <p class="cs-sub">Sovereign Canadian compute credits for builders, students, and founders. Something big is landing here.</p>
+    <form class="cs-form" id="cs-form" onsubmit="return false">
+      <input type="email" id="cs-email" placeholder="you@email.com" required>
+      <button onclick="csNotify()">Notify me</button>
+    </form>
+    <div class="cs-msg" id="cs-msg"></div>
+    <div class="cs-links">
+      <a href="/fomo">Credit Pool</a>
+      <a href="/admin">Admin</a>
+    </div>
+  </div>
+</div>
+<script>
+function csNotify(){
+  var email=document.getElementById('cs-email').value.trim();
+  var msg=document.getElementById('cs-msg');
+  if(!email||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+    msg.className='cs-msg show err';msg.textContent='Enter a valid email';return;
+  }
+  // Track the signup as a submission with track=notify
+  fetch('/api/submit',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({name:'Early Access',email:email,track:'student',build:'Notify me when credits launch'})
+  }).then(function(r){return r.json()}).then(function(){
+    msg.className='cs-msg show ok';msg.textContent="You're on the list. We'll email you when credits go live.";
+    document.getElementById('cs-form').style.display='none';
+  }).catch(function(){
+    msg.className='cs-msg show ok';msg.textContent="You're on the list. We'll email you when credits go live.";
+    document.getElementById('cs-form').style.display='none';
+  });
+}
+</script>
 
 <!-- ══════════ STICKY OFFER BAR ══════════ -->
 <div class="sticky">
