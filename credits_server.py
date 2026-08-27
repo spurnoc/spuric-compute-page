@@ -182,6 +182,12 @@ def load_testimonials():
 def load_events():
     return turso_query("SELECT event_type, page, section, cta, visitor_id, meta, created_at FROM analytics_events ORDER BY created_at DESC LIMIT 5000")
 
+def add_early_access(email, source="coming_soon"):
+    turso_execute(
+        "INSERT OR IGNORE INTO early_access (email, source, created_at) VALUES (?, ?, ?)",
+        [email, source, datetime.now(timezone.utc).isoformat()]
+    )
+
 def add_event(event):
     import json as _json
     meta = _json.dumps(event.get("data", {}))
@@ -485,6 +491,8 @@ class CreditsHandler(BaseHTTPRequestHandler):
             self._handle_fomo_feed()
         elif path == "/api/testimonials":
             self._handle_testimonials()
+        elif path == "/api/admin/early-access":
+            self._handle_admin_early_access()
         elif path == "/api/track":
             self._handle_track()
         elif path == "/api/turnstile-site-key":
@@ -620,6 +628,17 @@ class CreditsHandler(BaseHTTPRequestHandler):
         )
 
         print(f"[SUBMIT] {name} <{email}> — track={track}, use_case={use_case}, gpu={gpu_pref}, email_sent={email_sent}")
+
+        # If this is a "notify me" signup from the coming soon page, store separately
+        if track == "notify":
+            add_early_access(email, "coming_soon")
+            self._json_response({
+                "success": True,
+                "message": f"Thanks! We'll notify you at {email} when credits go live.",
+                "email_sent": False,
+                "track": "notify",
+            })
+            return
 
         # Persist submission to Turso
         submission = {
@@ -831,6 +850,14 @@ class CreditsHandler(BaseHTTPRequestHandler):
                 "approved": bool(t.get("approved")),
             })
         self._json_response({"testimonials": result})
+
+    def _handle_admin_early_access(self):
+        """GET /api/admin/early-access — return all early access signups."""
+        if not self._check_admin_token():
+            self._json_response({"error": "Unauthorized"}, 401)
+            return
+        signups = turso_query("SELECT id, email, source, created_at FROM early_access ORDER BY created_at DESC")
+        self._json_response({"early_access": signups})
 
     def _handle_admin_submissions(self):
         """GET /api/admin/submissions — return all submissions + claim codes."""

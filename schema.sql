@@ -52,3 +52,11 @@ INSERT OR IGNORE INTO claim_codes (code, track, credits, label) VALUES ('EVENT-S
 
 -- Seed Nick's testimonial
 INSERT OR IGNORE INTO testimonials (quote, name, role, company, approved) VALUES ('SPUR is truly one of a kind. A great partner doing great things. Proud to work with a fellow Canadian company in the space.', 'Nick', 'Augure', 'Augure', 1);
+
+-- Early access signups (from the coming soon page)
+CREATE TABLE IF NOT EXISTS early_access (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  email TEXT NOT NULL UNIQUE,
+  source TEXT DEFAULT 'coming_soon',
+  created_at TEXT DEFAULT (datetime('now'))
+);
