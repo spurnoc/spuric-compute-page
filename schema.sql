@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS submissions (
   status TEXT DEFAULT 'pending',
   ip TEXT,
   user_agent TEXT,
+  source TEXT DEFAULT 'v3',
   created_at TEXT DEFAULT (datetime('now'))
 );
 

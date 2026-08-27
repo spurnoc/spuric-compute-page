@@ -284,11 +284,11 @@ def load_submissions():
     return turso_query("SELECT * FROM submissions ORDER BY created_at DESC")
 
 def add_submission(sub):
-    turso_execute(
-        "INSERT INTO submissions (name, email, organization, description, track, claim_code, form_version, status, ip, user_agent, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+    db_write(
+        "INSERT INTO submissions (name, email, organization, description, track, claim_code, form_version, status, ip, user_agent, created_at, source) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
         [sub.get("name",""), sub.get("email",""), sub.get("organization",""), sub.get("description",""),
          sub.get("track",""), sub.get("claim_code",""), sub.get("form_version","v3"), sub.get("status","pending"),
-         sub.get("ip",""), sub.get("user_agent",""), sub.get("submitted_at","")]
+         sub.get("ip",""), sub.get("user_agent",""), sub.get("submitted_at",""), sub.get("source","v3")]
     )
 
 def update_submission_status(sub_id, status):
@@ -783,6 +783,7 @@ class CreditsHandler(BaseHTTPRequestHandler):
             "form_version": "v3" if "build" in data else "v2",
             "status": "pending",
             "submitted_at": datetime.now(timezone.utc).isoformat(),
+            "source": data.get("source", "v3"),
         }
         add_submission(submission)
 
@@ -951,11 +952,11 @@ class CreditsHandler(BaseHTTPRequestHandler):
             self._json_response({"ok": False}, 403)
 
     def _handle_fomo_feed(self):
-        """GET /api/fomo/feed — public, returns anonymized submissions for the FOMO activity feed."""
-        subs = load_submissions()
+        """GET /api/fomo/feed — public, returns anonymized FOMO-page claims only."""
+        subs = turso_query("SELECT name, track, organization, created_at FROM submissions WHERE source='fomo' ORDER BY created_at DESC LIMIT 20")
         # Anonymize: only initials, track, org, timestamp. No email, no full name.
         anon = []
-        for s in subs[:20]:  # last 20
+        for s in subs:
             name = s.get("name", "")
             parts = name.split()
             initials = "".join([p[0] for p in parts if p])[:2].upper() or "?"
@@ -963,7 +964,7 @@ class CreditsHandler(BaseHTTPRequestHandler):
                 "name": initials + ".",
                 "track": s.get("track", ""),
                 "organization": s.get("organization", ""),
-                "submitted_at": s.get("created_at") or s.get("submitted_at") or "",
+                "submitted_at": s.get("created_at", ""),
             })
         self._json_response({"submissions": anon})
 

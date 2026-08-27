@@ -572,6 +572,7 @@ document.getElementById('secret-claimform').addEventListener('submit', function(
   var form = this;
   var data = {};
   new FormData(form).forEach(function(v,k){data[k] = v;});
+  data.source = 'fomo';
 
   // Validate
   var ok = true;
