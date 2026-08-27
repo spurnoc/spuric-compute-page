@@ -67,6 +67,8 @@ RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
 RESEND_FROM = os.getenv("RESEND_FROM", "SPUR Compute <onboarding@resend.dev>")
 RESEND_API_URL = "https://api.resend.com/emails"
 
+FOMO_PASSWORD = os.getenv("FOMO_PASSWORD", "spur2026")
+
 PAGES_DIR = os.path.dirname(os.path.abspath(__file__))
 
 ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "spurnoc")
@@ -481,6 +483,8 @@ class CreditsHandler(BaseHTTPRequestHandler):
             self._handle_admin_analytics()
         elif path == "/api/fomo/feed":
             self._handle_fomo_feed()
+        elif path == "/api/fomo/auth":
+            self._handle_fomo_auth()
         elif path == "/api/testimonials":
             self._handle_testimonials()
         elif path == "/api/track":
@@ -774,6 +778,21 @@ class CreditsHandler(BaseHTTPRequestHandler):
             "status_breakdown": status_counts,
             "turnstile_enabled": bool(TURNSTILE_SECRET_KEY),
         })
+
+    def _handle_fomo_auth(self):
+        """POST /api/fomo/auth - validate FOMO page access password."""
+        content_length = int(self.headers.get("Content-Length", 0))
+        body = self.rfile.read(content_length).decode("utf-8")
+        try:
+            data = json.loads(body)
+        except json.JSONDecodeError:
+            self._json_response({"ok": False}, 400)
+            return
+        password = (data.get("password") or "").strip()
+        if password and password == FOMO_PASSWORD:
+            self._json_response({"ok": True})
+        else:
+            self._json_response({"ok": False}, 403)
 
     def _handle_fomo_feed(self):
         """GET /api/fomo/feed — public, returns anonymized submissions for the FOMO activity feed."""

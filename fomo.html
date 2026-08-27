@@ -199,9 +199,40 @@ p{margin:0}
   .claim-code-box{padding:20px 16px}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ── FOMO PASSWORD GATE ── */
+.fomo-gate{position:fixed;inset:0;z-index:9999;background:var(--bg-section);display:flex;align-items:center;justify-content:center;padding:20px}
+.fomo-gate.hide{display:none}
+.fomo-gate-card{background:var(--bg);border:1px solid var(--border-subtle);border-radius:var(--radius);padding:40px;max-width:380px;width:100%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.08)}
+.fomo-gate-card .gate-logo{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:20px}
+.fomo-gate-card .gate-logo .logo-mark{width:28px;height:28px;border-radius:6px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.fomo-gate-card .gate-logo span{font-weight:700;font-size:15px;color:var(--text-primary)}
+.fomo-gate-card h2{font-size:20px;font-weight:700;margin:0 0 6px;color:var(--text-primary)}
+.fomo-gate-card p{font-size:14px;color:var(--text-muted);margin:0 0 24px}
+.fomo-gate-card input{width:100%;padding:12px 14px;font-size:15px;border:1px solid var(--border-subtle);border-radius:8px;box-sizing:border-box;font-family:var(--font-mono);margin-bottom:12px}
+.fomo-gate-card input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--orange-100)}
+.fomo-gate-card button{width:100%;padding:12px;font-size:15px;font-weight:600;border:none;border-radius:8px;background:var(--accent);color:#fff;cursor:pointer;transition:background .15s}
+.fomo-gate-card button:hover{background:var(--accent-hover)}
+.fomo-gate-card .gate-error{color:var(--danger);font-size:13px;margin-top:8px;display:none}
+.fomo-gate-card .gate-error.show{display:block}
 </style>
 </head>
 <body>
+
+<!-- FOMO PASSWORD GATE -->
+<div class="fomo-gate" id="fomo-gate">
+  <div class="fomo-gate-card">
+    <div class="gate-logo">
+      <div class="logo-mark">S</div>
+      <span>SPUR Innovation</span>
+    </div>
+    <h2>Access required</h2>
+    <p>Enter the access code to view the credit pool.</p>
+    <input type="password" id="fomo-pass" placeholder="Access code" autocomplete="off">
+    <button onclick="checkFomoPass()">Enter</button>
+    <div class="gate-error" id="gate-error">Incorrect access code.</div>
+  </div>
+</div>
 
 <!-- STICKY BAR -->
 <div class="sticky">
@@ -584,6 +615,40 @@ document.getElementById('secret-claimform').addEventListener('submit', function(
 // Enter key on input
 document.getElementById('claim-code-input').addEventListener('keydown', function(e){
   if(e.key === 'Enter') validateClaimCode();
+});
+// ── FOMO PASSWORD GATE ──
+function checkFomoPass(){
+  var input = document.getElementById('fomo-pass');
+  var err = document.getElementById('gate-error');
+  var code = input.value.trim();
+  if(!code) return;
+  fetch('/api/fomo/auth', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({password: code})
+  })
+  .then(function(r){return r.json();})
+  .then(function(data){
+    if(data.ok){
+      sessionStorage.setItem('fomo_auth', '1');
+      document.getElementById('fomo-gate').classList.add('hide');
+    } else {
+      err.classList.add('show');
+      input.value = '';
+      input.focus();
+    }
+  })
+  .catch(function(){
+    err.classList.add('show');
+  });
+}
+// Check if already authed this session
+if(sessionStorage.getItem('fomo_auth') === '1'){
+  document.getElementById('fomo-gate').classList.add('hide');
+}
+// Enter key
+document.getElementById('fomo-pass').addEventListener('keydown', function(e){
+  if(e.key === 'Enter') checkFomoPass();
 });
 </script>
 
