@@ -83,14 +83,19 @@ TURSO_URL = os.getenv("TURSO_URL", "")
 TURSO_TOKEN = os.getenv("TURSO_TOKEN", "")
 TURSO_API_URL = f"{TURSO_URL}/v2/pipeline" if TURSO_URL else ""
 
-# ── Cloudflare D1 — fallback ────────────────────────────────────────
+# ── Cloudflare D1 — backup ────────────────────────────────────────
 CF_ACCOUNT = os.getenv("CF_ACCOUNT", "")
 CF_DB = os.getenv("CF_DB", "")
 CF_TOKEN = os.getenv("CF_TOKEN", "")
 CF_API_URL = f"https://api.cloudflare.com/client/v4/accounts/{CF_ACCOUNT}/d1/database/{CF_DB}/query" if CF_ACCOUNT and CF_DB else ""
 
-# Track which DB is active for admin display
+# Track which DB last served a read (for admin display)
 DB_ACTIVE = "turso"
+
+import threading
+from concurrent.futures import ThreadPoolExecutor
+
+_pool = ThreadPoolExecutor(max_workers=4)
 
 
 def _turso_execute(sql, args=None):
@@ -106,7 +111,7 @@ def _turso_execute(sql, args=None):
         headers={"Authorization": f"Bearer {TURSO_TOKEN}", "Content-Type": "application/json"},
         method="POST",
     )
-    with urllib.request.urlopen(req, timeout=10) as resp:
+    with urllib.request.urlopen(req, timeout=8) as resp:
         return json.loads(resp.read().decode("utf-8"))
 
 
@@ -123,52 +128,15 @@ def _cf_execute(sql, args=None):
         headers={"Authorization": f"Bearer {CF_TOKEN}", "Content-Type": "application/json"},
         method="POST",
     )
-    with urllib.request.urlopen(req, timeout=10) as resp:
+    with urllib.request.urlopen(req, timeout=8) as resp:
         return json.loads(resp.read().decode("utf-8"))
 
 
-def turso_execute(sql, args=None):
-    """Execute a SQL statement. Tries Turso first, falls back to D1."""
-    global DB_ACTIVE
-    try:
-        data = _turso_execute(sql, args)
-        if data is not None:
-            results = data.get("results", [])
-            if results and results[0].get("type") == "ok":
-                DB_ACTIVE = "turso"
-                return data
-            # Check if it's a real error (not just no results)
-            if results and results[0].get("type") == "error":
-                err_msg = results[0].get("error", {}).get("message", "")
-                print(f"[TURSO] SQL error: {err_msg}")
-    except Exception as e:
-        print(f"[TURSO] Connection failed, falling back to D1: {e}")
-
-    # Fallback to D1
-    try:
-        data = _cf_execute(sql, args)
-        if data is not None:
-            DB_ACTIVE = "d1"
-            # Normalize D1 response to match Turso format
-            return {"results": [{"type": "ok" if data.get("success") else "error",
-                                  "response": {"result": {
-                                      "cols": [{"name": k} for k in (data.get("result", [{}])[0].get("results", [{}])[0].keys() if data.get("result") and data["result"][0].get("results") else {})],
-                                      "rows": [[{"type": "text", "value": str(v)} for v in row.values()] for row in (data.get("result", [{}])[0].get("results", []) if data.get("result") else [])]
-                                  }}}]}
-    except Exception as e:
-        print(f"[D1] Fallback also failed: {e}")
-
-    return {"results": [{"type": "error", "error": {"message": "Both databases failed"}}]}
-
-
-def turso_query(sql, args=None):
-    """Execute a SELECT and return rows as list of dicts."""
-    data = turso_execute(sql, args)
+def _normalize_turso(data):
+    """Parse Turso response into (ok, cols, rows)."""
     results = data.get("results", [])
     if not results or results[0].get("type") != "ok":
-        err = results[0].get("error", {}).get("message", "unknown") if results else "no results"
-        print(f"[TURSO] Query error: {err}")
-        return []
+        return False, [], []
     result = results[0].get("response", {}).get("result", {})
     cols = [c["name"] for c in result.get("cols", [])]
     rows = []
@@ -182,6 +150,115 @@ def turso_query(sql, args=None):
             else:
                 vals.append(cell)
         rows.append(dict(zip(cols, vals)))
+    return True, cols, rows
+
+
+def _normalize_d1(data):
+    """Parse D1 response into (ok, cols, rows)."""
+    if not data or not data.get("success"):
+        return False, [], []
+    result = data.get("result", [{}])
+    if not result:
+        return True, [], []
+    results = result[0].get("results", [])
+    if not results:
+        return True, [], []
+    cols = list(results[0].keys())
+    rows = results
+    return True, cols, rows
+
+
+def db_write(sql, args=None):
+    """Write to BOTH databases in parallel. Returns True if at least one succeeded."""
+    def try_turso():
+        try:
+            _turso_execute(sql, args)
+            return True
+        except Exception as e:
+            print(f"[TURSO] Write failed: {e}")
+            return False
+
+    def try_d1():
+        try:
+            _cf_execute(sql, args)
+            return True
+        except Exception as e:
+            print(f"[D1] Write failed: {e}")
+            return False
+
+    f_turso = _pool.submit(try_turso)
+    f_d1 = _pool.submit(try_d1)
+
+    ok_turso = f_turso.result()
+    ok_d1 = f_d1.result()
+
+    if ok_turso and ok_d1:
+        print(f"[DB] Write succeeded on both")
+    elif ok_turso:
+        print(f"[DB] Write succeeded on Turso only")
+    elif ok_d1:
+        print(f"[DB] Write succeeded on D1 only")
+    else:
+        print(f"[DB] Write FAILED on both")
+
+    return ok_turso or ok_d1
+
+
+def db_query(sql, args=None):
+    """Read from whichever database responds first. Falls back to the other if one fails."""
+    global DB_ACTIVE
+
+    def try_turso():
+        data = _turso_execute(sql, args)
+        if data is None:
+            return None
+        ok, cols, rows = _normalize_turso(data)
+        return ("turso", ok, cols, rows)
+
+    def try_d1():
+        data = _cf_execute(sql, args)
+        if data is None:
+            return None
+        ok, cols, rows = _normalize_d1(data)
+        return ("d1", ok, cols, rows)
+
+    f_turso = _pool.submit(try_turso)
+    f_d1 = _pool.submit(try_d1)
+
+    # Wait for whichever finishes first
+    import time
+    done = []
+    pending = [f_turso, f_d1]
+    while pending:
+        # Check if any completed
+        for f in list(pending):
+            if f.done():
+                result = f.result()
+                if result and result[1]:  # ok=True
+                    DB_ACTIVE = result[0]
+                    return result[2], result[3]  # cols, rows
+                done.append(result)
+                pending.remove(f)
+
+        if not pending:
+            break
+        time.sleep(0.001)  # avoid CPU spin
+
+    # If we get here, neither returned ok=True. Return whatever we got.
+    for d in done:
+        if d:
+            return d[2], d[3]
+    return [], []
+
+
+# Keep turso_execute/turso_query as wrappers for backwards compat
+def turso_execute(sql, args=None):
+    """Wrapper: writes go to both, reads use db_query."""
+    return db_write(sql, args)
+
+def turso_query(sql, args=None):
+    """Wrapper: reads race both databases, returns rows as list of dicts."""
+    cols, rows = db_query(sql, args)
     return rows
 
 
