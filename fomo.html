@@ -201,6 +201,8 @@ p{margin:0}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* ── FOMO PASSWORD GATE ── */
+body.fomo-gated{overflow:hidden}
+body.fomo-gated > *:not(#fomo-gate){visibility:hidden!important}
 .fomo-gate{position:fixed;inset:0;z-index:9999;background:var(--bg-section);display:flex;align-items:center;justify-content:center;padding:20px}
 .fomo-gate.hide{display:none}
 .fomo-gate-card{background:var(--bg);border:1px solid var(--border-subtle);border-radius:var(--radius);padding:40px;max-width:380px;width:100%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.08)}
@@ -217,7 +219,7 @@ p{margin:0}
 .fomo-gate-card .gate-error.show{display:block}
 </style>
 </head>
-<body>
+<body class="fomo-gated">
 
 <!-- FOMO PASSWORD GATE -->
 <div class="fomo-gate" id="fomo-gate">
@@ -632,6 +634,7 @@ function checkFomoPass(){
     if(data.ok){
       sessionStorage.setItem('fomo_auth', '1');
       document.getElementById('fomo-gate').classList.add('hide');
+      document.body.classList.remove('fomo-gated');
     } else {
       err.classList.add('show');
       input.value = '';
@@ -645,6 +648,7 @@ function checkFomoPass(){
 // Check if already authed this session
 if(sessionStorage.getItem('fomo_auth') === '1'){
   document.getElementById('fomo-gate').classList.add('hide');
+  document.body.classList.remove('fomo-gated');
 }
 // Enter key
 document.getElementById('fomo-pass').addEventListener('keydown', function(e){
