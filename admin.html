@@ -1060,13 +1060,11 @@ function renderEarlyAccess(list){
   }
   el.innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:14px">' +
     '<thead><tr><th style="text-align:left;padding:10px 14px;border-bottom:2px solid var(--border-subtle)">Email</th>' +
-    '<th style="text-align:left;padding:10px 14px;border-bottom:2px solid var(--border-subtle)">Source</th>' +
     '<th style="text-align:left;padding:10px 14px;border-bottom:2px solid var(--border-subtle)">Signed up</th></tr></thead>' +
     '<tbody>' + list.map(function(s){
       var date = s.created_at ? new Date(s.created_at).toLocaleString() : '';
       return '<tr>' +
         '<td style="padding:10px 14px;border-bottom:1px solid var(--border-subtle);font-weight:500">' + esc(s.email) + '</td>' +
-        '<td style="padding:10px 14px;border-bottom:1px solid var(--border-subtle);color:var(--text-muted)">' + esc(s.source || '') + '</td>' +
         '<td style="padding:10px 14px;border-bottom:1px solid var(--border-subtle);color:var(--text-muted)">' + esc(date) + '</td>' +
       '</tr>';
     }).join('') + '</tbody></table>';
