@@ -1128,6 +1128,13 @@ class CreditsHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def do_PUT(self):
+        path = urlparse(self.path).path
+        if path.startswith("/api/admin/submissions/") and path.endswith("/status"):
+            self._handle_admin_update_status(path)
+        else:
+            self._json_response({"error": "Not found"}, 404)
+
     def do_OPTIONS(self):
         self.send_response(204)
         self.send_header("Access-Control-Allow-Origin", "*")
