@@ -1188,13 +1188,16 @@ class CreditsHandler(BaseHTTPRequestHandler):
 
         # Use existing submission data if provided (avoids a DB read-back round trip)
         existing = data.get("submission") or {}
+        prev_status = (existing.get("status") or "pending").strip().lower()
+
         if existing:
             updated = update_submission_status_fast(sub_id, status, existing)
         else:
             updated = update_submission_status(sub_id, status)
         if updated:
-            print(f"[ADMIN] Submission {sub_id} → {status}")
-            if status in ("approved", "rejected"):
+            print(f"[ADMIN] Submission {sub_id} {prev_status} → {status}")
+            # Only send email if status actually changed
+            if status != prev_status and status in ("approved", "rejected"):
                 # Respond immediately, send email in background
                 self._json_response({"success": True, "submission": updated, "email_sent": None})
                 _send_status_email_async(updated, status)
