@@ -718,6 +718,12 @@ class CreditsHandler(BaseHTTPRequestHandler):
             self._json_response({"error": "Validation failed", "fields": errors}, 422)
             return
 
+        # Prevent duplicate submissions from the same email
+        existing = turso_query("SELECT id FROM submissions WHERE email = ? LIMIT 1", [email])
+        if existing:
+            self._json_response({"error": "This email has already submitted a request. If you need to update your information, reply to your confirmation email or contact us.", "fields": {"email": "This email already has a submission on file."}}, 409)
+            return
+
         # Send the confirmation email
         email_sent = send_confirmation_email(
             recipient_email=email,
