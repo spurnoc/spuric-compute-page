@@ -492,7 +492,6 @@
     <div class="tabs">
       <div class="tab active" onclick="switchTab('submissions')">Submissions</div>
       <div class="tab" onclick="switchTab('codes')">Claim Codes</div>
-      <div class="tab" onclick="switchTab('early')">Early Access</div>
       <div class="tab" onclick="switchTab('analytics')">Analytics</div>
     </div>
 
@@ -584,15 +583,6 @@
         <button class="btn-primary" onclick="openCodeModal()">+ Add code</button>
       </div>
       <div id="codes-list" class="codes-grid"></div>
-    </div>
-
-    <!-- EARLY ACCESS PANEL -->
-    <div class="tab-panel" id="panel-early">
-      <div class="section-title">
-        <h2>Early Access Signups</h2>
-        <span class="count" id="early-count"></span>
-      </div>
-      <div id="early-list"></div>
     </div>
 
     <!-- ANALYTICS PANEL -->
@@ -1040,34 +1030,6 @@ function switchTab(name){
   event.target.classList.add('active');
   document.getElementById('panel-' + name).classList.add('active');
   if(name === 'analytics') fetchAnalytics();
-  if(name === 'early') fetchEarlyAccess();
-}
-
-// ── EARLY ACCESS ───────────────────────────────────────
-function fetchEarlyAccess(){
-  api('/api/admin/early-access').then(function(r){
-    if(r.ok) renderEarlyAccess(r.body.early_access || []);
-  });
-}
-
-function renderEarlyAccess(list){
-  var el = document.getElementById('early-list');
-  var count = document.getElementById('early-count');
-  if(count) count.textContent = list.length + ' signups';
-  if(list.length === 0){
-    el.innerHTML = '<p style="color:var(--text-muted);padding:20px 0">No early access signups yet.</p>';
-    return;
-  }
-  el.innerHTML = '<table style="width:100%;border-collapse:collapse;font-size:14px">' +
-    '<thead><tr><th style="text-align:left;padding:10px 14px;border-bottom:2px solid var(--border-subtle)">Email</th>' +
-    '<th style="text-align:left;padding:10px 14px;border-bottom:2px solid var(--border-subtle)">Signed up</th></tr></thead>' +
-    '<tbody>' + list.map(function(s){
-      var date = s.created_at ? new Date(s.created_at).toLocaleString() : '';
-      return '<tr>' +
-        '<td style="padding:10px 14px;border-bottom:1px solid var(--border-subtle);font-weight:500">' + esc(s.email) + '</td>' +
-        '<td style="padding:10px 14px;border-bottom:1px solid var(--border-subtle);color:var(--text-muted)">' + esc(date) + '</td>' +
-      '</tr>';
-    }).join('') + '</tbody></table>';
 }
 
 // ── ANALYTICS ───────────────────────────────────────────
