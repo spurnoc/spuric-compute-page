@@ -437,6 +437,17 @@ def _send_status_email_direct(recipient_email, subject, html_body, text_body):
     print(f"[EMAIL] No email provider configured — skipping status email to {recipient_email}")
     return False
 
+def _send_status_email_async(submission, status):
+    """Send status email in a background thread so the API responds instantly."""
+    def _worker():
+        try:
+            result = send_status_email(submission, status)
+            print(f"[ADMIN] Status email to {submission.get('email','')} — sent={result}")
+        except Exception as e:
+            print(f"[ADMIN] Status email failed: {e}")
+    t = threading.Thread(target=_worker, daemon=True)
+    t.start()
+
 def load_claim_codes():
     return turso_query("SELECT code, track, credits, label FROM claim_codes ORDER BY id")
 
@@ -1144,9 +1155,11 @@ class CreditsHandler(BaseHTTPRequestHandler):
             print(f"[ADMIN] Submission {sub_id} → {status}")
             email_sent = False
             if status in ("approved", "rejected"):
-                email_sent = send_status_email(updated, status)
-                print(f"[ADMIN] Status email to {updated.get('email','')} — sent={email_sent}")
-            self._json_response({"success": True, "submission": updated, "email_sent": email_sent})
+                # Respond immediately, send email in background
+                self._json_response({"success": True, "submission": updated, "email_sent": None})
+                _send_status_email_async(updated, status)
+                return
+            self._json_response({"success": True, "submission": updated, "email_sent": False})
         else:
             self._json_response({"error": "Submission not found"}, 404)
 

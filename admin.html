@@ -944,9 +944,9 @@ function updateStatus(idx, status){
       renderTable();
       openModal(idx);
       if(status === 'approved'){
-        toast(r.body.email_sent ? 'Approved and email sent' : 'Approved (email failed)');
+        toast(r.body.email_sent === null ? 'Approved, email sending...' : (r.body.email_sent ? 'Approved and email sent' : 'Approved (email failed)'));
       } else if(status === 'rejected'){
-        toast(r.body.email_sent ? 'Rejected and email sent' : 'Rejected (email failed)');
+        toast(r.body.email_sent === null ? 'Rejected, email sending...' : (r.body.email_sent ? 'Rejected and email sent' : 'Rejected (email failed)'));
       } else {
         toast('Reset to pending');
       }
