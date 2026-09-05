@@ -6,6 +6,7 @@ COPY credits_server.py ./
 COPY schema.sql ./
 COPY v3.html fomo.html admin.html v1.html v2.html ./
 COPY photo-campus-aerial.webp facility.webp racemind.webp janus.webp ./
+COPY spur-logo-dark.svg spur-logo-light.svg spur-logo-transparent.svg ./
 
 ENV PORT=8090
 
