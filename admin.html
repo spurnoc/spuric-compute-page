@@ -449,6 +449,44 @@
     .analytics-card{background:var(--bg);border:1px solid var(--border-subtle);border-radius:var(--radius);padding:24px}
     .analytics-card h3{font-size:15px;margin-bottom:4px}
     .analytics-card .sub{font-size:13px;color:var(--text-muted);margin-bottom:16px}
+
+    @media(max-width:640px){
+      :root{--pad:12px}
+      .header-inner{height:52px}
+      .logo{font-size:13px;gap:8px}
+      .logo img{width:22px;height:22px}
+      .header-right{gap:8px}
+      .header-right a{font-size:12px}
+      .header-badge{font-size:11px;padding:3px 8px}
+      .toolbar{flex-direction:column;align-items:stretch;gap:10px}
+      .toolbar-left{justify-content:flex-start}
+      .filter-select{font-size:13px;padding:8px 10px}
+      .stat-card{padding:16px}
+      .stat-card .stat-value{font-size:24px}
+      .stat-card .stat-label{font-size:10px}
+      .stat-card .stat-sub{font-size:12px}
+      .analytics-card{padding:18px}
+      .analytics-card h3{font-size:14px}
+      th,td{padding:8px 6px;font-size:13px}
+      .td-name{font-size:13px}
+      .modal-box{padding:20px 16px;border-radius:12px}
+      .modal-title{font-size:18px}
+      .detail-item{font-size:13px}
+      .detail-item .dk{font-size:12px}
+      .detail-item .dv{font-size:13px}
+      .codes-grid{grid-template-columns:1fr}
+      .code-card{padding:16px}
+      .code-row{font-size:13px}
+      .code-row .code-code{font-size:13px;min-width:0}
+      .donut-wrap{flex-direction:column;gap:16px}
+      .bar-col{min-width:0}
+      .bar-label{font-size:9px}
+    }
+    @media(max-width:480px){
+      .stats-grid{grid-template-columns:1fr}
+      .logo span{display:none}
+      .header-right a:not(.header-badge){display:none}
+    }
   </style>
 </head>
 <body>

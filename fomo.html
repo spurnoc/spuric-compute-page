@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>SPUR Compute: Claim Before They're Gone</title>
 <meta name="description" content="Compute credits are being claimed. Claim yours before the pool runs out.">
 <meta name="robots" content="noindex,nofollow">
@@ -181,7 +181,6 @@ p{margin:0}
   box-shadow:0 0 0 3px var(--orange-100)}
 .modal-field textarea{min-height:80px;resize:vertical;line-height:1.5}
 .modal-fieldrow{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:520px){.modal-fieldrow{grid-template-columns:1fr}}
 .modal-segmented{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .modal-segmented input{position:absolute;opacity:0;pointer-events:none}
 .modal-segmented label{display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -190,13 +189,50 @@ p{margin:0}
 .modal-segmented label small{font-weight:400;color:var(--text-muted);font-size:12px}
 .modal-segmented input:checked+label{border-color:var(--accent);background:var(--accent-bg);
   box-shadow:0 0 0 1px var(--accent)}
-
 @media(max-width:768px){
   .hero{padding:48px 0 0}
   .pool-card{padding:28px 20px 32px}
   .feed-section{padding:48px 0}
   .cta-section{padding:56px 0}
   .claim-code-box{padding:20px 16px}
+}
+@media(max-width:520px){
+  .wrap{padding:0 16px}
+  .hero{padding:32px 0 0}
+  .hero h1{font-size:clamp(26px,8vw,34px)}
+  .hero .lead{font-size:16px}
+  .pool-card{padding:24px 16px 28px}
+  .pool-amount{font-size:36px}
+  .pool-label{font-size:12px}
+  .sticky{font-size:12px;gap:6px;padding:8px 12px;line-height:1.4}
+  .sticky img{height:16px}
+  .feed{gap:10px}
+  .feed-item{padding:14px}
+  .feed-avatar{width:36px;height:36px;flex:0 0 36px}
+  .feed-name{font-size:14px}
+  .feed-time{font-size:11px}
+  .feed-body{font-size:13.5px}
+  .cta-section h2{font-size:24px}
+  .cta-section .lead{font-size:16px}
+  .claim-code-box{padding:16px 12px}
+  .claim-code-box input{font-size:16px;padding:12px}
+  .modal-box{padding:24px 20px}
+  .modal-box h2{font-size:22px}
+  .modal-fieldrow{grid-template-columns:1fr}
+  .modal-segmented{grid-template-columns:1fr}
+  .modal-segmented label{min-height:48px;padding:10px 6px;font-size:13px}
+  .modal-segmented label small{font-size:11px}
+  .modal-actions .btn{width:100%}
+  .fomo-gate-card{padding:28px 20px;max-width:320px}
+  .fomo-gate-card h2{font-size:18px}
+  .fomo-gate-card p{font-size:13px}
+  footer{font-size:13px;padding:40px 0 24px}
+}
+@media(max-width:380px){
+  .hero h1{font-size:24px}
+  .pool-amount{font-size:30px}
+  .sticky span{display:none}
+  .sticky a{width:100%;text-align:center}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 

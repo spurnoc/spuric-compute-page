@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Compute Credits: SPUR Innovation Centre</title>
 <meta name="description" content="Up to $5,000 in NVIDIA B300 compute credits for founders, students, and event builders. Sovereign Canadian infrastructure. No US CLOUD Act exposure. No obligation.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -338,12 +338,83 @@ footer a:hover{color:#fff;text-decoration:underline}
   caption{white-space:normal}
   .mobiledock{position:fixed;left:0;right:0;bottom:0;z-index:70;background:#fff;
     border-top:1px solid var(--border-subtle);padding:11px 16px;
+    padding-bottom:calc(11px + env(safe-area-inset-bottom));
     box-shadow:0 -4px 22px oklch(0.22 0.01 250/.12);display:block}
   .mobiledock .btn{width:100%}
   .mobiledock p{text-align:center;margin-top:6px;font-size:12px}
 }
 @media (min-width:921px){.mobiledock{display:none}}
-@media (max-width:560px){.strip-grid{grid-template-columns:1fr}.segmented{grid-template-columns:1fr}}
+@media (max-width:560px){
+  .strip-grid{grid-template-columns:1fr 1fr}
+  .segmented{grid-template-columns:1fr}
+  .wrap{padding:0 16px}
+  h1{font-size:clamp(28px,8vw,36px)}
+  h2{font-size:clamp(24px,7vw,30px)}
+  .hero{padding:32px 0 40px}
+  .hero .lead{font-size:17px}
+  .hero-cta{flex-direction:column;width:100%}
+  .hero-cta .btn{width:100%}
+  .hero-cta .btn-ghost{width:100%}
+  .sec{padding:48px 0}
+  .sec-head{margin-bottom:32px}
+  .sec-head p{font-size:15px}
+  .lead{font-size:16px}
+  .sticky{font-size:12px;gap:6px;padding:8px 12px;line-height:1.4}
+  .sticky img{height:16px}
+  .sticky a{font-size:12px}
+  .strip-cell{padding:20px 12px}
+  .strip-cell b{font-size:22px}
+  .strip-cell b .sm{font-size:14px}
+  .strip-cell span{font-size:11px}
+  .card{padding:24px 20px}
+  .card h3{font-size:18px}
+  .card p{font-size:14px}
+  .track{padding:24px 18px 20px}
+  .alloc b{font-size:32px}
+  .formwrap{border-radius:12px}
+  .formhead{padding:24px 18px 0}
+  .formhead h2{font-size:22px}
+  .formhead p{font-size:14px}
+  form{padding:22px 18px 26px}
+  .fieldrow{grid-template-columns:1fr;gap:0}
+  input[type=text],input[type=email],textarea,select{font-size:16px;padding:12px 13px}
+  textarea{min-height:80px}
+  .segmented label{min-height:54px;padding:11px 6px;font-size:13.5px}
+  .segmented label small{font-size:11px}
+  .nextbox{padding:12px 14px;font-size:13px}
+  .success{padding:36px 20px}
+  .success h2{font-size:22px}
+  .proj-body{padding:18px 16px 20px}
+  .proj h3{font-size:16px}
+  .proj p{font-size:13.5px}
+  .proj .meta{font-size:12px}
+  .quote{padding:22px 18px}
+  .quote p{font-size:14.5px}
+  .qattr b{font-size:13.5px}
+  .qattr span{font-size:12px}
+  .step p{font-size:14px}
+  .stepnum{width:30px;height:30px;font-size:13px}
+  th,td{padding:10px 8px;font-size:13px}
+  thead th{font-size:12px}
+  thead th.us{font-size:14px}
+  .sovlist li{padding:16px 0}
+  .sovlist p{font-size:14px}
+  details p{font-size:14.5px;padding:0 36px 18px 0}
+  summary{font-size:15px;padding:16px 36px 16px 0}
+  summary::after{font-size:20px;top:13px}
+  .fgrid{grid-template-columns:1fr;gap:24px}
+  .fbot{flex-direction:column;gap:8px;text-align:center}
+  .mobiledock{padding:10px 12px}
+  .mobiledock .btn{font-size:15px;padding:14px 20px}
+  .mobiledock p{font-size:11px}
+}
+@media (max-width:380px){
+  h1{font-size:26px}
+  .sticky span{display:none}
+  .sticky a{width:100%;text-align:center}
+  .alloc b{font-size:28px}
+  .strip-cell b{font-size:19px}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 
 </style>
