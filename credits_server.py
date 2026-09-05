@@ -365,10 +365,8 @@ EMAIL_HTML_TEMPLATE = """\
         <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;font-size:14px;">
           <tr><td style="padding:6px 0;color:#888;border-bottom:1px solid #eee;">Name</td><td style="padding:6px 0;color:#1a1a1a;border-bottom:1px solid #eee;text-align:right;font-weight:500;">{name}</td></tr>
           <tr><td style="padding:6px 0;color:#888;border-bottom:1px solid #eee;">Track</td><td style="padding:6px 0;color:#1a1a1a;border-bottom:1px solid #eee;text-align:right;font-weight:500;">{track}</td></tr>
-          <tr><td style="padding:6px 0;color:#888;border-bottom:1px solid #eee;">Credit allocation</td><td style="padding:6px 0;color:#F87820;border-bottom:1px solid #eee;text-align:right;font-weight:700;">{credits}</td></tr>
-          <tr><td style="padding:6px 0;color:#888;border-bottom:1px solid #eee;">Use case</td><td style="padding:6px 0;color:#1a1a1a;border-bottom:1px solid #eee;text-align:right;font-weight:500;">{use_case}</td></tr>
-          <tr><td style="padding:6px 0;color:#888;border-bottom:1px solid #eee;">GPU preference</td><td style="padding:6px 0;color:#1a1a1a;border-bottom:1px solid #eee;text-align:right;font-weight:500;">{gpu}</td></tr>
-          <tr><td style="padding:6px 0;color:#888;">Duration</td><td style="padding:6px 0;color:#1a1a1a;text-align:right;font-weight:500;">{duration}</td></tr>
+          <tr><td style="padding:6px 0;color:#888;border-bottom:1px solid #eee;">Credit type</td><td style="padding:6px 0;color:#1a1a1a;border-bottom:1px solid #eee;text-align:right;font-weight:500;">{credit_type}</td></tr>
+          <tr><td style="padding:6px 0;color:#888;">Credit allocation</td><td style="padding:6px 0;color:#F87820;text-align:right;font-weight:700;">{credits}</td></tr>
         </table>
 
         <div style="background:#f0f7ff;border:1px solid #cfe3ff;border-radius:6px;padding:14px 16px;margin:0 0 20px;">
@@ -414,12 +412,10 @@ We received your request for {track} compute credits on SPUR's sovereign
 Canadian infrastructure.
 
 Summary:
-  Name:        {name}
-  Track:       {track}
-  Credits:     {credits}
-  Use case:    {use_case}
-  GPU:         {gpu}
-  Duration:    {duration}
+  Name:          {name}
+  Track:         {track}
+  Credit type:   {credit_type}
+  Credits:       {credits}
 
 Your project:
   {description}
@@ -437,44 +433,28 @@ Hosted in Canada · No US Cloud Act exposure · PIPEDA-aligned
 """
 
 
-def _build_email_content(recipient_name, track, use_case, gpu_pref, duration, description):
+def _build_email_content(recipient_name, track, credit_type, description):
     """Build the email subject, HTML body, and text body. Returns (subject, html, text)."""
     track_label = TRACK_LABELS.get(track, track)
     credits = TRACK_CREDITS.get(track, "TBD")
 
-    duration_display = {
-        "week": "1 week", "month": "1 month",
-        "3_months": "3 months", "ongoing": "Ongoing"
-    }.get(duration, duration)
-
-    use_case_display = use_case.replace("_", " ").title() if use_case else "Not specified"
-    gpu_display = {
-        "b300": "NVIDIA B300", "h100": "NVIDIA H100",
-        "no_preference": "No preference"
-    }.get(gpu_pref, gpu_pref)
+    credit_type_display = {
+        "api_only": "API credits only (Hosted models)",
+        "api_and_compute": "API credits + compute GPU access",
+    }.get(credit_type, credit_type)
 
     desc_display = description[:500] + "..." if len(description) > 500 else description
 
     fmt_args = {
         "name": html.escape(recipient_name),
         "track": track_label,
+        "credit_type": credit_type_display,
         "credits": credits,
-        "use_case": use_case_display,
-        "gpu": gpu_display,
-        "duration": duration_display,
         "description": html.escape(desc_display),
     }
 
     html_body = EMAIL_HTML_TEMPLATE.format(**fmt_args)
-    text_body = EMAIL_TEXT_TEMPLATE.format(
-        name=recipient_name,
-        track=track_label,
-        credits=credits,
-        use_case=use_case_display,
-        gpu=gpu_display,
-        duration=duration_display,
-        description=desc_display,
-    )
+    text_body = EMAIL_TEXT_TEMPLATE.format(**fmt_args)
     return EMAIL_SUBJECT, html_body, text_body
 
 
@@ -553,12 +533,11 @@ def _send_via_smtp(recipient_email, subject, html_body, text_body):
 
 
 def send_confirmation_email(recipient_email: str, recipient_name: str,
-                             track: str, use_case: str, gpu_pref: str,
-                             duration: str, description: str) -> bool:
+                             track: str, credit_type: str, description: str) -> bool:
     """Send a confirmation email. Tries Resend API first, then SMTP. Returns True on success."""
 
     subject, html_body, text_body = _build_email_content(
-        recipient_name, track, use_case, gpu_pref, duration, description
+        recipient_name, track, credit_type, description
     )
 
     # Option A: Resend API
@@ -745,13 +724,11 @@ class CreditsHandler(BaseHTTPRequestHandler):
             recipient_email=email,
             recipient_name=name,
             track=track,
-            use_case=use_case,
-            gpu_pref=gpu_pref,
-            duration=duration,
+            credit_type=credit_type,
             description=description,
         )
 
-        print(f"[SUBMIT] {name} <{email}> — track={track}, use_case={use_case}, gpu={gpu_pref}, email_sent={email_sent}")
+        print(f"[SUBMIT] {name} <{email}> — track={track}, credit_type={credit_type}, email_sent={email_sent}")
 
         # If this is a "notify me" signup, return early without storing a full submission
         if track == "notify":
