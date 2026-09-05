@@ -333,15 +333,46 @@ footer a:hover{color:#fff;text-decoration:underline}
   .sticky .brand{width:100%}
   form,.formhead{padding-left:22px;padding-right:22px}
   .fieldrow{grid-template-columns:1fr;gap:0}
-  table{display:block;overflow-x:auto}
-  table th,table td{white-space:nowrap}
-  caption{white-space:normal}
   .projects.two{gap:20px}
   .projects.two .proj-body{padding:20px 20px 24px}
   .projects.two .proj h3{font-size:19px}
   .projects.two .proj p{font-size:14.5px;line-height:1.55}
   .projects.two .proj .meta{font-size:13px;margin-top:14px;padding-top:12px}
   .projects.two .proj .photo{aspect-ratio:16/10}
+  /* comparison table: convert to stacked rows */
+  .cmp-table{display:block;border:0;border-radius:0;background:transparent;overflow:visible}
+  .cmp-table thead{display:none}
+  .cmp-table tbody{display:block}
+  .cmp-table tr{display:grid;grid-template-columns:1fr auto auto auto;align-items:center;
+    gap:8px;padding:12px 16px;border-bottom:1px solid var(--border-subtle);background:#fff}
+  .cmp-table tr:last-child{border-bottom:0;border-radius:0 0 var(--radius) var(--radius)}
+  .cmp-table tbody th{text-align:left;font-size:13px;padding:0;background:transparent;border:0;grid-column:1}
+  .cmp-table td{padding:0;border:0;font-size:13px;text-align:center;min-width:28px}
+  .cmp-table .tick,.cmp-table .no,.cmp-table .tick-plain{font-size:15px}
+  .cmp-table .tick{width:22px;height:22px;font-size:12px}
+  .cmp-table td::before{content:attr(data-label);display:block;font-size:9px;font-weight:600;
+    color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px}
+  .cmp-table td.us::before{color:var(--accent-hover)}
+  .cmp-table-cap{display:block;text-align:center;color:var(--text-muted);font-size:13px;padding:0 0 16px}
+}
+@media (max-width:560px){
+  .cmp-table tr{grid-template-columns:1fr auto auto auto;gap:6px;padding:10px 12px}
+  .cmp-table tbody th{font-size:12.5px}
+  .cmp-table td{min-width:24px}
+  .cmp-table .tick{width:20px;height:20px;font-size:11px}
+  .cmp-table .no,.cmp-table .tick-plain{font-size:14px}
+  /* data retention table: stack to key-value pairs */
+  .data-table{display:block;border:0!important;border-radius:0!important;overflow:visible!important}
+  .data-table thead{display:none}
+  .data-table tbody{display:block}
+  .data-table tr{display:block;padding:14px 0;border-bottom:1px solid var(--border-subtle)}
+  .data-table tr:last-child{border-bottom:0}
+  .data-table td{display:block;padding:0!important;border:0!important;text-align:left!important}
+  .data-table td:first-child{font-weight:700;font-size:14px;margin-bottom:4px}
+  .data-table td:last-child{font-size:13.5px;color:var(--text-body)}
+  .sov-card{padding:24px 18px!important}
+  .sov-card h3{font-size:15px!important}
+  .sov-card p,.sov-card li{font-size:14px!important}
 }
 @media (max-width:560px){
   .strip-grid{grid-template-columns:1fr 1fr}
@@ -864,8 +895,8 @@ footer a:hover{color:#fff;text-decoration:underline}
     <div class="sec-head">
       <h2>SPUR vs. the alternatives</h2>
     </div>
-    <table>
-      <caption>How SPUR compares to a US hyperscaler and to buying your own hardware.</caption>
+    <table class="cmp-table">
+      <caption class="cmp-table-cap">How SPUR compares to a US hyperscaler and to buying your own hardware.</caption>
       <thead>
         <tr>
           <th scope="col"><span class="visually-hidden">Capability</span></th>
@@ -876,17 +907,17 @@ footer a:hover{color:#fff;text-decoration:underline}
       </thead>
       <tbody>
         <tr><th scope="row">Data stays on Canadian soil</th>
-          <td class="us"><span class="tick">✓</span></td><td><span class="no">✕</span></td><td><span class="tick-plain">✓</span></td></tr>
+          <td class="us" data-label="SPUR"><span class="tick">✓</span></td><td data-label="US"><span class="no">✕</span></td><td data-label="Own"><span class="tick-plain">✓</span></td></tr>
         <tr><th scope="row">No US CLOUD Act exposure</th>
-          <td class="us"><span class="tick">✓</span></td><td><span class="no">✕</span></td><td><span class="tick-plain">✓</span></td></tr>
+          <td class="us" data-label="SPUR"><span class="tick">✓</span></td><td data-label="US"><span class="no">✕</span></td><td data-label="Own"><span class="tick-plain">✓</span></td></tr>
         <tr><th scope="row">Engineer on your project</th>
-          <td class="us"><span class="tick">✓</span></td><td><span class="no">✕</span></td><td><span class="no">✕</span></td></tr>
+          <td class="us" data-label="SPUR"><span class="tick">✓</span></td><td data-label="US"><span class="no">✕</span></td><td data-label="Own"><span class="no">✕</span></td></tr>
         <tr><th scope="row">Free credits to start</th>
-          <td class="us"><span class="tick">✓</span></td><td><span class="tick-plain">✓</span></td><td><span class="no">✕</span></td></tr>
+          <td class="us" data-label="SPUR"><span class="tick">✓</span></td><td data-label="US"><span class="tick-plain">✓</span></td><td data-label="Own"><span class="no">✕</span></td></tr>
         <tr><th scope="row">No capital outlay</th>
-          <td class="us"><span class="tick">✓</span></td><td><span class="tick-plain">✓</span></td><td><span class="no">✕</span></td></tr>
+          <td class="us" data-label="SPUR"><span class="tick">✓</span></td><td data-label="US"><span class="tick-plain">✓</span></td><td data-label="Own"><span class="no">✕</span></td></tr>
         <tr><th scope="row">Nothing to rack, cool, or staff</th>
-          <td class="us"><span class="tick">✓</span></td><td><span class="tick-plain">✓</span></td><td><span class="no">✕</span></td></tr>
+          <td class="us" data-label="SPUR"><span class="tick">✓</span></td><td data-label="US"><span class="tick-plain">✓</span></td><td data-label="Own"><span class="no">✕</span></td></tr>
       </tbody>
     </table>
     <div style="text-align:center;margin-top:36px">
@@ -928,7 +959,7 @@ footer a:hover{color:#fff;text-decoration:underline}
       <h2>Where your data lives. And doesn't.</h2>
     </div>
 
-    <div style="background:#fff;border:1px solid var(--border-subtle);border-radius:var(--radius);padding:32px 36px;box-shadow:0 1px 3px oklch(0.22 0.01 250/.06)">
+    <div class="sov-card" style="background:#fff;border:1px solid var(--border-subtle);border-radius:var(--radius);padding:32px 36px;box-shadow:0 1px 3px oklch(0.22 0.01 250/.06)">
       <h3 style="font-size:16px;margin-bottom:6px">Where your data is processed</h3>
       <p style="color:var(--text-body);font-size:15px;margin-bottom:24px">
         All inference runs on hardware in our Waterloo, Ontario data centre. Your requests are
@@ -943,7 +974,7 @@ footer a:hover{color:#fff;text-decoration:underline}
       </ul>
 
       <h3 style="font-size:16px;margin-bottom:6px">What we do store</h3>
-      <table style="width:100%;border-collapse:collapse;margin-bottom:24px;font-size:14.5px">
+      <table class="data-table" style="width:100%;border-collapse:collapse;margin-bottom:24px;font-size:14.5px">
         <thead>
           <tr><th style="text-align:left;padding:12px 16px;border-bottom:2px solid var(--border);font-family:var(--font-display);font-size:13px;font-weight:600;width:30%">Data</th><th style="text-align:left;padding:12px 16px;border-bottom:2px solid var(--border);font-family:var(--font-display);font-size:13px;font-weight:600">Retention</th></tr>
         </thead>
