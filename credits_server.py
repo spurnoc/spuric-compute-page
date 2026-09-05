@@ -90,7 +90,7 @@ CF_TOKEN = os.getenv("CF_TOKEN", "")
 CF_API_URL = f"https://api.cloudflare.com/client/v4/accounts/{CF_ACCOUNT}/d1/database/{CF_DB}/query" if CF_ACCOUNT and CF_DB else ""
 
 # Track which DB last served a read (for admin display)
-DB_ACTIVE = "turso"
+DB_ACTIVE = "d1"
 
 import threading
 from concurrent.futures import ThreadPoolExecutor
@@ -169,15 +169,7 @@ def _normalize_d1(data):
 
 
 def db_write(sql, args=None):
-    """Write to BOTH databases in parallel. Returns True if at least one succeeded."""
-    def try_turso():
-        try:
-            _turso_execute(sql, args)
-            return True
-        except Exception as e:
-            print(f"[TURSO] Write failed: {e}")
-            return False
-
+    """Write to D1 first (primary), then Turso in background. Returns True if D1 succeeded."""
     def try_d1():
         try:
             _cf_execute(sql, args)
@@ -186,68 +178,54 @@ def db_write(sql, args=None):
             print(f"[D1] Write failed: {e}")
             return False
 
-    f_turso = _pool.submit(try_turso)
-    f_d1 = _pool.submit(try_d1)
+    def try_turso():
+        try:
+            _turso_execute(sql, args)
+            return True
+        except Exception as e:
+            print(f"[TURSO] Write failed: {e}")
+            return False
 
-    ok_turso = f_turso.result()
-    ok_d1 = f_d1.result()
+    # D1 is primary - wait for it
+    ok_d1 = try_d1()
 
-    if ok_turso and ok_d1:
-        print(f"[DB] Write succeeded on both")
-    elif ok_turso:
-        print(f"[DB] Write succeeded on Turso only")
-    elif ok_d1:
-        print(f"[DB] Write succeeded on D1 only")
-    else:
-        print(f"[DB] Write FAILED on both")
+    # Turso is backup - fire and forget (don't block the response)
+    _pool.submit(try_turso)
 
-    return ok_turso or ok_d1
+    if ok_d1:
+        return True
+    # D1 failed, wait for Turso as fallback
+    print(f"[DB] D1 write failed, checking Turso fallback")
+    return try_turso()
 
 
 def db_query(sql, args=None):
-    """Read from whichever database responds first. Falls back to the other if one fails."""
+    """Read from D1 first (primary). Falls back to Turso if D1 fails."""
     global DB_ACTIVE
 
-    def try_turso():
-        data = _turso_execute(sql, args)
-        if data is None:
-            return None
-        ok, cols, rows = _normalize_turso(data)
-        return ("turso", ok, cols, rows)
-
-    def try_d1():
+    # Try D1 first
+    try:
         data = _cf_execute(sql, args)
-        if data is None:
-            return None
-        ok, cols, rows = _normalize_d1(data)
-        return ("d1", ok, cols, rows)
+        if data is not None:
+            ok, cols, rows = _normalize_d1(data)
+            if ok:
+                DB_ACTIVE = "d1"
+                return cols, rows
+    except Exception as e:
+        print(f"[D1] Read failed: {e}")
 
-    f_turso = _pool.submit(try_turso)
-    f_d1 = _pool.submit(try_d1)
+    # Fall back to Turso
+    try:
+        data = _turso_execute(sql, args)
+        if data is not None:
+            ok, cols, rows = _normalize_turso(data)
+            if ok:
+                DB_ACTIVE = "turso"
+                return cols, rows
+    except Exception as e:
+        print(f"[TURSO] Read failed: {e}")
 
-    # Wait for whichever finishes first
-    import time
-    done = []
-    pending = [f_turso, f_d1]
-    while pending:
-        # Check if any completed
-        for f in list(pending):
-            if f.done():
-                result = f.result()
-                if result and result[1]:  # ok=True
-                    DB_ACTIVE = result[0]
-                    return result[2], result[3]  # cols, rows
-                done.append(result)
-                pending.remove(f)
-
-        if not pending:
-            break
-        time.sleep(0.001)  # avoid CPU spin
-
-    # If we get here, neither returned ok=True. Return whatever we got.
-    for d in done:
-        if d:
-            return d[2], d[3]
+    DB_ACTIVE = "none"
     return [], []
 
 
@@ -280,6 +258,52 @@ def verify_turnstile(token):
 
 
 # ── Database-backed data functions ───────────────────────────────────
+
+def sync_d1_to_turso():
+    """Copy all tables from D1 (primary) to Turso (backup). Runs every 4 hours."""
+    if not TURSO_API_URL:
+        print("[SYNC] Turso not configured, skipping sync")
+        return
+    try:
+        print("[SYNC] Starting D1 -> Turso sync...")
+        tables = ["submissions", "claim_codes", "testimonials", "analytics_events"]
+        for table in tables:
+            # Read from D1
+            cols, rows = _normalize_d1(_cf_execute(f"SELECT * FROM {table}"))
+            if not rows:
+                print(f"[SYNC] {table}: 0 rows, skipping")
+                continue
+            # Clear Turso table and re-insert
+            _turso_execute(f"DELETE FROM {table}")
+            col_list = ", ".join(cols)
+            placeholders = ", ".join(["?"] * len(cols))
+            for row in rows:
+                vals = [row.get(c) for c in cols]
+                _turso_execute(f"INSERT INTO {table} ({col_list}) VALUES ({placeholders})", vals)
+            print(f"[SYNC] {table}: {len(rows)} rows synced")
+        print("[SYNC] Complete")
+    except Exception as e:
+        print(f"[SYNC] Failed: {e}")
+
+
+def _start_sync_scheduler():
+    """Background thread that syncs D1 -> Turso every 4 hours."""
+    import time
+    SYNC_INTERVAL = 4 * 60 * 60  # 4 hours
+
+    def _run():
+        while True:
+            time.sleep(SYNC_INTERVAL)
+            try:
+                sync_d1_to_turso()
+            except Exception as e:
+                print(f"[SYNC] Error: {e}")
+
+    t = threading.Thread(target=_run, daemon=True)
+    t.start()
+    print("[SYNC] Background sync scheduled every 4 hours")
+
+
 def load_submissions():
     return turso_query("SELECT * FROM submissions ORDER BY created_at DESC")
 
@@ -1314,6 +1338,9 @@ if __name__ == "__main__":
         print(f"  Emails will be skipped until configured.")
     print("=" * 60)
     print()
+
+    # Start background D1 -> Turso sync (every 4 hours)
+    _start_sync_scheduler()
 
     server = HTTPServer(("0.0.0.0", PORT), CreditsHandler)
     print(f"  Listening on http://localhost:{PORT}")
