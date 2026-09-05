@@ -296,6 +296,16 @@ def update_submission_status(sub_id, status):
     rows = turso_query("SELECT * FROM submissions WHERE id=?", [sub_id])
     return rows[0] if rows else None
 
+def update_submission_status_fast(sub_id, status, existing_data):
+    """Update status and return immediately with merged data, no read-back."""
+    turso_execute("UPDATE submissions SET status=? WHERE id=?", [status, sub_id])
+    merged = dict(existing_data)
+    merged["status"] = status
+    return merged
+
+# Inline SPUR logo as base64 data URI for email templates
+LOGO_DATA_URI = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyOCIgaGVpZ2h0PSIyOCIgdmlld0JveD0iMCAwIDUxMiA1MTIiPjxnIGZpbGw9IiMxNTE2MUEiIHNoYXBlLXJlbmRlcmluZz0iZ2VvbWV0cmljUHJlY2lzaW9uIj48cG9seWdvbiBwb2ludHM9Ijk3LjE3OTIyOSwxNTQuODAzNzY4IDI5OC41ODM5MzcsMTU0LjgwMzc2OCAyNDkuNjMyODMwLDcwLjAxNzk2NCAxNDYuMTMwMzM2LDcwLjAxNzk2NCIgdHJhbnNmb3JtPSJyb3RhdGUoMCAyNTYgMjU2KSIvPjxwb2x5Z29uIHBvaW50cz0iOTcuMTc5MjI5LDE1NC44MDM3NjggMjk4LjU4MzkzNywxNTQuODAzNzY4IDI0OS42MzI4MzAsNzAuMDE3OTY0IDE0Ni4xMzAzMzYsNzAuMDE3OTY0IiB0cmFuc2Zvcm09InJvdGF0ZSg2MCAyNTYgMjU2KSIvPjxwb2x5Z29uIHBvaW50cz0iOTcuMTc5MjI5LDE1NC44MDM3NjggMjk4LjU4MzkzNywxNTQuODAzNzY4IDI0OS42MzI4MzAsNzAuMDE3OTY0IDE0Ni4xMzAzMzYsNzAuMDE3OTY0IiB0cmFuc2Zvcm09InJvdGF0ZSgxMjAgMjU2IDI1NikiLz48cG9seWdvbiBwb2ludHM9Ijk3LjE3OTIyOSwxNTQuODAzNzY4IDI5OC41ODM5MzcsMTU0LjgwMzc2OCAyNDkuNjMyODMwLDcwLjAxNzk2NCAxNDYuMTMwMzM2LDcwLjAxNzk2NCIgdHJhbnNmb3JtPSJyb3RhdGUoMTgwIDI1NiAyNTYpIi8+PHBvbHlnb24gcG9pbnRzPSI5Ny4xNzkyMjksMTU0LjgwMzc2OCAyOTguNTgzOTM3LDE1NC44MDM3NjggMjQ5LjYzMjgzMCw3MC4wMTc5NjQgMTQ2LjEzMDMzNiw3MC4wMTc5NjQiIHRyYW5zZm9ybT0icm90YXRlKDI0MCAyNTYgMjU2KSIvPjxwb2x5Z29uIHBvaW50cz0iOTcuMTc5MjI5LDE1NC44MDM3NjggMjk4LjU4MzkzNywxNTQuODAzNzY4IDI0OS42MzI4MzAsNzAuMDE3OTY0IDE0Ni4xMzAzMzYsNzAuMDE3OTY0IiB0cmFuc2Zvcm09InJvdGF0ZSgzMDAgMjU2IDI1NikiLz48L2c+PC9zdmc+"
+
 
 STATUS_EMAIL_HTML = """\
 <!DOCTYPE html>
@@ -307,7 +317,7 @@ STATUS_EMAIL_HTML = """\
       <td style="background:#ffffff;border-radius:8px;border:1px solid #e5e5e5;padding:32px;">
 
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:24px;">
-          <img src="https://compute.spurnoc.com/spur-logo-transparent.svg" alt="SPUR" style="width:24px;height:24px;display:block">
+          <img src="{logo}" alt="SPUR" style="width:24px;height:24px;display:block">
           <span style="font-weight:700;font-size:15px;color:#1a1a1a;">SPUR Innovation</span>
         </div>
 
@@ -419,6 +429,7 @@ def send_status_email(submission, status):
         "body": body,
         "details_block": details_block,
         "details_text": details_text,
+        "logo": LOGO_DATA_URI,
     }
 
     html_body = STATUS_EMAIL_HTML.format(**fmt_args)
@@ -499,7 +510,7 @@ EMAIL_HTML_TEMPLATE = """\
       <td style="background:#ffffff;border-radius:8px;border:1px solid #e5e5e5;padding:32px;">
 
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:24px;">
-          <div style="width:28px;height:28px;border-radius:6px;background:#F87820;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;">S</div>
+          <img src="{logo}" alt="SPUR" style="width:24px;height:24px;display:block">
           <span style="font-weight:700;font-size:15px;color:#1a1a1a;">SPUR Innovation</span>
         </div>
 
@@ -602,6 +613,7 @@ def _build_email_content(recipient_name, track, credit_type, description):
         "credit_type": credit_type_display,
         "credits": credits,
         "description": html.escape(desc_display),
+        "logo": LOGO_DATA_URI,
     }
 
     html_body = EMAIL_HTML_TEMPLATE.format(**fmt_args)
@@ -1150,10 +1162,14 @@ class CreditsHandler(BaseHTTPRequestHandler):
             self._json_response({"error": "Status must be pending, approved, or rejected"}, 422)
             return
 
-        updated = update_submission_status(sub_id, status)
+        # Use existing submission data if provided (avoids a DB read-back round trip)
+        existing = data.get("submission") or {}
+        if existing:
+            updated = update_submission_status_fast(sub_id, status, existing)
+        else:
+            updated = update_submission_status(sub_id, status)
         if updated:
             print(f"[ADMIN] Submission {sub_id} → {status}")
-            email_sent = False
             if status in ("approved", "rejected"):
                 # Respond immediately, send email in background
                 self._json_response({"success": True, "submission": updated, "email_sent": None})

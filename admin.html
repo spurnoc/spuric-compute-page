@@ -936,7 +936,7 @@ function closeModal(){
 function updateStatus(idx, status){
   var s = SUBMISSIONS[idx];
   if(!s) return;
-  api('/api/admin/submissions/' + s.id + '/status', 'PUT', {status: status}).then(function(r){
+  api('/api/admin/submissions/' + s.id + '/status', 'PUT', {status: status, submission: s}).then(function(r){
     if(r.ok){
       s.status = status;
       s.email_sent = r.body.email_sent;
