@@ -939,10 +939,17 @@ function updateStatus(idx, status){
   api('/api/admin/submissions/' + s.id + '/status', 'PUT', {status: status}).then(function(r){
     if(r.ok){
       s.status = status;
+      s.email_sent = r.body.email_sent;
       renderStats();
       renderTable();
       openModal(idx);
-      toast('Marked as ' + status);
+      if(status === 'approved'){
+        toast(r.body.email_sent ? 'Approved and email sent' : 'Approved (email failed)');
+      } else if(status === 'rejected'){
+        toast(r.body.email_sent ? 'Rejected and email sent' : 'Rejected (email failed)');
+      } else {
+        toast('Reset to pending');
+      }
     } else {
       toast('Failed to update');
     }

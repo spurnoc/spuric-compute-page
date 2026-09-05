@@ -296,6 +296,147 @@ def update_submission_status(sub_id, status):
     rows = turso_query("SELECT * FROM submissions WHERE id=?", [sub_id])
     return rows[0] if rows else None
 
+
+STATUS_EMAIL_HTML = """\
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f5f5f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <table role="presentation" style="width:100%;max-width:560px;margin:0 auto;padding:32px 16px;">
+    <tr>
+      <td style="background:#ffffff;border-radius:8px;border:1px solid #e5e5e5;padding:32px;">
+
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:24px;">
+          <img src="https://compute.spurnoc.com/spur-logo-transparent.svg" alt="SPUR" style="width:24px;height:24px;display:block">
+          <span style="font-weight:700;font-size:15px;color:#1a1a1a;">SPUR Innovation</span>
+        </div>
+
+        <h1 style="font-size:22px;font-weight:600;color:#1a1a1a;margin:0 0 12px;">{heading}</h1>
+
+        <p style="font-size:16px;line-height:1.6;color:#444;margin:0 0 16px;">
+          Hi {name},
+        </p>
+
+        <p style="font-size:16px;line-height:1.6;color:#444;margin:0 0 20px;">
+          {body}
+        </p>
+
+        {details_block}
+
+        <p style="font-size:14px;line-height:1.6;color:#888;margin:0 0 8px;">
+          Questions? Just reply to this email.
+        </p>
+
+        <hr style="border:none;border-top:1px solid #eee;margin:24px 0;">
+        <p style="font-size:12px;line-height:1.5;color:#aaa;margin:0;">
+          SPUR Innovation Centre &middot; Waterloo, Ontario, Canada<br>
+          &copy; 2026 SPUR Innovation Centre
+        </p>
+
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+"""
+
+
+STATUS_EMAIL_TEXT = """\
+SPUR Innovation — Compute Credits Update
+
+Hi {name},
+
+{body}
+
+{details_text}
+
+Questions? Just reply to this email.
+
+SPUR Innovation Centre · Waterloo, Ontario, Canada
+© 2026 SPUR Innovation Centre
+"""
+
+
+def send_status_email(submission, status):
+    """Send an approval or rejection email. Returns True on success."""
+    name = submission.get("name", "")
+    email = submission.get("email", "")
+    track = TRACK_LABELS.get(submission.get("track", ""), submission.get("track", ""))
+    credits = TRACK_CREDITS.get(submission.get("track", ""), "TBD")
+    credit_type_raw = submission.get("credit_type", "api_and_compute")
+    credit_type = {
+        "api_only": "API credits only (Hosted models)",
+        "api_and_compute": "API credits + compute GPU access",
+    }.get(credit_type_raw, credit_type_raw)
+
+    if status == "approved":
+        heading = "Your SPUR compute credits are approved"
+        body = (
+            f"Good news! Your request for {track} compute credits has been approved. "
+            f"Your {credits} in credits is now active."
+        )
+        details_block = (
+            '<table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;font-size:14px;">'
+            f'<tr><td style="padding:6px 0;color:#888;border-bottom:1px solid #eee;">Name</td><td style="padding:6px 0;color:#1a1a1a;border-bottom:1px solid #eee;text-align:right;font-weight:500;">{html.escape(name)}</td></tr>'
+            f'<tr><td style="padding:6px 0;color:#888;border-bottom:1px solid #eee;">Track</td><td style="padding:6px 0;color:#1a1a1a;border-bottom:1px solid #eee;text-align:right;font-weight:500;">{track}</td></tr>'
+            f'<tr><td style="padding:6px 0;color:#888;border-bottom:1px solid #eee;">Credit type</td><td style="padding:6px 0;color:#1a1a1a;border-bottom:1px solid #eee;text-align:right;font-weight:500;">{credit_type}</td></tr>'
+            f'<tr><td style="padding:6px 0;color:#888;">Credit allocation</td><td style="padding:6px 0;color:#F87820;text-align:right;font-weight:700;">{credits}</td></tr>'
+            '</table>'
+            '<div style="background:#f0f7ff;border:1px solid #cfe3ff;border-radius:6px;padding:14px 16px;margin:0 0 20px;">'
+            '<p style="margin:0;font-size:14px;line-height:1.5;color:#1a4d8f;">'
+            '<strong>What happens next?</strong><br>'
+            'You will receive a follow-up email with your access and onboarding instructions within one business day.'
+            '</p></div>'
+        )
+        details_text = (
+            f"Summary:\n"
+            f"  Name:          {name}\n"
+            f"  Track:         {track}\n"
+            f"  Credit type:   {credit_type}\n"
+            f"  Credits:       {credits}\n\n"
+            f"What happens next?\n"
+            f"  You will receive a follow-up email with your access and onboarding\n"
+            f"  instructions within one business day."
+        )
+    elif status == "rejected":
+        heading = "Update on your SPUR compute credits request"
+        body = (
+            f"Thank you for your interest in SPUR compute credits. After reviewing your "
+            f"request, we are unable to approve it at this time. This could be due to "
+            f"eligibility, capacity, or the current volume of requests."
+        )
+        details_block = ""
+        details_text = (
+            "If you believe this was sent in error, or if your situation has changed, "
+            "feel free to reply to this email."
+        )
+    else:
+        return False  # "pending" doesn't send an email
+
+    fmt_args = {
+        "heading": heading,
+        "name": html.escape(name),
+        "body": body,
+        "details_block": details_block,
+        "details_text": details_text,
+    }
+
+    html_body = STATUS_EMAIL_HTML.format(**fmt_args)
+    text_body = STATUS_EMAIL_TEXT.format(**fmt_args)
+    subject = heading
+
+    return _send_status_email_direct(email, subject, html_body, text_body)
+
+
+def _send_status_email_direct(recipient_email, subject, html_body, text_body):
+    """Send a status email directly via configured provider."""
+    if RESEND_API_KEY:
+        return _send_via_resend(recipient_email, subject, html_body, text_body)
+    if SMTP_HOST and SMTP_USER and SMTP_PASS:
+        return _send_via_smtp(recipient_email, subject, html_body, text_body)
+    print(f"[EMAIL] No email provider configured — skipping status email to {recipient_email}")
+    return False
+
 def load_claim_codes():
     return turso_query("SELECT code, track, credits, label FROM claim_codes ORDER BY id")
 
@@ -1001,7 +1142,11 @@ class CreditsHandler(BaseHTTPRequestHandler):
         updated = update_submission_status(sub_id, status)
         if updated:
             print(f"[ADMIN] Submission {sub_id} → {status}")
-            self._json_response({"success": True, "submission": updated})
+            email_sent = False
+            if status in ("approved", "rejected"):
+                email_sent = send_status_email(updated, status)
+                print(f"[ADMIN] Status email to {updated.get('email','')} — sent={email_sent}")
+            self._json_response({"success": True, "submission": updated, "email_sent": email_sent})
         else:
             self._json_response({"error": "Submission not found"}, 404)
 
