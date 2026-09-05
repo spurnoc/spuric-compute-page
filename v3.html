@@ -374,6 +374,20 @@ footer a:hover{color:#fff;text-decoration:underline}
   .sov-card h3{font-size:15px!important}
   .sov-card p,.sov-card li{font-size:14px!important}
 }
+
+/* project carousel (mobile only) */
+.proj-dots{display:none}
+
+@media (max-width:920px){
+  .proj-carousel{display:block;position:relative;overflow:hidden}
+  .proj-carousel .proj-slide{display:none}
+  .proj-carousel .proj-slide.active{display:flex;flex-direction:column}
+  .proj-dots{display:flex;justify-content:center;gap:8px;margin-top:16px}
+  .proj-dot{width:8px;height:8px;border-radius:50%;background:var(--border);
+    border:0;padding:0;cursor:pointer;transition:background .2s}
+  .proj-dot.active{background:var(--accent)}
+}
+
 @media (max-width:560px){
   .strip-grid{grid-template-columns:1fr 1fr}
   .segmented{grid-template-columns:1fr}
@@ -638,7 +652,7 @@ footer a:hover{color:#fff;text-decoration:underline}
       <p>Real projects from founders, students, and hackathon teams using SPUR credits.</p>
     </div>
 
-    <div class="projects two">
+    <div class="projects two proj-carousel" id="projCarousel">
       <!-- Founder project, commented out for now
       <div class="proj">
         <div class="photo" data-photo><span>PROJECT PHOTO 1<br><br>Founder project<br>screenshot, demo, or team<br><br>16:10</span></div>
@@ -651,7 +665,7 @@ footer a:hover{color:#fff;text-decoration:underline}
         </div>
       </div>
       -->
-      <div class="proj">
+      <div class="proj proj-slide" data-slide="0">
         <div class="photo" data-photo>
           <img src="racemind.webp?v=3" alt="RaceMind real-time racing telemetry and predictive analytics dashboard" loading="lazy">
         </div>
@@ -666,7 +680,7 @@ footer a:hover{color:#fff;text-decoration:underline}
           <div class="meta">Waterloo.dev Hackathon · Gemma + TimesFM · Video demo available</div>
         </div>
       </div>
-      <div class="proj">
+      <div class="proj proj-slide" data-slide="1">
         <div class="photo" data-photo>
           <img src="janus.webp?v=4" alt="Janus spacecraft sensor arbitration system interface" loading="lazy">
         </div>
@@ -683,6 +697,7 @@ footer a:hover{color:#fff;text-decoration:underline}
         </div>
       </div>
     </div>
+    <div class="proj-dots" id="projDots"></div>
 
     <div style="text-align:center;margin-top:44px">
       <a class="btn btn-lg" data-cta data-section="projects" href="#claim">Claim your credits →</a>
@@ -1343,9 +1358,54 @@ document.addEventListener('keydown',function(e){
 document.querySelectorAll('.proj .photo img').forEach(function(img){
   img.addEventListener('click',function(e){
     e.stopPropagation();
-    openImgModal(img.src.replace(/\\?v=\\d+/,''),img.alt);
+    openImgModal(img.src.replace(/\?v=\d+/,''),img.alt);
   });
 });
+
+// Project carousel (mobile only)
+(function(){
+  var slides=document.querySelectorAll('.proj-slide');
+  var dotsContainer=document.getElementById('projDots');
+  if(slides.length<=1)return;
+
+  var current=0;
+  slides[0].classList.add('active');
+
+  // Create dots
+  for(var i=0;i<slides.length;i++){
+    (function(idx){
+      var dot=document.createElement('button');
+      dot.className='proj-dot'+(idx===0?' active':'');
+      dot.setAttribute('aria-label','Show project '+(idx+1));
+      dot.addEventListener('click',function(){goTo(idx)});
+      dotsContainer.appendChild(dot);
+    })(i);
+  }
+
+  function goTo(idx){
+    slides[current].classList.remove('active');
+    dotsContainer.children[current].classList.remove('active');
+    current=idx;
+    slides[current].classList.add('active');
+    dotsContainer.children[current].classList.add('active');
+  }
+
+  // Swipe support
+  var carousel=document.getElementById('projCarousel');
+  var startX=0,deltaX=0;
+  carousel.addEventListener('touchstart',function(e){
+    startX=e.touches[0].clientX;deltaX=0;
+  },{passive:true});
+  carousel.addEventListener('touchmove',function(e){
+    deltaX=e.touches[0].clientX-startX;
+  },{passive:true});
+  carousel.addEventListener('touchend',function(){
+    if(Math.abs(deltaX)>50){
+      if(deltaX>0){goTo((current-1+slides.length)%slides.length)}
+      else{goTo((current+1)%slides.length)}
+    }
+  });
+})();
 </script>
 <!-- ANALYTICS: tag manager snippet goes here -->
 
