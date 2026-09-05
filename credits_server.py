@@ -385,8 +385,7 @@ EMAIL_HTML_TEMPLATE = """\
         </div>
 
         <p style="font-size:14px;line-height:1.6;color:#888;margin:0 0 8px;">
-          Questions? Reply to this email or contact us at
-          <a href="mailto:credits@spuric.com" style="color:#F87820;">credits@spuric.com</a>
+          Questions? Just reply to this email.
         </p>
 
         <hr style="border:none;border-top:1px solid #eee;margin:24px 0;">
@@ -425,7 +424,7 @@ What happens next?
   business day. You will receive a follow-up email with your SPUR console
   access and onboarding instructions.
 
-Questions? Reply to this email or contact credits@spuric.com
+Questions? Just reply to this email.
 
 SPUR Innovation Centre · Waterloo, Ontario, Canada
 Hosted in Canada · No US Cloud Act exposure · PIPEDA-aligned
