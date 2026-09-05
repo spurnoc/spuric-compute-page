@@ -285,9 +285,9 @@ def load_submissions():
 
 def add_submission(sub):
     db_write(
-        "INSERT INTO submissions (name, email, organization, description, track, claim_code, form_version, status, ip, user_agent, created_at, source) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO submissions (name, email, organization, description, track, credit_type, claim_code, form_version, status, ip, user_agent, created_at, source) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
         [sub.get("name",""), sub.get("email",""), sub.get("organization",""), sub.get("description",""),
-         sub.get("track",""), sub.get("claim_code",""), sub.get("form_version","v3"), sub.get("status","pending"),
+         sub.get("track",""), sub.get("credit_type","api_and_compute"), sub.get("claim_code",""), sub.get("form_version","v3"), sub.get("status","pending"),
          sub.get("ip",""), sub.get("user_agent",""), sub.get("submitted_at",""), sub.get("source","v3")]
     )
 
@@ -768,6 +768,7 @@ class CreditsHandler(BaseHTTPRequestHandler):
             "name": name,
             "email": email,
             "track": track,
+            "credit_type": credit_type,
             "organization": organization,
             "description": description,
             "claim_code": "",

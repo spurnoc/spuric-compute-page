@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS submissions (
   organization TEXT,
   description TEXT,
   track TEXT,
+  credit_type TEXT DEFAULT 'api_and_compute',
   claim_code TEXT,
   form_version TEXT DEFAULT 'v3',
   status TEXT DEFAULT 'pending',

@@ -552,7 +552,7 @@
             <tr>
               <th>Name</th>
               <th>Track</th>
-              <th>GPU</th>
+              <th>Credits</th>
               <th>Status</th>
               <th>Submitted</th>
               <th></th>
@@ -823,10 +823,11 @@ function renderTable(){
 
   tbody.innerHTML = filtered.map(function(s, i){
     var idx = SUBMISSIONS.indexOf(s);
+    var ctLabel = s.credit_type === 'api_only' ? 'API only' : (s.credit_type === 'api_and_compute' ? 'API + GPU' : esc(s.credit_type||'—'));
     return '<tr class="submission-row" onclick="openModal('+idx+')">' +
       '<td class="td-name">' + esc(s.name) + '</td>' +
       '<td>' + trackBadge(s.track) + '</td>' +
-      '<td class="mono" style="font-size:13px;">' + esc((s.gpu_pref||'').toUpperCase()) + '</td>' +
+      '<td class="mono" style="font-size:13px;">' + ctLabel + '</td>' +
       '<td>' + statusBadge(s.status||'pending') + '</td>' +
       '<td class="td-time">' + fmtTime(s.submitted_at) + '</td>' +
       '<td style="text-align:right;"><span style="color:var(--text-muted);font-size:18px;">&rsaquo;</span></td>' +
