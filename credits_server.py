@@ -1198,11 +1198,12 @@ class CreditsHandler(BaseHTTPRequestHandler):
             print(f"[ADMIN] Submission {sub_id} {prev_status} → {status}")
             # Only send email if status actually changed
             if status != prev_status and status in ("approved", "rejected"):
-                # Respond immediately, send email in background
-                self._json_response({"success": True, "submission": updated, "email_sent": None})
-                _send_status_email_async(updated, status)
+                email_sent = send_status_email(updated, status)
+                print(f"[ADMIN] Status email to {updated.get('email','')} — sent={email_sent}")
+                self._json_response({"success": True, "submission": updated, "email_sent": email_sent})
                 return
-            self._json_response({"success": True, "submission": updated, "email_sent": False})
+            # Status didn't change - no email needed
+            self._json_response({"success": True, "submission": updated, "email_sent": "skipped"})
         else:
             self._json_response({"error": "Submission not found"}, 404)
 

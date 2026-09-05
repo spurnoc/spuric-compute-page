@@ -943,16 +943,12 @@ function updateStatus(idx, status){
       renderStats();
       renderTable();
       openModal(idx);
-      if(status === 'approved'){
-        if(r.body.email_sent === null) toast('Approved, email sending...');
-        else if(r.body.email_sent) toast('Approved and email sent');
-        else toast(r.body.submission && r.body.submission.status === 'approved' ? 'Already approved' : 'Approved (email failed)');
-      } else if(status === 'rejected'){
-        if(r.body.email_sent === null) toast('Rejected, email sending...');
-        else if(r.body.email_sent) toast('Rejected and email sent');
-        else toast(r.body.submission && r.body.submission.status === 'rejected' ? 'Already rejected' : 'Rejected (email failed)');
+      if(r.body.email_sent === true){
+        toast(status === 'approved' ? 'Approved and email sent' : 'Rejected and email sent');
+      } else if(r.body.email_sent === 'skipped'){
+        toast(status === 'approved' ? 'Already approved' : 'Already rejected');
       } else {
-        toast('Reset to pending');
+        toast(status === 'approved' ? 'Approved (email failed)' : 'Rejected (email failed)');
       }
     } else {
       toast('Failed to update');
